@@ -26,6 +26,7 @@ type Page struct {
 func main() {
 	conn := connect(os.Getenv("DB_USERNAME"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_NAME"))
 	fmt.Println(getUserViaId(conn, 1)) // test
+	addUser(conn, "test3", "pass", "123@maoi.t")
 	http.HandleFunc("/", pageHandler)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 

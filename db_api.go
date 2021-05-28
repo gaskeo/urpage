@@ -39,3 +39,15 @@ func getUserViaId(conn *pgx.Conn, userId int) *User {
 	}
 	return &user
 }
+
+func addUser(conn *pgx.Conn, username string, password string, email string) int {
+	userId := -1
+	err := conn.QueryRow(context.Background(),
+		"INSERT INTO user_info (username, password, email, create_date)"+
+			"VALUES ($1, $2, $3, $4) RETURNING user_id", username, password, email, time.Now()).Scan(&userId)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "QueryRow failed: %v\n", err)
+		os.Exit(1)
+	}
+	return userId
+}

@@ -1,9 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
+	"os"
 )
 
 func pageHandler(writer http.ResponseWriter, request *http.Request) {
@@ -22,6 +24,9 @@ type Page struct {
 }
 
 func main() {
+	conn := connect(os.Getenv("DB_USERNAME"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_NAME"))
+	fmt.Println(getUserViaId(conn, 1)) // test
 	http.HandleFunc("/", pageHandler)
 	log.Fatal(http.ListenAndServe(":8080", nil))
+
 }

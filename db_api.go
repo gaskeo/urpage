@@ -15,6 +15,7 @@ type User struct {
 	email      string
 	createDate time.Time
 	imagePath  string
+	links      string
 }
 
 type Page struct {
@@ -40,44 +41,21 @@ func getUserViaId(conn *pgx.Conn, userId int) *User {
 		&user.password,
 		&user.email,
 		&user.createDate,
-		&user.imagePath)
+		&user.imagePath,
+		&user.links)
 	if err != nil {
 		return &User{}
 	}
 	return &user
 }
 
-func addUser(conn *pgx.Conn, username string, password string, email string, imagePath string) int {
+func addUser(conn *pgx.Conn, username string, password string, email string, imagePath string, links string) int {
 	userId := -1
 	err := conn.QueryRow(context.Background(),
-		"INSERT INTO user_info (username, password, email, create_date, image_path)"+
-			"VALUES ($1, $2, $3, $4) RETURNING user_id", username, password, email, time.Now(), imagePath).Scan(&userId)
+		"INSERT INTO user_info (username, password, email, create_date, image_path, links)"+
+			"VALUES ($1, $2, $3, $4, $5) RETURNING user_id", username, password, email, time.Now(), imagePath, links).Scan(&userId)
 	if err != nil {
 		return -1
 	}
 	return userId
-}
-
-func getPageViaId(conn *pgx.Conn, pageId int) *Page {
-	page := Page{}
-	err := conn.QueryRow(context.Background(),
-		"SELECT * FROM page_info WHERE page_id == $1", pageId).Scan(&page.pageId, &page.authorId, &page.links)
-	if err != nil {
-		return &Page{}
-	}
-	return &page
-}
-
-func addPage(conn *pgx.Conn, authorId int, links string) int {
-	pageId := -1
-	user := getUserViaId(conn, authorId)
-	if user.userId == 0 {
-		return -1
-	}
-	err := conn.QueryRow(context.Background(),
-		"INSERT INTO page_info (author_id, links) VALUES ($1, $2)", authorId, links).Scan(&pageId)
-	if err != nil {
-		return -1
-	}
-	return pageId
 }

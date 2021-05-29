@@ -11,7 +11,7 @@
 <h1 class="page-username">{{ .Username }}</h1>
 <ul class="page-links">
     {{ range .Links }}
-        <li class="page-link"><a href="{{ . }}">тык</a></li>
+        <li class="page-link"><a href="{{ index . 0 }}"><img class="page-linked-img" src="{{ index . 1 }}"></a></li>
     {{ end }}
 </ul>
 </body>

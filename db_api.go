@@ -17,7 +17,7 @@ type User struct {
 	Email      string
 	CreateDate time.Time
 	ImagePath  string
-	Links      []string
+	Links      [][]string
 }
 
 func connect(username string, password string, dbname string) *pgx.Conn {
@@ -44,6 +44,7 @@ func getUserViaId(userId int) *User {
 		&image,
 		&links)
 	if err != nil {
+		log.Println(err)
 		return &User{}
 	}
 
@@ -55,8 +56,9 @@ func getUserViaId(userId int) *User {
 
 	if links != nil {
 		linksLst := strings.Split(*links, " ")
-		user.Links = linksLst
+		user.Links = createIconLinkPairs(linksLst)
 	}
+
 	return &user
 }
 
@@ -66,7 +68,7 @@ func addUser(username string, password string, email string, imagePath string, l
 		"INSERT INTO user_info (Username, Password, Email, create_date, image_path, Links)"+
 			"VALUES ($1, $2, $3, $4, $5, $6) RETURNING user_id", username, password, email, time.Now(), imagePath, links).Scan(&userId)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return -1
 	}
 	return userId

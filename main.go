@@ -34,7 +34,7 @@ func faviconHandler(w http.ResponseWriter, r *http.Request) {}
 
 func main() {
 	conn = connect(os.Getenv("DB_USERNAME"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_NAME"))
-	fmt.Println(getUserViaId(1)) // test
+	fmt.Println(getUserViaId(9)) // test
 
 	fs := http.FileServer(http.Dir("./static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))

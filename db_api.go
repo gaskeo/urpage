@@ -6,6 +6,7 @@ import (
 	"github.com/jackc/pgx/v4"
 	"log"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -15,8 +16,8 @@ type User struct {
 	Password   string
 	Email      string
 	CreateDate time.Time
-	ImagePath  *string
-	Links      *string
+	ImagePath  string
+	Links      []string
 }
 
 func connect(username string, password string, dbname string) *pgx.Conn {
@@ -30,20 +31,31 @@ func connect(username string, password string, dbname string) *pgx.Conn {
 
 func getUserViaId(userId int) *User {
 	user := User{}
+
+	var image *string
+	var links *string
+
 	err := conn.QueryRow(context.Background(), "SELECT * from user_info where user_id=$1", userId).Scan(
 		&user.UserId,
 		&user.Username,
 		&user.Password,
 		&user.Email,
 		&user.CreateDate,
-		&user.ImagePath,
-		&user.Links)
+		&image,
+		&links)
 	if err != nil {
 		return &User{}
 	}
-	if user.ImagePath != nil {
-		newPath := userImages + *user.ImagePath
-		user.ImagePath = &newPath
+
+	if image != nil {
+		user.ImagePath = userImages + *image
+	} else {
+		user.ImagePath = userImages + "test.jpeg"
+	}
+
+	if links != nil {
+		linksLst := strings.Split(*links, " ")
+		user.Links = linksLst
 	}
 	return &user
 }

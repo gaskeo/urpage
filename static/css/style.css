@@ -1,0 +1,28 @@
+.page-img {
+    display: block;
+    margin-right: auto;
+    margin-left: auto;
+    margin-top: 6rem;
+    width: 14rem;
+    height: 14rem;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.page-username {
+    text-align: center;
+    margin-top: 3rem;
+}
+
+.page-links {
+    margin: 0;
+    padding: 4px;
+    display: block;
+    text-align: center;
+}
+
+.page-link {
+    display: inline;
+    margin-right: 5px;
+    padding: 3px;
+}

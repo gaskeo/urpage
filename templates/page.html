@@ -3,11 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ .Username }}</title>
+    <link rel="stylesheet" href="../static/css/style.css">
 </head>
 <body>
 
-<img src="{{ .ImagePath }}">
-<h1>test page</h1>
-
+<img class="page-img" src="{{ .ImagePath }}">
+<h1 class="page-username">{{ .Username }}</h1>
+<ul class="page-links">
+    {{ range .Links }}
+        <li class="page-link"><a href="{{ . }}">тык</a></li>
+    {{ end }}
+</ul>
 </body>
 </html>

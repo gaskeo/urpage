@@ -14,14 +14,8 @@ type User struct {
 	password   string
 	email      string
 	createDate time.Time
-	imagePath  string
-	links      string
-}
-
-type Page struct {
-	pageId   int
-	authorId int
-	links    string
+	imagePath  *string
+	links      *string
 }
 
 func connect(username string, password string, dbname string) *pgx.Conn {
@@ -33,7 +27,7 @@ func connect(username string, password string, dbname string) *pgx.Conn {
 	return conn
 }
 
-func getUserViaId(conn *pgx.Conn, userId int) *User {
+func getUserViaId(userId int) *User {
 	user := User{}
 	err := conn.QueryRow(context.Background(), "SELECT * from user_info where user_id=$1", userId).Scan(
 		&user.userId,
@@ -49,7 +43,7 @@ func getUserViaId(conn *pgx.Conn, userId int) *User {
 	return &user
 }
 
-func addUser(conn *pgx.Conn, username string, password string, email string, imagePath string, links string) int {
+func addUser(username string, password string, email string, imagePath string, links string) int {
 	userId := -1
 	err := conn.QueryRow(context.Background(),
 		"INSERT INTO user_info (username, password, email, create_date, image_path, links)"+

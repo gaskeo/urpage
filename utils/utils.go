@@ -1,22 +1,23 @@
-package main
+package utils
 
 import (
+	"go-site/constants"
 	"golang.org/x/crypto/bcrypt"
 	"net/url"
 	"strings"
 )
 
-func hashPassword(password string) (string, error) {
+func HashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	return string(bytes), err
 }
 
-func checkPassword(password string, hash string) bool {
+func CheckPassword(password string, hash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	return err == nil
 }
 
-func createIconLinkPairs(links []string) [][]string {
+func CreateIconLinkPairs(links []string) [][]string {
 	var data [][]string
 
 	for _, link := range links {
@@ -36,13 +37,13 @@ func createIconLinkPairs(links []string) [][]string {
 
 		}
 
-		file := linksImagesPairs[host]
+		file := constants.LinksImagesPairs[host]
 
 		if len(file) == 0 {
-			file = linksImagesPairs["other"]
+			file = constants.LinksImagesPairs["other"]
 		}
 
-		file = linkPath + file
+		file = constants.LinkPath + file
 		data = append(data, []string{link, file})
 	}
 

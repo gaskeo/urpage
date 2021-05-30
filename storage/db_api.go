@@ -1,14 +1,18 @@
-package main
+package storage
 
 import (
 	"context"
 	"fmt"
 	"github.com/jackc/pgx/v4"
+	"go-site/constants"
+	"go-site/utils"
 	"log"
 	"os"
 	"strings"
 	"time"
 )
+
+var conn *pgx.Conn
 
 type User struct {
 	UserId     int
@@ -20,16 +24,17 @@ type User struct {
 	Links      [][]string
 }
 
-func connect(username string, password string, dbname string) *pgx.Conn {
-	conn, err := pgx.Connect(context.Background(), "postgres://"+username+":"+password+"@localhost:5432/"+dbname)
+func Connect(username string, password string, dbname string) *pgx.Conn {
+	connect, err := pgx.Connect(context.Background(), "postgres://"+username+":"+password+"@localhost:5432/"+dbname)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
 		os.Exit(1)
 	}
+	conn = connect
 	return conn
 }
 
-func getUserViaId(userId int) *User {
+func GetUserViaId(userId int) *User {
 	user := User{}
 
 	var image *string
@@ -49,14 +54,14 @@ func getUserViaId(userId int) *User {
 	}
 
 	if image != nil {
-		user.ImagePath = userImages + *image
+		user.ImagePath = constants.UserImages + *image
 	} else {
-		user.ImagePath = userImages + "test.jpeg"
+		user.ImagePath = constants.UserImages + "test.jpeg"
 	}
 
 	if links != nil {
 		linksLst := strings.Split(*links, " ")
-		user.Links = createIconLinkPairs(linksLst)
+		user.Links = utils.CreateIconLinkPairs(linksLst)
 	}
 
 	return &user

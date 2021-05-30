@@ -16,6 +16,8 @@ func main() {
 
 	http.HandleFunc("/favicon.ico", handlers.FaviconHandler)
 
+	http.HandleFunc("/reg", handlers.RegistrationHandler)
+
 	http.HandleFunc("/", handlers.PageHandler)
 
 	log.Fatal(http.ListenAndServe(":8080", nil))

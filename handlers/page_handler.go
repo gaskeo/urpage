@@ -14,9 +14,14 @@ func PageHandler(writer http.ResponseWriter, request *http.Request) {
 	if err != nil {
 		log.Println(err)
 	}
-	fmt.Println(t)
 
 	userIdStr := request.URL.Path[1:]
+
+	if len(userIdStr) == 0 {
+		MainPageHandler(writer, request)
+		return
+	}
+
 	userId, err := strconv.Atoi(userIdStr)
 
 	if err != nil {
@@ -25,7 +30,7 @@ func PageHandler(writer http.ResponseWriter, request *http.Request) {
 
 	user := storage.GetUserViaId(userId)
 	if user.UserId == 0 {
-		errorHandler(writer, request, http.StatusNotFound)
+		ErrorHandler(writer, request, http.StatusNotFound)
 		return
 	}
 	fmt.Println(writer)

@@ -1,13 +1,26 @@
 package handlers
 
 import (
-	"fmt"
+	"html/template"
+	"log"
 	"net/http"
 )
 
-func errorHandler(writer http.ResponseWriter, request *http.Request, status int) {
+func ErrorHandler(writer http.ResponseWriter, request *http.Request, status int) {
 	writer.WriteHeader(status)
+
 	if status == http.StatusNotFound {
-		fmt.Fprint(writer, "my 404")
+
+		t, err := template.ParseFiles("templates/error404.html")
+		if err != nil {
+			log.Println(err)
+
+		}
+
+		err = t.Execute(writer, "")
+		if err != nil {
+			log.Println(err)
+		}
+
 	}
 }

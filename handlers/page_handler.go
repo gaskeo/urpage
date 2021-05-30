@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"go-site/storage"
 	"html/template"
 	"log"
@@ -11,6 +10,7 @@ import (
 
 func PageHandler(writer http.ResponseWriter, request *http.Request) {
 	t, err := template.ParseFiles("templates/page.html")
+
 	if err != nil {
 		log.Println(err)
 	}
@@ -29,11 +29,12 @@ func PageHandler(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	user := storage.GetUserViaId(userId)
+
 	if user.UserId == 0 {
 		ErrorHandler(writer, request, http.StatusNotFound)
 		return
 	}
-	fmt.Println(writer)
+
 	err = t.Execute(writer, user)
 
 	if err != nil {

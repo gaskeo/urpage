@@ -53,7 +53,7 @@ func GetUserViaId(userId int) *User {
 		return &User{}
 	}
 
-	if image != nil {
+	if image != nil && len(*image) != 0 {
 		user.ImagePath = constants.UserImages + *image
 	} else {
 		user.ImagePath = constants.UserImages + "test.jpeg"
@@ -67,7 +67,7 @@ func GetUserViaId(userId int) *User {
 	return &user
 }
 
-func addUser(username string, password string, email string, imagePath string, links string) int {
+func AddUser(username string, password string, email string, imagePath string, links string) int {
 	userId := -1
 	err := conn.QueryRow(context.Background(),
 		"INSERT INTO user_info (Username, Password, Email, create_date, image_path, Links)"+

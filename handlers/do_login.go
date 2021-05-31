@@ -3,7 +3,6 @@ package handlers
 import (
 	"go-site/storage"
 	"go-site/utils"
-	"log"
 	"net/http"
 	"strconv"
 )
@@ -29,8 +28,6 @@ func DoLogin(writer http.ResponseWriter, request *http.Request) {
 		http.Redirect(writer, request, "/login", http.StatusSeeOther)
 		return
 	}
-
-	log.Println(user)
 
 	http.Redirect(writer, request, "/id/"+strconv.Itoa(user.UserId), http.StatusSeeOther)
 }

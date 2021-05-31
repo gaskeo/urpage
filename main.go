@@ -16,7 +16,7 @@ func main() {
 
 	http.HandleFunc("/favicon.ico", handlers.FaviconHandler)
 
-	http.HandleFunc("/reg", handlers.RegistrationHandler)
+	http.HandleFunc("/registration", handlers.RegistrationHandler)
 
 	http.HandleFunc("/login", handlers.LoginHandler)
 

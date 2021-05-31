@@ -15,7 +15,7 @@ func PageHandler(writer http.ResponseWriter, request *http.Request) {
 		log.Println(err)
 	}
 
-	userIdStr := request.URL.Path[1:]
+	userIdStr := request.URL.Path[len("/id/"):]
 
 	if len(userIdStr) == 0 {
 		MainPageHandler(writer, request)

@@ -18,7 +18,7 @@ func main() {
 
 	http.HandleFunc("/reg", handlers.RegistrationHandler)
 
-	http.HandleFunc("/", handlers.PageHandler)
+	http.HandleFunc("/id/", handlers.PageHandler)
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

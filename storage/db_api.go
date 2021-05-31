@@ -40,7 +40,7 @@ func GetUserViaId(userId int) *User {
 	var image *string
 	var links *string
 
-	err := conn.QueryRow(context.Background(), "SELECT * from user_info where user_id=$1", userId).Scan(
+	err := conn.QueryRow(context.Background(), "SELECT * from user_info WHERE user_id=$1", userId).Scan(
 		&user.UserId,
 		&user.Username,
 		&user.Password,
@@ -59,7 +59,7 @@ func GetUserViaId(userId int) *User {
 		user.ImagePath = constants.UserImages + "test.jpeg"
 	}
 
-	if links != nil {
+	if links != nil && len(*links) != 0 {
 		linksLst := strings.Split(*links, " ")
 		user.Links = utils.CreateIconLinkPairs(linksLst)
 	}
@@ -77,4 +77,15 @@ func AddUser(username string, password string, email string, imagePath string, l
 		return -1
 	}
 	return userId
+}
+
+func CheckEmailExistInDB(email string) bool {
+	var emailInDB string
+
+	err := conn.QueryRow(context.Background(), "SELECT email from user_info WHERE email=$1", email).Scan(&emailInDB)
+	if err != nil {
+		log.Println(err)
+	}
+
+	return emailInDB == email
 }

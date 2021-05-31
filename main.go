@@ -20,5 +20,7 @@ func main() {
 
 	http.HandleFunc("/id/", handlers.PageHandler)
 
+	http.HandleFunc("/do/registration", handlers.DoRegistration)
+
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

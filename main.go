@@ -18,6 +18,8 @@ func main() {
 
 	http.HandleFunc("/reg", handlers.RegistrationHandler)
 
+	http.HandleFunc("/login", handlers.LoginHandler)
+
 	http.HandleFunc("/id/", handlers.PageHandler)
 
 	http.HandleFunc("/do/registration", handlers.DoRegistration)

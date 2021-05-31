@@ -89,3 +89,40 @@ func CheckEmailExistInDB(email string) bool {
 
 	return emailInDB == email
 }
+
+func GetUserByEmailAndPassword(email string, password string) *User {
+	user := User{}
+
+	var image *string
+	var links *string
+
+	err := conn.QueryRow(context.Background(), "SELECT * from user_info WHERE email=$1", email).Scan(
+		&user.UserId,
+		&user.Username,
+		&user.Password,
+		&user.Email,
+		&user.CreateDate,
+		&image,
+		&links)
+	if err != nil {
+		log.Println(err)
+		return &User{}
+	}
+
+	if password == user.Password {
+		return &User{}
+	}
+
+	if image != nil && len(*image) != 0 {
+		user.ImagePath = constants.UserImages + *image
+	} else {
+		user.ImagePath = constants.UserImages + "test.jpeg"
+	}
+
+	if links != nil && len(*links) != 0 {
+		linksLst := strings.Split(*links, " ")
+		user.Links = utils.CreateIconLinkPairs(linksLst)
+	}
+
+	return &user
+}

@@ -10,6 +10,7 @@ func DoRegistration(writer http.ResponseWriter, request *http.Request) {
 	if request.Method != "POST" {
 		return
 	}
+
 	username := request.FormValue("username")
 	email := request.FormValue("email")
 	password := request.FormValue("password")

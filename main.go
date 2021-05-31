@@ -20,9 +20,11 @@ func main() {
 
 	http.HandleFunc("/login", handlers.LoginHandler)
 
-	http.HandleFunc("/id/", handlers.PageHandler)
-
 	http.HandleFunc("/do/registration", handlers.DoRegistration)
+
+	http.HandleFunc("/do/login", handlers.DoLogin)
+
+	http.HandleFunc("/id/", handlers.PageHandler)
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

@@ -18,21 +18,21 @@ func GenerateId() int64 {
 }
 
 func GenerateKey() string {
-	b := make([]byte, 32)
-	_, err := rand.Read(b)
+	key := make([]byte, 32)
+	_, err := rand.Read(key)
 	if err != nil {
 		log.Println(err)
 	}
 
-	return fmt.Sprintf("%x", b)
+	return fmt.Sprintf("%x", key)
 }
 
 func GenerateRefreshToken() string {
-	b := make([]byte, 16)
-	_, err := rand.Read(b)
+	refreshToken := make([]byte, 16)
+	_, err := rand.Read(refreshToken)
 	if err != nil {
 		log.Println(err)
 	}
 
-	return fmt.Sprintf("%x", b)
+	return fmt.Sprintf("%x", refreshToken)
 }

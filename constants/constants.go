@@ -1,5 +1,7 @@
 package constants
 
+import "time"
+
 const UserImages = "/static/images/user_images/"
 
 const LinkPath = "/static/images/site_images/social_icons/SVG/"
@@ -21,3 +23,6 @@ var LinksImagesPairs = map[string]string{
 	"t.me":          "telegram.svg",
 	"other":         "other.svg",
 }
+
+const JWTExpireTime = time.Hour
+const RefreshTokenExpireTime = time.Hour * 730

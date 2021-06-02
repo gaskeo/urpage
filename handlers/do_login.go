@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"go-site/constants"
 	"go-site/jwt"
 	"go-site/storage"
 	"go-site/utils"
@@ -10,8 +11,8 @@ import (
 )
 
 func addJWTCookie(user storage.User, writer http.ResponseWriter, request *http.Request) {
-	TokenExpireDate := time.Now().Add(time.Hour)
-	RefreshExpireDate := TokenExpireDate.Add(time.Hour * 730)
+	TokenExpireDate := time.Now().Add(constants.JWTExpireTime)
+	RefreshExpireDate := TokenExpireDate.Add(constants.RefreshTokenExpireTime)
 
 	token, err := jwt.GenerateJWTToken(user.UserId, TokenExpireDate, jwt.SecretKey)
 	if err != nil {

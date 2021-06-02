@@ -1,8 +1,9 @@
 package constants
 
-var UserImages = "/static/images/user_images/"
+const UserImages = "/static/images/user_images/"
 
-var LinkPath = "/static/images/site_images/social_icons/SVG/"
+const LinkPath = "/static/images/site_images/social_icons/SVG/"
+
 var LinksImagesPairs = map[string]string{
 	"vk.com":        "vk.svg",
 	"facebook.com":  "facebook.svg",

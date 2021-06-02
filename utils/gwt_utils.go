@@ -18,6 +18,16 @@ func GenerateId() int64 {
 }
 
 func GenerateKey() string {
+	b := make([]byte, 32)
+	_, err := rand.Read(b)
+	if err != nil {
+		log.Println(err)
+	}
+
+	return fmt.Sprintf("%x", b)
+}
+
+func GenerateRefreshToken() string {
 	b := make([]byte, 16)
 	_, err := rand.Read(b)
 	if err != nil {

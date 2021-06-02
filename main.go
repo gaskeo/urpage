@@ -26,5 +26,7 @@ func main() {
 
 	http.HandleFunc("/id/", handlers.PageHandler)
 
+	http.HandleFunc("/", handlers.MainPageHandler)
+
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

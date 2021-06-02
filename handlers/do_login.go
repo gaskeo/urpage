@@ -19,7 +19,7 @@ func addJWTCookie(user storage.User, writer http.ResponseWriter, request *http.R
 		return
 	}
 
-	refreshToken := utils.GenerateRefreshToken()
+	refreshToken := jwt.GenerateRefreshToken()
 
 	cookieToken := http.Cookie{
 		Name:    "JWT",

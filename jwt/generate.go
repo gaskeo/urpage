@@ -4,13 +4,12 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
-	"go-site/utils"
 	"time"
 )
 
 const minSecretKeySize = 32
 
-var SecretKey = utils.GenerateKey()
+var SecretKey = GenerateKey()
 
 var ErrExpiredToken = errors.New("token has expired")
 var ErrSmallSecretKey = errors.New("small secret key")
@@ -34,7 +33,7 @@ func (payload *Payload) Valid() error {
 
 func GenerateJWTToken(id int, expiredAt time.Time, secretKey string) (string, error) {
 	payload := Payload{id,
-		utils.GenerateId(),
+		GenerateId(),
 		time.Now(),
 		expiredAt}
 	fmt.Println(secretKey)

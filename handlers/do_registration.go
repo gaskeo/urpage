@@ -18,12 +18,12 @@ func DoRegistration(writer http.ResponseWriter, request *http.Request) {
 	passwordHashed, err := utils.HashPassword(password)
 
 	if err != nil {
-		http.Redirect(writer, request, "/reg", http.StatusSeeOther)
+		http.Redirect(writer, request, "/registration", http.StatusSeeOther)
 		return
 	}
 
 	if storage.CheckEmailExistInDB(email) {
-		http.Redirect(writer, request, "/reg", http.StatusSeeOther)
+		http.Redirect(writer, request, "/registration", http.StatusSeeOther)
 		return
 	}
 

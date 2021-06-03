@@ -31,7 +31,7 @@ func (payload *Payload) Valid() error {
 	return nil
 }
 
-func GenerateJWTToken(id int, expiredAt time.Time, secretKey string) (string, error) {
+func GenerateJWTToken(id int, expiredAt time.Time, secretKey string) (Payload, string, error) {
 	payload := Payload{id,
 		GenerateId(),
 		time.Now(),
@@ -39,10 +39,11 @@ func GenerateJWTToken(id int, expiredAt time.Time, secretKey string) (string, er
 	fmt.Println(secretKey)
 
 	if len(secretKey) < minSecretKeySize {
-		return "", ErrSmallSecretKey
+		return Payload{}, "", ErrSmallSecretKey
 	}
 
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, &payload)
 
-	return jwtToken.SignedString([]byte(secretKey))
+	JWTString, err := jwtToken.SignedString([]byte(secretKey))
+	return payload, JWTString, err
 }

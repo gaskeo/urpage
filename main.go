@@ -2,6 +2,7 @@ package main
 
 import (
 	"go-site/handlers"
+	"go-site/redis_api"
 	"go-site/storage"
 	"log"
 	"net/http"
@@ -10,6 +11,8 @@ import (
 
 func main() {
 	storage.Connect(os.Getenv("DB_USERNAME"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_NAME"))
+
+	redis_api.Connect(os.Getenv("REDIS_ADDRESS"), os.Getenv("REDIS_PASSWORD"), 0)
 
 	fs := http.FileServer(http.Dir("./static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))

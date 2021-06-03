@@ -14,7 +14,7 @@ func addJWTCookie(user storage.User, writer http.ResponseWriter, request *http.R
 	TokenExpireDate := time.Now().Add(constants.JWTExpireTime)
 	RefreshExpireDate := TokenExpireDate.Add(constants.RefreshTokenExpireTime)
 
-	token, err := jwt.GenerateJWTToken(user.UserId, TokenExpireDate, jwt.SecretKey)
+	_, token, err := jwt.GenerateJWTToken(user.UserId, TokenExpireDate, jwt.SecretKey)
 	if err != nil {
 		http.Redirect(writer, request, "/login", http.StatusSeeOther)
 		return

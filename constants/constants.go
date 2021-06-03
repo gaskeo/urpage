@@ -24,5 +24,5 @@ var LinksImagesPairs = map[string]string{
 	"other":         "other.svg",
 }
 
-const JWTExpireTime = time.Hour
-const RefreshTokenExpireTime = time.Hour * 730
+const JWTExpireTime = time.Second * 10
+const RefreshTokenExpireTime = time.Second * 20

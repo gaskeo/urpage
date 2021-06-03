@@ -2,7 +2,6 @@ package redis_api
 
 import (
 	"context"
-	"fmt"
 	"github.com/go-redis/redis/v8"
 	"time"
 )
@@ -29,7 +28,16 @@ func Set(key string, value string, expiredDate time.Time) {
 	} else {
 		expiredTime = expiredDate.Sub(time.Now())
 	}
-	fmt.Println(expiredTime)
-	fmt.Println(rdb.Set(ctx, key, value, expiredTime))
 
+	rdb.Set(ctx, key, value, expiredTime)
+
+}
+
+func Get(key string) string {
+	result, err := rdb.Get(ctx, key).Result()
+	if err != nil {
+		return ""
+	}
+
+	return result
 }

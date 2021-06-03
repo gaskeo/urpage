@@ -2,7 +2,6 @@ package jwt
 
 import (
 	"errors"
-	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"time"
 )
@@ -36,7 +35,6 @@ func GenerateJWTToken(id int, expiredAt time.Time, secretKey string) (Payload, s
 		GenerateId(),
 		time.Now(),
 		expiredAt}
-	fmt.Println(secretKey)
 
 	if len(secretKey) < minSecretKeySize {
 		return Payload{}, "", ErrSmallSecretKey

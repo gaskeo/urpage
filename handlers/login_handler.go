@@ -7,6 +7,14 @@ import (
 )
 
 func LoginHandler(writer http.ResponseWriter, request *http.Request) {
+
+	userId := checkIfUserAuth(request)
+
+	if userId != 0 {
+		http.Redirect(writer, request, "/", http.StatusSeeOther)
+		return
+	}
+
 	t, err := template.ParseFiles("templates/login.html")
 	if err != nil {
 		log.Println(err)

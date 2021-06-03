@@ -25,9 +25,9 @@ func checkIfUserAuth(request *http.Request) int {
 			redisJWTValue := redis_api.Get(redisJWTKey)
 
 			if redisJWTValue == JWTToken.Value {
-				log.Println("invalid token")
 				return payload.UserId
 			} else {
+				log.Println("invalid token")
 				return 0
 			}
 		}

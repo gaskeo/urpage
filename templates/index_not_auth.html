@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Главная</title>
+    <link rel="stylesheet" href="../static/css/register.css">
+    <link rel="stylesheet" href="../static/css/main_page.css">
+</head>
+<body>
+<div class="data-container">
+    <div class="header">
+        <h1 class="logo">крутое название</h1>
+        <div class="header-links-container">
+            <a class="header-link" href="/login">Войти</a>
+        </div>
+
+    </div>
+    <div class="form-container">
+        <h1 class="form-header">Регистрация</h1>
+        <form class="page-form" action="/do/registration" method="post">
+
+            <label for="username" class="page-form-label">Имя пользователя</label>
+            <input id="username" name="username" class="page-form-input" type="text"><br>
+
+            <label for="email" class="page-form-label">Почта</label>
+            <input id="email" name="email" class="page-form-input" type="text"><br>
+
+            <label for="password" class="page-form-label">Пароль</label>
+            <input id="password" name="password" class="page-form-input" type="password"><br>
+
+            <label for="password-again" class="page-form-label">Пароль еще раз</label>
+            <input id="password-again" name="password-again" class="page-form-input" type="password"><br>
+
+            <input type="submit" class="page-form-submit" value="Зарегистрироваться">
+        </form>
+    </div>
+</div>
+</body>
+</html>

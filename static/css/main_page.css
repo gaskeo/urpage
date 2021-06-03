@@ -1,0 +1,41 @@
+.logo {
+    display: inline;
+    line-height: 3.6rem !important;
+    font: 1.6em "Arial Black";
+}
+
+.header-link {
+    text-decoration: none;
+    padding: 10px 15px;
+    font: 0.9em "Arial";
+    text-align: center;
+
+    color: black;
+
+    background-color: #f2f3f4;
+
+    border-radius: 10px;
+}
+
+.header-links-container {
+    display: inline;
+    margin-top: 1.5rem;
+    float: right;
+}
+
+.header {
+    overflow: hidden;
+}
+
+body {
+    margin: 0;
+}
+
+.form-container {
+    float: right;
+}
+
+.data-container {
+    margin-left: 10%;
+    max-width: 80%;
+}

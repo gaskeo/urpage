@@ -24,6 +24,8 @@ type User struct {
 	Links      [][]string
 }
 
+type SomeUsers map[string]User
+
 func Connect(username string, password string, dbname string) *pgx.Conn {
 	connect, err := pgx.Connect(context.Background(), "postgres://"+username+":"+password+"@localhost:5432/"+dbname)
 	if err != nil {

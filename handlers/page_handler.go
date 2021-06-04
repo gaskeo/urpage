@@ -9,35 +9,42 @@ import (
 )
 
 func PageHandler(writer http.ResponseWriter, request *http.Request) {
-	t, err := template.ParseFiles("templates/page.html")
+	var user storage.User
 
-	if err != nil {
-		log.Println(err)
+	{ // get user by user id in path
+		userIdStr := request.URL.Path[len("/id/"):]
+
+		if len(userIdStr) == 0 {
+			http.Redirect(writer, request, "/", http.StatusSeeOther)
+			return
+		}
+
+		userId, err := strconv.Atoi(userIdStr)
+
+		if err != nil {
+			log.Println(err)
+		}
+
+		user, err = storage.GetUserViaId(userId)
+
+		if err != nil {
+			ErrorHandler(writer, request, http.StatusNotFound)
+			return
+		}
 	}
 
-	userIdStr := request.URL.Path[len("/id/"):]
+	{ // generate template
+		t, err := template.ParseFiles("templates/page.html")
 
-	if len(userIdStr) == 0 {
-		MainPageHandler(writer, request)
-		return
-	}
+		if err != nil {
+			ErrorHandler(writer, request, http.StatusNotFound)
+			return
+		}
+		err = t.Execute(writer, user)
 
-	userId, err := strconv.Atoi(userIdStr)
-
-	if err != nil {
-		log.Println(err)
-	}
-
-	user, _ := storage.GetUserViaId(userId)
-
-	if user.UserId == 0 {
-		ErrorHandler(writer, request, http.StatusNotFound)
-		return
-	}
-
-	err = t.Execute(writer, user)
-
-	if err != nil {
-		log.Println(err)
+		if err != nil {
+			ErrorHandler(writer, request, http.StatusNotFound)
+			return
+		}
 	}
 }

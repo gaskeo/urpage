@@ -13,6 +13,7 @@ var SecretKey = GenerateKey()
 var ErrExpiredToken = errors.New("token has expired")
 var ErrSmallSecretKey = errors.New("small secret key")
 var ErrInvalidToken = errors.New("invalid token")
+var ErrInvalidRefreshToken = errors.New("invalid refresh token")
 
 type Payload struct {
 	UserId    int
@@ -49,5 +50,6 @@ func GenerateJWTToken(id int, expiredAt time.Time, secretKey string) (Payload, s
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, &payload)
 
 	JWTString, err := jwtToken.SignedString([]byte(secretKey))
+
 	return payload, JWTString, err
 }

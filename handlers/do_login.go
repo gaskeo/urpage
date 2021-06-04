@@ -3,143 +3,70 @@ package handlers
 import (
 	"go-site/constants"
 	"go-site/jwt"
-	"go-site/redis_api"
 	"go-site/storage"
+	"go-site/verify_utils"
 	"log"
 	"net/http"
 	"strconv"
-	"time"
 )
 
-func GenerateJWTToken(userId int) (string, jwt.Payload, time.Time, error) {
-	tokenExpireDate := time.Now().Add(constants.JWTExpireTime)
-	refreshExpireDate := tokenExpireDate.Add(constants.RefreshTokenExpireTime)
-
-	payload, token, err := jwt.GenerateJWTToken(userId, tokenExpireDate, jwt.SecretKey)
-
-	if err != nil {
-		return "", jwt.Payload{}, time.Time{}, err
-	}
-
-	return token, payload, refreshExpireDate, nil
-}
-
-func addJWTCookie(token,
-	refreshToken string,
-	tokenId int64,
-	userId int,
-	tokenExpireDate,
-	refreshExpireDate time.Time,
-	writer http.ResponseWriter) {
-
-	cookieToken := http.Cookie{
-		Name:    "JWT",
-		Value:   token,
-		Expires: tokenExpireDate,
-		Path:    "/",
-	}
-
-	cookieRefresh := http.Cookie{
-		Name:    "RefreshToken",
-		Value:   refreshToken,
-		Expires: refreshExpireDate,
-		Path:    "/",
-	}
-
-	cookieRefreshId := http.Cookie{
-		Name:    "RefreshTokenId",
-		Value:   strconv.FormatInt(tokenId, 10),
-		Expires: refreshExpireDate,
-		Path:    "/",
-	}
-
-	cookieRefreshUserId := http.Cookie{
-		Name:    "RefreshTokenUserId",
-		Value:   strconv.Itoa(userId),
-		Expires: refreshExpireDate,
-		Path:    "/",
-	}
-
-	http.SetCookie(writer, &cookieToken)
-	http.SetCookie(writer, &cookieRefresh)
-	http.SetCookie(writer, &cookieRefreshId)
-	http.SetCookie(writer, &cookieRefreshUserId)
-}
-
-func AddJWSTokenInRedis(payload jwt.Payload, JWTToken string, tokenExpireDate time.Time) error {
-	JWTKey := strconv.FormatInt(payload.PayloadId, 10) + strconv.Itoa(payload.UserId) + "JWT"
-
-	err := redis_api.Set(JWTKey, JWTToken, tokenExpireDate)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func AddRefreshTokenInRedis(payload jwt.Payload, refreshToken string, refreshTokenExpireDate time.Time) error {
-	refreshKey := strconv.FormatInt(payload.PayloadId, 10) + strconv.Itoa(payload.UserId) + "Refresh"
-
-	err := redis_api.Set(refreshKey, refreshToken, refreshTokenExpireDate)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func DoLogin(writer http.ResponseWriter, request *http.Request) {
+	var user storage.User
+	var err error
+
 	if request.Method != "POST" {
 		return
 	}
 
-	email := request.FormValue("email")
-	password := request.FormValue("password")
+	{ // work with form
+		email := request.FormValue("email")
+		password := request.FormValue("password")
 
-	user, err := storage.GetUserByEmailAndPassword(email, password)
+		user, err = storage.GetUserByEmailAndPassword(email, password)
 
-	if err != nil {
-		log.Println(err)
-		http.Redirect(writer, request, "/login", http.StatusSeeOther)
-		return
+		if err != nil {
+			log.Println(err)
+			http.Redirect(writer, request, "/login", http.StatusSeeOther)
+			return
+		}
 	}
 
-	token, payload, tokenExpireDate, err := GenerateJWTToken(user.UserId)
+	{ // work with JWT
+		token, payload, tokenExpireDate, err := verify_utils.GenerateJWTToken(user.UserId)
 
-	if err != nil {
-		log.Println(err)
-		http.Redirect(writer, request, "/login", http.StatusSeeOther)
-		return
-	}
+		if err != nil {
+			log.Println(err)
+			http.Redirect(writer, request, "/login", http.StatusSeeOther)
+			return
+		}
 
-	refreshExpireDate := tokenExpireDate.Add(constants.RefreshTokenExpireTime)
+		refreshExpireDate := tokenExpireDate.Add(constants.RefreshTokenExpireTime)
 
-	refreshToken, err := jwt.GenerateRefreshToken()
+		refreshToken, err := jwt.GenerateRefreshToken()
 
-	if err != nil {
-		log.Println(err)
-		http.Redirect(writer, request, "/login", http.StatusSeeOther)
-		return
-	}
+		if err != nil {
+			log.Println(err)
+			http.Redirect(writer, request, "/login", http.StatusSeeOther)
+			return
+		}
 
-	addJWTCookie(token, refreshToken, payload.PayloadId, payload.UserId, tokenExpireDate, refreshExpireDate, writer)
+		verify_utils.AddJWTCookie(token, refreshToken, payload.PayloadId, payload.UserId, tokenExpireDate, refreshExpireDate, writer)
 
-	err = AddJWSTokenInRedis(payload, token, tokenExpireDate)
+		err = verify_utils.AddJWSTokenInRedis(payload, token, tokenExpireDate)
 
-	if err != nil {
-		log.Println(err)
-		http.Redirect(writer, request, "/login", http.StatusSeeOther)
-		return
-	}
+		if err != nil {
+			log.Println(err)
+			http.Redirect(writer, request, "/login", http.StatusSeeOther)
+			return
+		}
 
-	err = AddRefreshTokenInRedis(payload, refreshToken, refreshExpireDate)
+		err = verify_utils.AddRefreshTokenInRedis(payload, refreshToken, refreshExpireDate)
 
-	if err != nil {
-		log.Println(err)
-		http.Redirect(writer, request, "/login", http.StatusSeeOther)
-		return
+		if err != nil {
+			log.Println(err)
+			http.Redirect(writer, request, "/login", http.StatusSeeOther)
+			return
+		}
 	}
 
 	http.Redirect(writer, request, "/id/"+strconv.Itoa(user.UserId), http.StatusSeeOther)

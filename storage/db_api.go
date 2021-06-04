@@ -5,6 +5,7 @@ import (
 	"github.com/jackc/pgx/v4"
 	"go-site/constants"
 	"go-site/utils"
+	"go-site/verify_utils"
 	"log"
 	"strings"
 	"time"
@@ -113,7 +114,7 @@ func GetUserByEmailAndPassword(email string, password string) (User, error) {
 	}
 
 	{
-		PasswordsCompare, err := utils.CheckPassword(password, user.Password)
+		PasswordsCompare, err := verify_utils.CheckPassword(password, user.Password)
 
 		if err != nil {
 			return User{}, err

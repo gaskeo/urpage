@@ -28,7 +28,7 @@ func PageHandler(writer http.ResponseWriter, request *http.Request) {
 		log.Println(err)
 	}
 
-	user := storage.GetUserViaId(userId)
+	user, _ := storage.GetUserViaId(userId)
 
 	if user.UserId == 0 {
 		ErrorHandler(writer, request, http.StatusNotFound)

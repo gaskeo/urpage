@@ -22,11 +22,19 @@ func DoRegistration(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	if storage.CheckEmailExistInDB(email) {
+	userExist, _ := storage.CheckEmailExistInDB(email)
+
+	if userExist {
 		http.Redirect(writer, request, "/registration", http.StatusSeeOther)
 		return
 	}
 
-	storage.AddUser(username, passwordHashed, email, "", "")
+	_, err = storage.AddUser(username, passwordHashed, email, "", "")
+
+	if err != nil {
+		http.Redirect(writer, request, "/registration", http.StatusSeeOther)
+		return
+	}
+
 	http.Redirect(writer, request, "/login", http.StatusSeeOther)
 }

@@ -18,10 +18,11 @@ func Connect(address string, password string, db int) (bool, error) {
 	})
 
 	pong, err := rdb.Ping(ctx).Result()
+
 	return pong == "PONG", err
 }
 
-func Set(key string, value string, expiredDate time.Time) {
+func Set(key string, value string, expiredDate time.Time) error {
 	var expiredTime time.Duration
 
 	zeroTime := time.Time{}
@@ -32,15 +33,17 @@ func Set(key string, value string, expiredDate time.Time) {
 		expiredTime = expiredDate.Sub(time.Now())
 	}
 
-	rdb.Set(ctx, key, value, expiredTime)
+	_, err := rdb.Set(ctx, key, value, expiredTime).Result()
 
+	return err
 }
 
-func Get(key string) string {
+func Get(key string) (string, error) {
 	result, err := rdb.Get(ctx, key).Result()
+
 	if err != nil {
-		return ""
+		return "", err
 	}
 
-	return result
+	return result, nil
 }

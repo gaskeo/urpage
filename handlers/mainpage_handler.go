@@ -22,7 +22,11 @@ func checkIfUserAuth(request *http.Request) int {
 
 		if err != jwt.ErrExpiredToken && payload != nil {
 			redisJWTKey := strconv.FormatInt(payload.PayloadId, 10) + strconv.Itoa(payload.UserId) + "JWT"
-			redisJWTValue := redis_api.Get(redisJWTKey)
+			redisJWTValue, err := redis_api.Get(redisJWTKey)
+			if err != nil {
+				log.Println(err)
+				return 0
+			}
 
 			if redisJWTValue == JWTToken.Value {
 				return payload.UserId
@@ -54,7 +58,11 @@ func checkIfUserAuth(request *http.Request) int {
 	}
 
 	redisRefreshTokenKey := refreshTokenId.Value + refreshTokenUserId.Value + "Refresh"
-	redisRefreshTokenValue := redis_api.Get(redisRefreshTokenKey)
+	redisRefreshTokenValue, err := redis_api.Get(redisRefreshTokenKey)
+	if err != nil {
+		log.Println(err)
+		return 0
+	}
 
 	if refreshToken.Value != redisRefreshTokenValue {
 		log.Println("invalid refresh token")
@@ -67,9 +75,18 @@ func checkIfUserAuth(request *http.Request) int {
 		return 0
 	}
 
-	newToken, newPayload, newExpireDate := GenerateJWTToken(userId)
+	newToken, newPayload, newExpireDate, err := GenerateJWTToken(userId)
+
+	if err != nil {
+		return 0
+	}
+
 	log.Println("generate new token")
-	AddJWSTokenInRedis(newPayload, newToken, newExpireDate)
+	err = AddJWSTokenInRedis(newPayload, newToken, newExpireDate)
+
+	if err != nil {
+		return 0
+	}
 
 	return userId
 }
@@ -82,7 +99,7 @@ func MainPageHandler(writer http.ResponseWriter, request *http.Request) {
 	if userId == 0 {
 		user = storage.User{}
 	} else {
-		user = *storage.GetUserViaId(userId)
+		user, _ = storage.GetUserViaId(userId)
 	}
 
 	if user.UserId == 0 {

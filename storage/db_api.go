@@ -2,12 +2,10 @@ package storage
 
 import (
 	"context"
-	"fmt"
 	"github.com/jackc/pgx/v4"
 	"go-site/constants"
 	"go-site/utils"
 	"log"
-	"os"
 	"strings"
 	"time"
 )
@@ -26,14 +24,12 @@ type User struct {
 
 type SomeUsers map[string]User
 
-func Connect(username string, password string, dbname string) *pgx.Conn {
+func Connect(username string, password string, dbname string) (*pgx.Conn, error) {
 	connect, err := pgx.Connect(context.Background(), "postgres://"+username+":"+password+"@localhost:5432/"+dbname)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
-		os.Exit(1)
-	}
+
 	conn = connect
-	return conn
+
+	return connect, err
 }
 
 func GetUserViaId(userId int) *User {

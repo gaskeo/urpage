@@ -10,9 +10,19 @@ import (
 )
 
 func main() {
-	storage.Connect(os.Getenv("DB_USERNAME"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_NAME"))
+	_, err := storage.Connect(os.Getenv("DB_USERNAME"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_NAME"))
+	if err != nil {
+		log.Fatal("database problem", err)
+	}
 
-	redis_api.Connect(os.Getenv("REDIS_ADDRESS"), os.Getenv("REDIS_PASSWORD"), 0)
+	log.Println("connected to postgres")
+
+	connectToRedis, err := redis_api.Connect(os.Getenv("REDIS_ADDRESS"), os.Getenv("REDIS_PASSWORD"), 0)
+	if err != nil || !connectToRedis {
+		log.Fatal("redis problem", err)
+	}
+
+	log.Println("connected to redis")
 
 	fs := http.FileServer(http.Dir("./static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))

@@ -10,12 +10,15 @@ var ctx = context.Background()
 
 var rdb *redis.Client
 
-func Connect(address string, password string, db int) {
+func Connect(address string, password string, db int) (bool, error) {
 	rdb = redis.NewClient(&redis.Options{
 		Addr:     address,
 		Password: password,
 		DB:       db,
 	})
+
+	pong, err := rdb.Ping(ctx).Result()
+	return pong == "PONG", err
 }
 
 func Set(key string, value string, expiredDate time.Time) {

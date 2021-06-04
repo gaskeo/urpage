@@ -2,7 +2,7 @@
     .form-container {
         display: block;
 
-        padding: 1rem;
+        padding: 1rem 1rem 2rem;
 
         margin-top: 10rem;
         margin-left: auto;
@@ -93,7 +93,7 @@
     .form-container {
         display: block;
 
-        padding: 1rem;
+        padding: 1rem 1rem 4rem;
 
         margin-top: 5rem;
         margin-left: auto;
@@ -106,6 +106,7 @@
 
         border: #f2f3f4 solid 2px;
         border-radius: 10px;
+
     }
 
     .form-header {

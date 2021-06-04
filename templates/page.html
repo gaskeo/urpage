@@ -6,13 +6,24 @@
     <link rel="stylesheet" href="../static/css/page.css">
 </head>
 <body>
-
-<img class="page-img" src="{{ .ImagePath }}">
-<h1 class="page-username">{{ .Username }}</h1>
-<ul class="page-links">
-    {{ range .Links }}
-        <li class="page-link"><a href="{{ index . 0 }}"><img class="page-linked-img" src="{{ index . 1 }}"></a></li>
-    {{ end }}
-</ul>
+<div class="data-container">
+    <img class="page-img" src="{{ .ImagePath }}">
+    <h1 class="page-username">{{ .Username }}</h1>
+    <ul class="page-links">
+        {{ range .Links }}
+            <li class="page-link"><a href="{{ index . 0 }}"><img class="page-linked-img" src="{{ index . 1 }}"></a></li>
+        {{ end }}
+    </ul>
+    <br>
+    <div style="height: 3rem"></div>
+    <footer>
+        <h2 class="page-h2-footer">Создайте свою визитку</h2>
+        <div class="links-footer">
+            <a class="page-link-footer" href="/">На главную</a>
+            <a class="page-link-footer" href="/login">Войти</a>
+            <a class="page-link-footer" href="/registration">Зарегистрироваться</a>
+        </div><div style="height: 3rem"></div>
+    </footer>
+</div>
 </body>
 </html>

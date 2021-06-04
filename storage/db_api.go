@@ -63,7 +63,10 @@ func GetUserViaId(userId int) (User, error) {
 
 	if links != nil && len(*links) != 0 {
 		linksLst := strings.Split(*links, " ")
-		user.Links = utils.CreateIconLinkPairs(linksLst)
+		user.Links, err = utils.CreateIconLinkPairs(linksLst)
+		if err != nil {
+			return User{}, err
+		}
 	}
 
 	return user, nil
@@ -79,6 +82,7 @@ func AddUser(username string, password string, email string, imagePath string, l
 		log.Println(err)
 		return -1, err
 	}
+
 	return userId, nil
 }
 
@@ -114,7 +118,12 @@ func GetUserByEmailAndPassword(email string, password string) (User, error) {
 		return User{}, err
 	}
 
-	if !utils.CheckPassword(password, user.Password) {
+	PasswordsCompare, err := utils.CheckPassword(password, user.Password)
+
+	if err != nil {
+		return User{}, err
+	}
+	if !PasswordsCompare {
 		return User{}, ErrWrongPassword
 	}
 
@@ -126,7 +135,11 @@ func GetUserByEmailAndPassword(email string, password string) (User, error) {
 
 	if links != nil && len(*links) != 0 {
 		linksLst := strings.Split(*links, " ")
-		user.Links = utils.CreateIconLinkPairs(linksLst)
+		user.Links, err = utils.CreateIconLinkPairs(linksLst)
+		if err != nil {
+			return User{}, err
+		}
+
 	}
 
 	return user, nil

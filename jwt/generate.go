@@ -31,8 +31,14 @@ func (payload *Payload) Valid() error {
 }
 
 func GenerateJWTToken(id int, expiredAt time.Time, secretKey string) (Payload, string, error) {
+	payloadId, err := GenerateId()
+
+	if err != nil {
+		return Payload{}, "", err
+	}
+
 	payload := Payload{id,
-		GenerateId(),
+		payloadId,
 		time.Now(),
 		expiredAt}
 

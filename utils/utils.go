@@ -12,19 +12,22 @@ func HashPassword(password string) (string, error) {
 	return string(bytes), err
 }
 
-func CheckPassword(password string, hash string) bool {
+func CheckPassword(password string, hash string) (bool, error) {
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
-	return err == nil
+	if err != nil {
+		return false, err
+	}
+	return true, nil
 }
 
-func CreateIconLinkPairs(links []string) [][]string {
+func CreateIconLinkPairs(links []string) ([][]string, error) {
 	var data [][]string
 
 	for _, link := range links {
 		allUrl, err := url.Parse(link)
 
 		if err != nil {
-			panic(err)
+			return [][]string{}, err
 		}
 
 		host := allUrl.Host
@@ -47,5 +50,5 @@ func CreateIconLinkPairs(links []string) [][]string {
 		data = append(data, []string{link, file})
 	}
 
-	return data
+	return data, nil
 }

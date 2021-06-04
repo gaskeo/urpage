@@ -116,7 +116,13 @@ func DoLogin(writer http.ResponseWriter, request *http.Request) {
 
 	refreshExpireDate := tokenExpireDate.Add(constants.RefreshTokenExpireTime)
 
-	refreshToken := jwt.GenerateRefreshToken()
+	refreshToken, err := jwt.GenerateRefreshToken()
+
+	if err != nil {
+		log.Println(err)
+		http.Redirect(writer, request, "/login", http.StatusSeeOther)
+		return
+	}
 
 	addJWTCookie(token, refreshToken, payload.PayloadId, payload.UserId, tokenExpireDate, refreshExpireDate, writer)
 

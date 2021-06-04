@@ -2,7 +2,6 @@ package storage
 
 import (
 	"context"
-	"errors"
 	"github.com/jackc/pgx/v4"
 	"go-site/constants"
 	"go-site/utils"
@@ -13,59 +12,51 @@ import (
 
 var conn *pgx.Conn
 
-var ErrWrongPassword = errors.New("wrong password")
-
-type User struct {
-	UserId     int
-	Username   string
-	Password   string
-	Email      string
-	CreateDate time.Time
-	ImagePath  string
-	Links      [][]string
-}
-
-type SomeUsers map[string]User
-
 func Connect(username string, password string, dbname string) (*pgx.Conn, error) {
-	connect, err := pgx.Connect(context.Background(), "postgres://"+username+":"+password+"@localhost:5432/"+dbname)
+	var err error
 
-	conn = connect
+	conn, err = pgx.Connect(context.Background(), "postgres://"+username+":"+password+"@localhost:5432/"+dbname)
 
-	return connect, err
+	return conn, err
 }
 
 func GetUserViaId(userId int) (User, error) {
 	user := User{}
 
-	var image *string
-	var links *string
+	var imageDB *string
+	var linksDB *string
 
-	err := conn.QueryRow(context.Background(), "SELECT * from user_info WHERE user_id=$1", userId).Scan(
-		&user.UserId,
-		&user.Username,
-		&user.Password,
-		&user.Email,
-		&user.CreateDate,
-		&image,
-		&links)
+	var err error
 
-	if err != nil {
-		log.Println(err)
-		return User{}, err
-	}
+	{
+		err = conn.QueryRow(context.Background(), "SELECT * from user_info WHERE user_id=$1", userId).Scan(
+			&user.UserId,
+			&user.Username,
+			&user.Password,
+			&user.Email,
+			&user.CreateDate,
+			&imageDB,
+			&linksDB)
 
-	if image != nil && len(*image) != 0 {
-		user.ImagePath = constants.UserImages + *image
-	} else {
-		user.ImagePath = constants.UserImages + "test.jpeg"
-	}
-
-	if links != nil && len(*links) != 0 {
-		linksLst := strings.Split(*links, " ")
-		user.Links, err = utils.CreateIconLinkPairs(linksLst)
 		if err != nil {
+			log.Println(err)
 			return User{}, err
+		}
+	}
+
+	{
+		if imageDB != nil && len(*imageDB) != 0 {
+			user.ImagePath = constants.UserImages + *imageDB
+		} else {
+			user.ImagePath = constants.UserImages + "test.jpeg"
+		}
+
+		if linksDB != nil && len(*linksDB) != 0 {
+			linksLst := strings.Split(*linksDB, " ")
+			user.Links, err = utils.CreateIconLinkPairs(linksLst)
+			if err != nil {
+				return User{}, err
+			}
 		}
 	}
 
@@ -74,12 +65,12 @@ func GetUserViaId(userId int) (User, error) {
 
 func AddUser(username string, password string, email string, imagePath string, links string) (int, error) {
 	userId := -1
+
 	err := conn.QueryRow(context.Background(),
 		"INSERT INTO user_info (Username, Password, Email, create_date, image_path, Links)"+
 			"VALUES ($1, $2, $3, $4, $5, $6) RETURNING user_id", username, password, email, time.Now(), imagePath, links).Scan(&userId)
 
 	if err != nil {
-		log.Println(err)
 		return -1, err
 	}
 
@@ -87,59 +78,66 @@ func AddUser(username string, password string, email string, imagePath string, l
 }
 
 func CheckEmailExistInDB(email string) (bool, error) {
-	var emailInDB string
+	var emailDB string
 
-	err := conn.QueryRow(context.Background(), "SELECT email from user_info WHERE email=$1", email).Scan(&emailInDB)
+	err := conn.QueryRow(context.Background(), "SELECT email from user_info WHERE email=$1", email).Scan(&emailDB)
 
 	if err != nil {
 		log.Println(err)
 		return false, err
 	}
 
-	return emailInDB == email, nil
+	return emailDB == email, nil
 }
 
 func GetUserByEmailAndPassword(email string, password string) (User, error) {
 	user := User{}
 
-	var image *string
-	var links *string
+	var imageDB *string
+	var linksDB *string
+	var err error
 
-	err := conn.QueryRow(context.Background(), "SELECT * from user_info WHERE email=$1", email).Scan(
-		&user.UserId,
-		&user.Username,
-		&user.Password,
-		&user.Email,
-		&user.CreateDate,
-		&image,
-		&links)
+	{
+		err = conn.QueryRow(context.Background(), "SELECT * from user_info WHERE email=$1", email).Scan(
+			&user.UserId,
+			&user.Username,
+			&user.Password,
+			&user.Email,
+			&user.CreateDate,
+			&imageDB,
+			&linksDB)
 
-	if err != nil {
-		return User{}, err
-	}
-
-	PasswordsCompare, err := utils.CheckPassword(password, user.Password)
-
-	if err != nil {
-		return User{}, err
-	}
-	if !PasswordsCompare {
-		return User{}, ErrWrongPassword
-	}
-
-	if image != nil && len(*image) != 0 {
-		user.ImagePath = constants.UserImages + *image
-	} else {
-		user.ImagePath = constants.UserImages + "test.jpeg"
-	}
-
-	if links != nil && len(*links) != 0 {
-		linksLst := strings.Split(*links, " ")
-		user.Links, err = utils.CreateIconLinkPairs(linksLst)
 		if err != nil {
 			return User{}, err
 		}
+	}
 
+	{
+		PasswordsCompare, err := utils.CheckPassword(password, user.Password)
+
+		if err != nil {
+			return User{}, err
+		}
+		if !PasswordsCompare {
+			return User{}, ErrWrongPassword
+		}
+	}
+
+	{
+		if imageDB != nil && len(*imageDB) != 0 {
+			user.ImagePath = constants.UserImages + *imageDB
+		} else {
+			user.ImagePath = constants.UserImages + "test.jpeg"
+		}
+
+		if linksDB != nil && len(*linksDB) != 0 {
+			linksLst := strings.Split(*linksDB, " ")
+			user.Links, err = utils.CreateIconLinkPairs(linksLst)
+			if err != nil {
+				return User{}, err
+			}
+
+		}
 	}
 
 	return user, nil

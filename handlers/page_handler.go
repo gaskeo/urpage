@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"go-site/storage"
+	"go-site/verify_utils"
 	"html/template"
 	"log"
 	"net/http"
@@ -10,6 +11,8 @@ import (
 
 func PageHandler(writer http.ResponseWriter, request *http.Request) {
 	var user storage.User
+	var authUser storage.User
+	var users storage.SomeUsers
 
 	{ // get user by user id in path
 		userIdStr := request.URL.Path[len("/id/"):]
@@ -33,6 +36,16 @@ func PageHandler(writer http.ResponseWriter, request *http.Request) {
 		}
 	}
 
+	{ // user auth check
+		authUserId, err := verify_utils.CheckIfUserAuth(request)
+
+		authUser, err = storage.GetUserViaId(authUserId)
+
+		if err != nil {
+			authUser = storage.User{}
+		}
+	}
+
 	{ // generate template
 		t, err := template.ParseFiles("templates/page.html")
 
@@ -40,7 +53,10 @@ func PageHandler(writer http.ResponseWriter, request *http.Request) {
 			ErrorHandler(writer, request, http.StatusNotFound)
 			return
 		}
-		err = t.Execute(writer, user)
+
+		users = storage.SomeUsers{"User": user, "AuthUser": authUser}
+
+		err = t.Execute(writer, users)
 
 		if err != nil {
 			ErrorHandler(writer, request, http.StatusNotFound)

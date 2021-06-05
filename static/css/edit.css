@@ -18,9 +18,6 @@
         background-color: white;
         overflow: hidden;
 
-        -webkit-box-shadow: none;
-        -moz-box-shadow: none;
-
         position: fixed;
 
         margin-top: 12rem;
@@ -197,10 +194,11 @@
         background-color: white;
         overflow: hidden;
 
-        -webkit-box-shadow: none;
-        -moz-box-shadow: none;
-
         margin-top: 2rem;
+
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
     }
 
     .tabs-button {
@@ -218,8 +216,8 @@
         font: 1.8em "Arial";
         text-align: center;
 
-        width: 32%;
-        height: 100%; /* 100 : n buttons */
+        width: 33%; /* 100 : n buttons */
+        height: 100%;
 
         padding-left: 1rem;
         padding-right: 1rem;

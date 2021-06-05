@@ -119,7 +119,6 @@ func CheckPassword(password string, hash string) (bool, error) {
 
 func GenerateJWTToken(userId int) (string, jwt.Payload, time.Time, error) {
 	tokenExpireDate := time.Now().Add(constants.JWTExpireTime)
-	refreshExpireDate := tokenExpireDate.Add(constants.RefreshTokenExpireTime)
 
 	payload, token, err := jwt.GenerateJWTToken(userId, tokenExpireDate, jwt.SecretKey)
 
@@ -127,7 +126,7 @@ func GenerateJWTToken(userId int) (string, jwt.Payload, time.Time, error) {
 		return "", jwt.Payload{}, time.Time{}, err
 	}
 
-	return token, payload, refreshExpireDate, nil
+	return token, payload, tokenExpireDate, nil
 }
 
 func AddJWTCookie(token,

@@ -14,7 +14,7 @@
     <div class="tabs">
         <button class="tabs-button active-tab" id="tab-edit-base-info"
                 onclick="changeTab(event, 'tab-edit-base-info', 'section-edit-base-info')">
-            Изменить основные данные
+            Изменить данные
         </button>
 
         <p class="separator"></p>
@@ -62,7 +62,7 @@
 
                 <input id="id" name="id" style="display: none" type="text" value="{{ .UserId }}">
                 {{ range $i, $elem := .Links }}
-                    <div style="display: inline; vertical-align: middle;" id="link-div-{{ $i }}">
+                    <div style="display: inline; vertical-align: middle;" id="link-div-{{ $i }}" class="form-link-container">
 
                         <input id="link-{{ $i }}"
                                name="link" class="page-form-input page-form-link" type="text" value="{{ index $elem 0 }}"

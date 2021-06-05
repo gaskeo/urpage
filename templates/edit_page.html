@@ -63,9 +63,12 @@
                 <input id="id" name="id" style="display: none" type="text" value="{{ .UserId }}">
                 {{ range $i, $elem := .Links }}
                     <div style="display: inline; vertical-align: middle;" id="link-div-{{ $i }}">
-                        <input id="link-{{ $i }}" name="link" class="page-form-input page-form-link" type="text"
-                               value="{{ index $elem 0 }}">
-                        <button type="button" id="delete-link-{{ $i }}" class="delete-link-button" onclick="deleteLink('link-div-{{ $i }}')">-</button>
+
+                        <input id="link-{{ $i }}"
+                               name="link" class="page-form-input page-form-link" type="text" value="{{ index $elem 0 }}"
+                        ><button type="button" id="delete-link-{{ $i }}"
+                                 class="delete-link-button" onclick="deleteLink('link-div-{{ $i }}')">-</button>
+
                     </div>
                 {{ end }}
                 <button type="button" id="add-link-button" class="add-link-button" onclick="addLink()">Добавить ссылку</button>

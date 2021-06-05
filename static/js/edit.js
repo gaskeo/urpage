@@ -67,16 +67,11 @@ function addLink() {
     newDiv.style.display = "inline"
     newDiv.style.verticalAlign = "middle"
 
-    console.log(newDiv)
-
-
     newInput = document.createElement("input")
     newInput.id = "link-" + elemsN
     newInput.name = "link"
     newInput.className = "page-form-input page-form-link"
     newInput.type = "text"
-
-    console.log(2)
 
     newButton = document.createElement("button")
     newButton.id = "delete-link-" + elemsN
@@ -88,8 +83,5 @@ function addLink() {
     newDiv.appendChild(newInput)
     newDiv.appendChild(newButton)
 
-    console.log(4)
-
     form.insertBefore(newDiv, afterItem)
-    console.log(5)
 }

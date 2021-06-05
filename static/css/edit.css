@@ -199,9 +199,12 @@
         display: flex;
         flex-direction: row;
         justify-content: flex-start;
+
+        align-items: stretch
     }
 
     .tabs-button {
+        flex: 1;
         display: inline-block;
 
         text-decoration: none;
@@ -216,7 +219,6 @@
         font: 1.8em "Arial";
         text-align: center;
 
-        width: 33%; /* 100 : n buttons */
         height: 100%;
 
         padding-left: 1rem;
@@ -226,7 +228,7 @@
     }
 
     .separator {
-        display: none;
+        display: inline-block;
 
         width: 2px;
 
@@ -268,6 +270,7 @@
         margin-left: auto;
         margin-right: auto;
         margin-top: 0;
+        width: 90%;
     }
 
     .form-image {

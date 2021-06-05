@@ -187,7 +187,7 @@
 
     .tabs {
         height: 8rem;
-        width: 90%;
+        width: 100%;
 
         border: 2px solid #dddddd;
         border-radius: 10px;
@@ -200,13 +200,11 @@
         -webkit-box-shadow: none;
         -moz-box-shadow: none;
 
-        position: fixed;
-
         margin-top: 2rem;
     }
 
     .tabs-button {
-        display: inline;
+        display: inline-block;
 
         text-decoration: none;
         -webkit-appearance: none;
@@ -220,7 +218,7 @@
         font: 1.8em "Arial";
         text-align: center;
 
-        width: 33%;
+        width: 32%;
         height: 100%; /* 100 : n buttons */
 
         padding-left: 1rem;
@@ -230,7 +228,7 @@
     }
 
     .separator {
-        display: inline;
+        display: none;
 
         width: 2px;
 
@@ -256,16 +254,14 @@
     }
 
     .section {
-        margin-top: 16rem;
+        margin-top: 6rem;
         margin-left: auto;
         margin-right: auto;
 
         -webkit-box-shadow: none;
         -moz-box-shadow: none;
 
-        width: 90%;
-
-        position: fixed;
+        width: 100%;
 
         transition: 0.9s;
     }

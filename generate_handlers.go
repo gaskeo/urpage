@@ -13,6 +13,8 @@ func generateHandlers() {
 
 	http.HandleFunc("/registration", handlers.RegistrationHandler)
 
+	http.HandleFunc("/edit/", handlers.EditHandler)
+
 	http.HandleFunc("/login", handlers.LoginHandler)
 
 	http.HandleFunc("/do/registration", handlers.DoRegistration)

@@ -59,7 +59,7 @@
 
     <div class="section" id="section-edit-links" style="opacity: 0; display: none">
         <div class="form-container">
-            <h1 class="form-header">Редактировать ссылки</h1>
+            <h1 class="form-header">Редактирование ссылок</h1>
 
             <form class="page-form" id="page-form-links" method="post" onsubmit="return sendLinks()" enctype=multipart/form-data>
 
@@ -83,16 +83,19 @@
 
     <div class="section" id="section-edit-password" style="opacity: 0; display: none">
         <div class="form-container">
-            <h1 class="form-header">Регистрация</h1>
+            <h1 class="form-header">Смена пароль</h1>
 
-            <form class="page-form" id="page-form-password" method="post">
+            <form class="page-form" id="page-form-password" method="post" onsubmit="return sendPassword()">
 
-                <input id="id" name="id" style="display: none" type="text" value="{{ .UserId }}">
+                <input id="check-id" name="id" style="display: none" type="text" value="{{ .UserId }}">
 
-                <label for="password" class="page-form-label">Пароль</label>
+                <label for="old-password" class="page-form-label">Старый пароль</label>
+                <input id="old-password" name="old-password" class="page-form-input" type="password"><br>
+
+                <label for="password" class="page-form-label">Новый пароль</label>
                 <input id="password" name="password" class="page-form-input" type="password"><br>
 
-                <label for="password-again" class="page-form-label">Пароль еще раз</label>
+                <label for="password-again" class="page-form-label">Новый пароль еще раз</label>
                 <input id="password-again" name="password-again" class="page-form-input" type="password"><br>
 
                 <input type="submit" class="page-form-submit" value="Сохранить">

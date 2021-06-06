@@ -148,3 +148,26 @@ function sendLinks() {
 
     return false
 }
+
+function sendPassword() {
+    let status;
+
+    let data = new FormData();
+
+    data.append("id", document.getElementById("id").value);
+    data.append("old", document.getElementById("old-password").value);
+    data.append("new", document.getElementById("password").value);
+
+
+    fetch("/do/edit_password", {method: 'post', body: data}).then(function (r) {
+        status = r.status
+
+        if (status === 200) {
+            alert("Успешно");
+        } else {
+            alert("что-то пошло не так...");
+        }
+    })
+
+    return false
+}

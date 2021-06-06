@@ -23,6 +23,8 @@ func generateHandlers() {
 
 	http.HandleFunc("/do/edit_links", handlers.DoEditLinks)
 
+	http.HandleFunc("/do/edit_password", handlers.DoEditPassword)
+
 	http.HandleFunc("/edit/", handlers.EditHandler)
 
 	http.HandleFunc("/id/", handlers.PageHandler)

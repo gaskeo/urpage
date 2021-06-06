@@ -21,6 +21,8 @@ func generateHandlers() {
 
 	http.HandleFunc("/do/edit_main", handlers.DoEditMain)
 
+	http.HandleFunc("/do/edit_links", handlers.DoEditLinks)
+
 	http.HandleFunc("/edit/", handlers.EditHandler)
 
 	http.HandleFunc("/id/", handlers.PageHandler)

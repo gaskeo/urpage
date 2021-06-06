@@ -95,24 +95,24 @@ function addLink() {
 }
 
 function sendMain() {
-    let status
+    let status;
 
     let data = new FormData();
 
     let photo = document.getElementById("img-request").files[0];
 
-    data.append("id", document.getElementById("id").value)
-    data.append("username", document.getElementById("username").value)
-    data.append("image", photo)
+    data.append("id", document.getElementById("id").value);
+    data.append("username", document.getElementById("username").value);
+    data.append("image", photo);
 
 
     fetch("/do/edit_main", {method: 'post', body: data}).then(function (r) {
         status = r.status
 
         if (status === 200) {
-            alert("Успешно")
+            alert("Успешно");
         } else {
-            alert("что-то пошло не так...")
+            alert("что-то пошло не так...");
         }
     })
 
@@ -120,5 +120,31 @@ function sendMain() {
 }
 
 function sendLinks() {
-    return true
+    let status, i, linkInputs, link;
+    let links = ""
+    let data = new FormData();
+
+    data.append("id", document.getElementById("id").value);
+
+    linkInputs = document.getElementsByClassName("page-form-link");
+
+    for (i = 0; i < linkInputs.length; i++) {
+        link = linkInputs[i].value
+        link = link.replace(/\s/g, "")
+        links += link + " "
+    }
+    links = links.slice(0, -1)
+    data.append("links", links)
+
+    fetch("/do/edit_links", {method: 'post', body: data}).then(function (r) {
+        status = r.status
+
+        if (status === 200) {
+            alert("Успешно");
+        } else {
+            alert("что-то пошло не так...");
+        }
+    })
+
+    return false
 }

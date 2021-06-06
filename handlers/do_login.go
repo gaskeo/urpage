@@ -50,7 +50,8 @@ func DoLogin(writer http.ResponseWriter, request *http.Request) {
 			return
 		}
 
-		verify_utils.AddJWTCookie(token, refreshToken, payload.PayloadId, payload.UserId, tokenExpireDate, refreshExpireDate, writer)
+		verify_utils.AddJWTCookie(token, tokenExpireDate, writer)
+		verify_utils.AddRefreshTokenCookie(refreshToken, payload.PayloadId, payload.UserId, refreshExpireDate, writer)
 
 		err = verify_utils.AddJWSTokenInRedis(payload, token, tokenExpireDate)
 

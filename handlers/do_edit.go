@@ -26,7 +26,7 @@ func DoEditMain(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	{ // check user authed
-		userId, err = verify_utils.CheckIfUserAuth(request)
+		userId, err = verify_utils.CheckIfUserAuth(writer, request)
 
 		if err != nil {
 			log.Println(err)

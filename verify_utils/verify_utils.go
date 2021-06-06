@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func CheckIfUserAuth(request *http.Request) (int, error) {
+func CheckIfUserAuth(writer http.ResponseWriter, request *http.Request) (int, error) {
 
 	{ // check jwt token block
 		JWTToken, err := request.Cookie("JWT")
@@ -96,6 +96,7 @@ func CheckIfUserAuth(request *http.Request) (int, error) {
 
 		log.Println("generate new token")
 		err = AddJWSTokenInRedis(newPayload, newToken, newExpireDate)
+		AddJWTCookie(newToken, newExpireDate, writer)
 
 		if err != nil {
 			return 0, err
@@ -130,14 +131,7 @@ func GenerateJWTToken(userId int) (string, jwt.Payload, time.Time, error) {
 	return token, payload, tokenExpireDate, nil
 }
 
-func AddJWTCookie(token,
-	refreshToken string,
-	tokenId int64,
-	userId int,
-	tokenExpireDate,
-	refreshExpireDate time.Time,
-	writer http.ResponseWriter) {
-
+func AddJWTCookie(token string, tokenExpireDate time.Time, writer http.ResponseWriter) {
 	cookieToken := http.Cookie{
 		Name:    "JWT",
 		Value:   token,
@@ -145,6 +139,10 @@ func AddJWTCookie(token,
 		Path:    "/",
 	}
 
+	http.SetCookie(writer, &cookieToken)
+}
+
+func AddRefreshTokenCookie(refreshToken string, tokenId int64, userId int, refreshExpireDate time.Time, writer http.ResponseWriter) {
 	cookieRefresh := http.Cookie{
 		Name:    "RefreshToken",
 		Value:   refreshToken,
@@ -166,7 +164,6 @@ func AddJWTCookie(token,
 		Path:    "/",
 	}
 
-	http.SetCookie(writer, &cookieToken)
 	http.SetCookie(writer, &cookieRefresh)
 	http.SetCookie(writer, &cookieRefreshId)
 	http.SetCookie(writer, &cookieRefreshUserId)

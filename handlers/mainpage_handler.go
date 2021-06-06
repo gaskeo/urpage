@@ -15,7 +15,7 @@ func MainPageHandler(writer http.ResponseWriter, request *http.Request) {
 	var user storage.User
 
 	{ // user auth check
-		userId, err = verify_utils.CheckIfUserAuth(request)
+		userId, err = verify_utils.CheckIfUserAuth(writer, request)
 
 		if err != nil {
 			temp = "templates/index_not_auth.html"

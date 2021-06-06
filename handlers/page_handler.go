@@ -37,7 +37,7 @@ func PageHandler(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	{ // user auth check
-		authUserId, err := verify_utils.CheckIfUserAuth(request)
+		authUserId, err := verify_utils.CheckIfUserAuth(writer, request)
 
 		authUser, err = storage.GetUserViaId(authUserId)
 

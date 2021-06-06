@@ -13,7 +13,7 @@ func EditHandler(writer http.ResponseWriter, request *http.Request) {
 	var authUser storage.User
 
 	{ // user auth check
-		authUserId, err := verify_utils.CheckIfUserAuth(request)
+		authUserId, err := verify_utils.CheckIfUserAuth(writer, request)
 
 		authUser, err = storage.GetUserViaId(authUserId)
 

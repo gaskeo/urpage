@@ -9,7 +9,7 @@ import (
 
 func RegistrationHandler(writer http.ResponseWriter, request *http.Request) {
 	{ // user auth check
-		_, err := verify_utils.CheckIfUserAuth(request)
+		_, err := verify_utils.CheckIfUserAuth(writer, request)
 
 		if err == nil {
 			http.Redirect(writer, request, "/", http.StatusSeeOther)

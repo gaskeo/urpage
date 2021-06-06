@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Редактирование</title>
-    <link rel="stylesheet" href="../static/css/register.css">
+    <link rel="stylesheet" href="../static/css/form.css">
+    <link rel="stylesheet" href="../static/css/basic.css">
     <link rel="stylesheet" href="../static/css/edit.css">
     <script type="text/javascript" src="../static/js/edit.js"></script>
 
@@ -17,14 +18,14 @@
             Изменить данные
         </button>
 
-        <p class="separator"></p>
+        <p class="tabs-separator"></p>
 
         <button class="tabs-button" id="tab-edit-links"
                 onclick="changeTab(event, 'tab-edit-links', 'section-edit-links')">
             Изменить ссылки
         </button>
 
-        <p class="separator"></p>
+        <p class="tabs-separator"></p>
 
         <button class="tabs-button" id="tab-edit-password"
                 onclick="changeTab(event, 'tab-edit-password', 'section-edit-password')">
@@ -33,26 +34,25 @@
     </div>
 
     <div class="section" id="section-edit-base-info">
-        <div class="form-container">
+        <div class="form-container form-container-edit-page">
             <h1 class="form-header">Смена основных данных</h1>
 
-            <form class="page-form" id="page-form-main" method="post" onsubmit="return sendMain()" enctype=multipart/form-data>
+            <form class="form" id="page-form-main" method="post" onsubmit="return sendMain()" enctype=multipart/form-data>
 
                 <input id="id" name="id" style="display: none" type="text" value="{{ .UserId }}">
 
                 <div class="photo-container" data-title="Изменить картинку">
                     <img class="form-image" id="img_src" src="{{ .ImagePath }}"><br>
 
-                    <label for="img-request" class="change-image-button">
+                    <label for="img-request" class="form-change-image-button">
                         Изменить картинку
                     </label>
-
                     <input type="file" id="img-request" style="display: none" onchange="changePreview()">
                 </div>
-                <label for="username" class="page-form-label">Имя пользователя</label>
-                <input id="username" name="username" class="page-form-input" type="text" value="{{ .Username }}"><br>
+                <label for="username" class="form-label">Имя пользователя</label>
+                <input id="username" name="username" class="form-input" type="text" value="{{ .Username }}"><br>
 
-                <input type="submit" class="page-form-submit" value="Сохранить">
+                <input type="submit" class="form-submit" value="Сохранить">
             </form>
         </div>
     </div>
@@ -68,7 +68,7 @@
                     <div style="display: inline; vertical-align: middle;" id="link-div-{{ $i }}" class="form-link-container">
 
                         <input id="link-{{ $i }}"
-                               name="link" class="page-form-input page-form-link" type="text" value="{{ index $elem 0 }}"
+                               name="link" class="form-input form-input-link" type="text" value="{{ index $elem 0 }}"
                         ><button type="button" id="delete-link-{{ $i }}"
                                  class="delete-link-button" onclick="deleteLink('link-div-{{ $i }}')">-</button>
 
@@ -76,7 +76,7 @@
                 {{ end }}
                 <button type="button" id="add-link-button" class="add-link-button" onclick="addLink()">Добавить ссылку</button>
 
-                <input type="submit" class="page-form-submit" value="Сохранить">
+                <input type="submit" class="form-submit" value="Сохранить">
             </form>
         </div>
     </div>
@@ -85,20 +85,20 @@
         <div class="form-container">
             <h1 class="form-header">Смена пароль</h1>
 
-            <form class="page-form" id="page-form-password" method="post" onsubmit="return sendPassword()">
+            <form class="form" id="page-form-password" method="post" onsubmit="return sendPassword()">
 
-                <input id="check-id" name="id" style="display: none" type="text" value="{{ .UserId }}">
+                <input id="id" name="id" style="display: none" type="text" value="{{ .UserId }}">
 
-                <label for="old-password" class="page-form-label">Старый пароль</label>
-                <input id="old-password" name="old-password" class="page-form-input" type="password"><br>
+                <label for="old-password" class="form-label">Старый пароль</label>
+                <input id="old-password" name="old-password" class="form-input" type="password"><br>
 
-                <label for="password" class="page-form-label">Новый пароль</label>
-                <input id="password" name="password" class="page-form-input" type="password"><br>
+                <label for="password" class="form-label">Новый пароль</label>
+                <input id="password" name="password" class="form-input" type="password"><br>
 
-                <label for="password-again" class="page-form-label">Новый пароль еще раз</label>
-                <input id="password-again" name="password-again" class="page-form-input" type="password"><br>
+                <label for="password-again" class="form-label">Новый пароль еще раз</label>
+                <input id="password-again" name="password-again" class="form-input" type="password"><br>
 
-                <input type="submit" class="page-form-submit" value="Сохранить">
+                <input type="submit" class="form-submit" value="Сохранить">
             </form>
         </div>
     </div>

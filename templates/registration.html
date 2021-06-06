@@ -3,27 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <title>Регистрация</title>
-    <link rel="stylesheet" href="../static/css/register.css">
+    <link rel="stylesheet" href="../static/css/basic.css">
+    <link rel="stylesheet" href="../static/css/form.css">
 </head>
 <body>
 
 <div class="form-container">
     <h1 class="form-header">Регистрация</h1>
-    <form class="page-form" action="/do/registration" method="post">
+    <form class="form" action="/do/registration" method="post">
 
-        <label for="username" class="page-form-label">Имя пользователя</label>
-        <input id="username" name="username" class="page-form-input" type="text"><br>
+        <label for="username" class="form-label">Имя пользователя</label>
+        <input id="username" name="username" class="form-input" type="text"><br>
 
-        <label for="email" class="page-form-label">Почта</label>
-        <input id="email" name="email" class="page-form-input" type="text"><br>
+        <label for="email" class="form-label">Почта</label>
+        <input id="email" name="email" class="form-input" type="text"><br>
 
-        <label for="password" class="page-form-label">Пароль</label>
-        <input id="password" name="password" class="page-form-input" type="password"><br>
+        <label for="password" class="form-label">Пароль</label>
+        <input id="password" name="password" class="form-input" type="password"><br>
 
-        <label for="password-again" class="page-form-label">Пароль еще раз</label>
-        <input id="password-again" name="password-again" class="page-form-input" type="password"><br>
+        <label for="password-again" class="form-label">Пароль еще раз</label>
+        <input id="password-again" name="password-again" class="form-input" type="password"><br>
 
-        <input type="submit" class="page-form-submit" value="Зарегистрироваться">
+        <input type="submit" class="form-submit" value="Зарегистрироваться">
     </form>
 </div>
 

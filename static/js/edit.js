@@ -92,7 +92,7 @@ function addLink() {
     newInput = document.createElement("input")
     newInput.id = `link-${newElementN}`
     newInput.name = "link"
-    newInput.className = "page-form-input page-form-link"
+    newInput.className = "form-input form-input-link"
     newInput.type = "text"
 
     newButton = document.createElement("button")

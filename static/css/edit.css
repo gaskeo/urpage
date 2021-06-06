@@ -1,120 +1,174 @@
+.tabs {
+    border: 2px solid #dddddd;
+    border-radius: 10px;
+
+    box-shadow: 0 0 5px 5px #f3f4f5;
+
+    background-color: white;
+    overflow: hidden;
+}
+
+.tabs-button {
+    text-decoration: none;
+    -webkit-appearance: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+
+
+    background-color: white;
+    box-shadow: none;
+    border: none;
+
+    font: 1em "Arial";
+    text-align: left;
+
+    width: 100%;
+    height: 33%; /* 100 : n buttons */
+
+    padding-left: 1rem;
+}
+
+.tabs-button:hover {
+    background-color: #f2f3f4;
+}
+
+.tabs-button.active-tab {
+    background-color: #dddddd;
+}
+
+.active-tab {
+    background-color: #dddddd;
+}
+
+.tabs-separator {
+    margin: 0;
+
+    background-color: #dddddd;
+}
+
+.form-image {
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.form-change-image-button {
+    text-decoration: none;
+
+    margin-left: auto;
+    margin-right: auto;
+
+    text-align: center;
+
+    color: black;
+
+    background-color: #f2f3f4;
+
+    border-radius: 10px;
+
+    cursor: pointer;
+}
+
+.form-change-image-button:hover {
+    background-color: #e1e2e3;
+}
+
+.form-input-link {
+    margin: 0.5rem 0;
+    display: inline;
+}
+
+.delete-link-button {
+    padding: 0;
+
+    vertical-align: middle;
+
+    align-items: center;
+    text-align: center;
+
+    line-height: 1.2;
+
+    border: #ddd solid 1px;
+    border-radius: 50%;
+
+    color: inherit;
+
+    appearance: none;
+}
+
+.add-link-button {
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+
+    line-height: 1.2;
+
+    border: #ddd solid 2px;
+    border-radius: 10px;
+
+    vertical-align: middle;
+
+    appearance: none;
+}
+
 @media screen and (min-width: 1024px) {
     .data-container {
-        width: 80%;
-
-        margin-left: 10%;
-        margin-right: 10%;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
     }
 
     .tabs {
+        flex: 1;
         height: 10rem;
         width: 15rem;
 
-        border: 2px solid #dddddd;
-        border-radius: 10px;
-
-        box-shadow: 0 0 5px 5px #f3f4f5;
-
-        background-color: white;
-        overflow: hidden;
-
-        position: fixed;
-
         margin-top: 12rem;
-        margin-left: 5rem;
+        max-width: 24rem;
     }
 
     .tabs-button {
         display: block;
-
-        text-decoration: none;
-        -webkit-appearance: none;
-        -webkit-box-shadow: none;
-        -moz-box-shadow: none;
-
-
-        background-color: white;
-        box-shadow: none;
-        border: none;
 
         font: 1em "Arial";
         text-align: left;
 
         width: 100%;
         height: 33%; /* 100 : n buttons */
-
-        padding-left: 1rem;
     }
 
-    .separator {
+    .tabs-separator {
         height: 2px;
-
-        margin: 0;
-
-        background-color: #dddddd;
-    }
-
-    .tabs-button:hover {
-        background-color: #f2f3f4;
-    }
-
-    .tabs-button.active-tab {
-        background-color: #dddddd;
-    }
-
-    .active-tab {
-        background-color: #dddddd;
     }
 
     .section {
-        position: fixed;
-
+        flex: 1;
         margin-top: 12rem;
-        margin-left: 25rem;
-
-        transition: 0.9s;
+        margin-left: 2rem;
         width: auto;
+        min-width: 36rem;
     }
 
     .form-container {
         margin-top: 0;
-        width: 40rem;
+        width: auto;
     }
 
     .form-image {
         height: 6rem;
         width: 6rem;
-        object-fit: cover;
-        border-radius: 50%;
+
         margin-bottom: 1rem;
     }
 
-    .change-image-button {
-        text-decoration: none;
+    .form-change-image-button {
         width: 16rem;
+
         padding: 10px 10px;
-        margin-left: auto;
-        margin-right: auto;
+
         font: 0.9em "Arial";
-        text-align: center;
-
-        color: black;
-
-        background-color: #f2f3f4;
-
-        border-radius: 10px;
-
-        cursor: pointer;
     }
 
-    .change-image-button:hover {
-        background-color: #e1e2e3;
-    }
-
-    .page-form-link {
-        margin: 0.5rem 0;
+    .form-input-link {
         width: 90%;
-        display: inline;
     }
 
     .delete-link-button {
@@ -124,76 +178,24 @@
         margin-top: 1rem;
         margin-left: 0.3rem;
 
-        padding: 0;
-
         width: 2rem;
         height: 2rem;
 
-        align-items: center;
-        vertical-align: middle;
-        text-align: center;
-
-        justify-content: center;
-
-        line-height: 1.2;
         font: 1em "arial";
-
-        border: #ddd solid 1px;
-        border-radius: 50%;
-
-        color: inherit;
-
-        appearance: none;
     }
 
     .add-link-button {
-        margin-bottom: 1rem;
-        margin-top: 1rem;
-
-        padding: 0;
-
         width: 12rem;
         height: 2rem;
 
-        line-height: 1.2;
-        text-align: center;
         font: 1em "arial";
-
-        vertical-align: middle;
-
-        justify-content: left;
-
-        border: #ddd solid 2px;
-        border-radius: 10px;
-
-        color: inherit;
-
-        appearance: none;
     }
 }
 
 @media screen and (max-width: 1023px) {
-    body {
-        padding: 0;
-        margin: 0;
-    }
-    .data-container {
-        width: 90%;
-        padding-left: 5%;
-        padding-right: 5%;
-    }
-
     .tabs {
         height: 8rem;
         width: 100%;
-
-        border: 2px solid #dddddd;
-        border-radius: 10px;
-
-        box-shadow: 0 0 5px 5px #f3f4f5;
-
-        background-color: white;
-        overflow: hidden;
 
         margin-top: 2rem;
 
@@ -208,15 +210,6 @@
         flex: 1;
         display: inline-block;
 
-        text-decoration: none;
-        -webkit-appearance: none;
-        -webkit-box-shadow: none;
-        -moz-box-shadow: none;
-
-        background-color: white;
-        box-shadow: none;
-        border: none;
-
         font: 1.8em "Arial";
         text-align: center;
 
@@ -228,26 +221,10 @@
         margin-top: 0;
     }
 
-    .separator {
+    .tabs-separator {
         display: inline-block;
 
         width: 2px;
-
-        margin: 0;
-
-        background-color: #dddddd;
-    }
-
-    .tabs-button:hover {
-        background-color: #f2f3f4;
-    }
-
-    .tabs-button.active-tab {
-        background-color: #dddddd;
-    }
-
-    .active-tab {
-        background-color: #dddddd;
     }
 
     .form-header {
@@ -263,13 +240,9 @@
         -moz-box-shadow: none;
 
         width: 100%;
-
-        transition: 0.9s;
     }
 
     .form-container {
-        margin-left: auto;
-        margin-right: auto;
         margin-top: 0;
         width: 90%;
     }
@@ -277,40 +250,21 @@
     .form-image {
         height: 16rem;
         width: 16rem;
-        object-fit: cover;
-        border-radius: 50%;
         margin-top: 1rem;
         margin-bottom: 2rem;
     }
 
-    .change-image-button {
-        text-decoration: none;
+    .form-change-image-button {
         width: 20rem;
+
         padding: 8px 6px;
-        margin-left: auto;
-        margin-right: auto;
+
         font: 1.8em "Arial";
-        text-align: center;
-
-        color: black;
-
-        background-color: #f2f3f4;
-
-        border-radius: 10px;
-
-        cursor: pointer;
     }
 
-    .change-image-button:hover {
-        background-color: #e1e2e3;
-    }
-
-    .page-form-link {
-        margin: 0.5rem 0;
+    .form-input-link {
         width: 80%;
-        display: inline;
         vertical-align: middle;
-
     }
 
     .form-link-container {
@@ -319,54 +273,21 @@
         justify-content: center;
     }
 
-
     .delete-link-button {
         display: inline;
-        vertical-align: middle;
 
         margin-left: 0.3rem;
-
-        padding: 0;
 
         width: 4rem;
         height: 4rem;
 
-        text-align: center;
-
-
-        line-height: 1.2;
         font: 1.6em "Arial";
-
-        border: #ddd solid 1px;
-        border-radius: 50%;
-
-        color: inherit;
-
-        appearance: none;
     }
 
     .add-link-button {
-        margin-bottom: 1rem;
-        margin-top: 1rem;
-
-        padding: 0;
-
         width: 18rem;
         height: 3rem;
 
-        line-height: 1.2;
-        text-align: center;
         font: 1.8em "arial";
-
-        vertical-align: middle;
-
-        justify-content: left;
-
-        border: #ddd solid 2px;
-        border-radius: 10px;
-
-        color: inherit;
-
-        appearance: none;
     }
 }

@@ -1,88 +1,45 @@
+.header {
+    overflow: hidden;
+}
+
+.logo {
+    display: inline;
+}
+
+.header-links-container {
+    display: inline;
+    float: right;
+
+}
+
 @media screen and (min-width: 1024px) {
     .logo {
-        display: inline;
         line-height: 3.6rem !important;
         font: 1.6em "Arial Black";
     }
 
-    .header-link {
-        text-decoration: none;
-        padding: 10px 15px;
-        font: 0.9em "Arial";
-        text-align: center;
-
-        color: black;
-
-        background-color: #f2f3f4;
-
-        border-radius: 10px;
-    }
-
     .header-links-container {
-        display: inline;
         margin-top: 1.5rem;
-        float: right;
-    }
-
-    .header {
-        overflow: hidden;
-    }
-
-    body {
-        margin: 0;
     }
 
     .form-container {
         float: right;
     }
-
-    .data-container {
-        margin-left: 10%;
-        max-width: 80%;
-    }
 }
 
 @media screen and (max-width: 1023px) {
     .logo {
-        display: inline;
         line-height: 6rem !important;
         font: 3em "Arial";
         font-weight: 700;
     }
 
-    .header-link {
-        text-decoration: none;
-        padding: 14px 26px;
-        font: 2em "Arial";
-        text-align: center;
-
-        color: black;
-
-        background-color: #f2f3f4;
-
-        border-radius: 10px;
-    }
-
     .header-links-container {
-        display: inline;
         margin-top: 2rem;
-        float: right;
-    }
-
-    .header {
-        overflow: hidden;
     }
 
     .form-container {
         padding-bottom: 4rem;
     }
 
-    body {
-        margin: 0;
-    }
-
-    .data-container {
-        margin-left: 5%;
-        max-width: 90%;
-    }
 }

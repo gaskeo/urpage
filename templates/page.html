@@ -3,29 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ .User.Username }}</title>
+    <link rel="stylesheet" href="../static/css/basic.css">
     <link rel="stylesheet" href="../static/css/page.css">
 </head>
 <body>
 <div class="data-container">
-    <img class="page-img" src="{{ .User.ImagePath }}">
-    <h1 class="page-username">{{ .User.Username }}</h1>
-    <ul class="page-links">
+    <img class="user-img" src="{{ .User.ImagePath }}">
+    <h1 class="user-username">{{ .User.Username }}</h1>
+    <ul class="user-links">
         {{ range .User.Links }}
-            <li class="page-link"><a href="{{ index . 0 }}"><img class="page-linked-img" src="{{ index . 1 }}"></a></li>
+            <li class="user-link"><a href="{{ index . 0 }}"><img class="user-linked-img" src="{{ index . 1 }}"></a></li>
         {{ end }}
     </ul>
     <br>
     <div style="height: 3rem"></div>
     <footer>
-        <h2 class="page-h2-footer">Создайте свою визитку</h2>
-        <div class="links-footer">
-            <a class="page-link-footer" href="/">На главную</a>
+        <h2 class="footer-h2">Создайте свою визитку</h2>
+        <div class="footer-links">
+            <a class="footer-link" href="/">На главную</a>
             {{ if eq .AuthUser.UserId 0}}
-                <a class="page-link-footer" href="/login">Войти</a>
-                <a class="page-link-footer" href="/registration">Зарегистрироваться</a>
+                <a class="footer-link" href="/login">Войти</a>
+                <a class="footer-link" href="/registration">Зарегистрироваться</a>
             {{ else }}
-                <a class="page-link-footer" href="/id/{{ .AuthUser.UserId }}">
-                    <img class="page-img-footer" src="{{ .AuthUser.ImagePath }}">
+                <a class="footer-link" href="/id/{{ .AuthUser.UserId }}">
+                    <img class="footer-img" src="{{ .AuthUser.ImagePath }}">
                     {{ .AuthUser.Username }}
                 </a>
             {{ end }}

@@ -1,0 +1,45 @@
+body {
+    padding: 0;
+    margin: 0;
+}
+
+
+
+.button-link {
+    text-decoration: none;
+    text-align: center;
+
+    background-color: #f2f3f4;
+    color: black;
+
+    border-radius: 10px;
+}
+
+@media screen and (min-width: 1024px) {
+    .data-container {
+        width: 80%;
+
+        margin-left: 10%;
+        margin-right: 10%;
+    }
+
+    .button-link {
+        font: 0.9em "Arial";
+
+        padding: 10px 15px;
+    }
+}
+
+@media screen and (max-width: 1023px) {
+    .data-container {
+        width: 90%;
+        padding-left: 5%;
+        padding-right: 5%;
+    }
+
+    .button-link {
+        font: 2em "Arial";
+
+        padding: 14px 26px;
+    }
+}

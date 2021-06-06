@@ -1,8 +1,11 @@
 package utils
 
 import (
+	"crypto/rand"
 	"go-site/constants"
+	"math/big"
 	"net/url"
+	"strconv"
 	"strings"
 )
 
@@ -37,4 +40,25 @@ func CreateIconLinkPairs(links []string) ([][]string, error) {
 	}
 
 	return data, nil
+}
+
+func CreateDBLinksFromPairs(LinkPairs [][]string) string {
+	var DBLinks []string
+
+	for _, linkPair := range LinkPairs {
+		DBLinks = append(DBLinks, linkPair[0])
+	}
+	return strings.Join(DBLinks, " ")
+}
+
+func GenerateImageName() (string, error) {
+	id, err := rand.Int(rand.Reader, big.NewInt(1000000000))
+
+	if err != nil {
+		return "", err
+	}
+
+	idStr := strconv.FormatInt(id.Int64(), 10)
+
+	return idStr, nil
 }

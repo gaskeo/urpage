@@ -25,6 +25,7 @@ func CheckIfUserAuth(request *http.Request) (int, error) {
 			}
 
 			if err != jwt.ErrExpiredToken && payload != nil {
+
 				redisJWTKey := strconv.FormatInt(payload.PayloadId, 10) + strconv.Itoa(payload.UserId) + "JWT"
 				redisJWTValue, err := redis_api.Get(redisJWTKey)
 

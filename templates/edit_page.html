@@ -36,15 +36,18 @@
         <div class="form-container">
             <h1 class="form-header">Смена основных данных</h1>
 
-            <form class="page-form" method="post" enctype=multipart/form-data>
+            <form class="page-form" id="page-form-main" method="post" onsubmit="return sendMain()" enctype=multipart/form-data>
 
                 <input id="id" name="id" style="display: none" type="text" value="{{ .UserId }}">
 
-                <input id="img" name="id" style="display: none" type="text">
-
                 <div class="photo-container" data-title="Изменить картинку">
                     <img class="form-image" id="img_src" src="{{ .ImagePath }}"><br>
-                    <p id="img_click" class="change-image-button">Изменить картинку</p>
+
+                    <label for="img-request" class="change-image-button">
+                        Изменить картинку
+                    </label>
+
+                    <input type="file" id="img-request" style="display: none" onchange="changePreview()">
                 </div>
                 <label for="username" class="page-form-label">Имя пользователя</label>
                 <input id="username" name="username" class="page-form-input" type="text" value="{{ .Username }}"><br>
@@ -58,7 +61,7 @@
         <div class="form-container">
             <h1 class="form-header">Редактировать ссылки</h1>
 
-            <form class="page-form" id="page-form-links" method="post" enctype=multipart/form-data>
+            <form class="page-form" id="page-form-links" method="post" onsubmit="return sendLinks()" enctype=multipart/form-data>
 
                 <input id="id" name="id" style="display: none" type="text" value="{{ .UserId }}">
                 {{ range $i, $elem := .Links }}
@@ -82,7 +85,7 @@
         <div class="form-container">
             <h1 class="form-header">Регистрация</h1>
 
-            <form class="page-form" method="post">
+            <form class="page-form" id="page-form-password" method="post">
 
                 <input id="id" name="id" style="display: none" type="text" value="{{ .UserId }}">
 

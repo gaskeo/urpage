@@ -86,12 +86,13 @@
         width: 6rem;
         object-fit: cover;
         border-radius: 50%;
+        margin-bottom: 1rem;
     }
 
     .change-image-button {
         text-decoration: none;
-        width: 10rem;
-        padding: 5px 1px;
+        width: 16rem;
+        padding: 10px 10px;
         margin-left: auto;
         margin-right: auto;
         font: 0.9em "Arial";
@@ -278,6 +279,8 @@
         width: 16rem;
         object-fit: cover;
         border-radius: 50%;
+        margin-top: 1rem;
+        margin-bottom: 2rem;
     }
 
     .change-image-button {

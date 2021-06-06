@@ -9,8 +9,7 @@ function changeTab(evt, tab, section) {
         if (sections[i] !== activeSection) {
             sections[i].style.opacity = "0";
             sections[i].style.display = "none";
-        }
-        else {
+        } else {
             activeSection.style.opacity = "1"
             activeSection.style.display = "block"
         }
@@ -25,21 +24,6 @@ function changeTab(evt, tab, section) {
 
     evt.currentTarget.className += " active-tab";
 }
-
-window.onload = function () {
-    document.getElementById('img_click').addEventListener('click', function (e) {
-        let input = document.getElementById("img");
-        input.type = 'file';
-        input.accept = ".jpg, .jpeg, .png";
-        input.onchange = e => {
-            let form, file
-            file = e.target.files[0];
-            document.getElementById("img_src").src = window.URL.createObjectURL(file);
-            form.image = input
-        };
-        input.click();
-    });
-};
 
 function deleteLink(divId) {
     let elem, index, countElements, i
@@ -60,13 +44,31 @@ function deleteLink(divId) {
     elem.remove()
 }
 
+function changePreview() {
+    let preview = document.getElementById('img_src');
+
+    let file = document.getElementById('img-request').files[0];
+
+    let reader = new FileReader();
+
+    reader.onloadend = function () {
+        preview.src = reader.result;
+        return reader.result
+    }
+
+    if (file) {
+        console.log(reader.readAsDataURL(file));
+    }
+
+}
+
 
 function addLink() {
     let newElementN, form, newDiv, newInput, newButton, afterItem
     newElementN = document.getElementsByClassName("page-form-link").length
 
     form = document.getElementById("page-form-links")
-    afterItem  = document.getElementById("add-link-button")
+    afterItem = document.getElementById("add-link-button")
 
     newDiv = document.createElement("div")
     newDiv.id = `link-div-${newElementN}`
@@ -90,4 +92,33 @@ function addLink() {
     newDiv.appendChild(newButton)
 
     form.insertBefore(newDiv, afterItem)
+}
+
+function sendMain() {
+    let status
+
+    let data = new FormData();
+
+    let photo = document.getElementById("img-request").files[0];
+
+    data.append("id", document.getElementById("id").value)
+    data.append("username", document.getElementById("username").value)
+    data.append("image", photo)
+
+
+    fetch("/do/edit_main", {method: 'post', body: data}).then(function (r) {
+        status = r.status
+
+        if (status === 200) {
+            alert("Успешно")
+        } else {
+            alert("что-то пошло не так...")
+        }
+    })
+
+    return false
+}
+
+function sendLinks() {
+    return true
 }

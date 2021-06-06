@@ -143,3 +143,15 @@ func GetUserByEmailAndPassword(email string, password string) (User, error) {
 
 	return user, nil
 }
+
+func UpdateUser(user User) error {
+	var userId int
+
+	links := utils.CreateDBLinksFromPairs(user.Links)
+
+	err := conn.QueryRow(context.Background(), "UPDATE user_info SET "+
+		"username=$1, email=$2, password=$3, image_path=$4, links=$5 WHERE user_id=$6 RETURNING user_id",
+		user.Username, user.Email, user.Password, user.ImagePath, links, user.UserId).Scan(&userId)
+
+	return err
+}

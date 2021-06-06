@@ -13,13 +13,15 @@ func generateHandlers() {
 
 	http.HandleFunc("/registration", handlers.RegistrationHandler)
 
-	http.HandleFunc("/edit/", handlers.EditHandler)
-
 	http.HandleFunc("/login", handlers.LoginHandler)
 
 	http.HandleFunc("/do/registration", handlers.DoRegistration)
 
 	http.HandleFunc("/do/login", handlers.DoLogin)
+
+	http.HandleFunc("/do/edit_main", handlers.DoEditMain)
+
+	http.HandleFunc("/edit/", handlers.EditHandler)
 
 	http.HandleFunc("/id/", handlers.PageHandler)
 

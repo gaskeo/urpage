@@ -1,3 +1,17 @@
+const hrefs = ["tab-edit-base-info", "tab-edit-links", "tab-edit-password"]
+
+window.onload = function () {
+    let i;
+    console.log(window.location.href)
+
+    for (i = 0; i < hrefs.length; i++) {
+        if (window.location.href.endsWith(hrefs[i])) {
+            document.getElementById(hrefs[i]).click()
+            break
+        }
+    }
+}
+
 function changeTab(evt, tab, section) {
     let i, sections, tabs, activeSection;
 
@@ -21,7 +35,7 @@ function changeTab(evt, tab, section) {
     for (i = 0; i < tabs.length; i++) {
         tabs[i].className = tabs[i].className.replace(" active-tab", "");
     }
-
+    history.pushState("", "", `#${tab}`)
     evt.currentTarget.className += " active-tab";
 }
 

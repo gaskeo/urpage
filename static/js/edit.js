@@ -109,6 +109,22 @@ function addLink() {
     form.insertBefore(newDiv, afterItem)
 }
 
+function checkResponse(r) {
+    status = r.status
+
+    if (status === 200) {
+        r.json().then(function (j) {
+            if (j["Err"] !== "") {
+                setError(j["Err"])
+            } else {
+                setError("ok")
+            }
+        })
+    } else {
+        alert("что-то пошло не так...");
+    }
+}
+
 function sendMain() {
     let status;
 
@@ -122,19 +138,7 @@ function sendMain() {
 
 
     fetch("/do/edit_main", {method: 'post', body: data}).then(function (r) {
-        status = r.status
-
-        if (status === 200) {
-            r.json().then(function (j) {
-                if (j["Err"] !== "") {
-                    setError(j["Err"])
-                } else {
-                    setError("ok")
-                }
-            })
-        } else {
-            alert("что-то пошло не так...");
-        }
+        checkResponse(r)
     })
 
     return false
@@ -159,19 +163,7 @@ function sendLinks() {
     links = links.slice(0, -1)
     data.append("links", links)
     fetch("/do/edit_links", {method: 'post', body: data}).then(function (r) {
-        status = r.status
-
-        if (status === 200) {
-            r.json().then(function (j) {
-                if (j["Err"] !== "") {
-                    setError(j["Err"])
-                } else {
-                    setError("ok")
-                }
-            })
-        } else {
-            alert("что-то пошло не так...");
-        }
+        checkResponse(r)
     })
 
     return false
@@ -194,19 +186,7 @@ function sendPassword() {
 
 
     fetch("/do/edit_password", {method: 'post', body: data}).then(function (r) {
-        status = r.status
-
-        if (status === 200) {
-            r.json().then(function (j) {
-                if (j["Err"] !== "") {
-                    setError(j["Err"])
-                } else {
-                    setError("ok")
-                }
-            })
-        } else {
-            alert("что-то пошло не так...");
-        }
+        checkResponse(r)
     })
 
     return false

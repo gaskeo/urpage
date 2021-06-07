@@ -168,6 +168,10 @@ function sendPassword() {
 
     let data = new FormData();
 
+    if (!checkPasswordsMatch()) {
+        return false
+    }
+
     data.append("id", document.getElementById("id").value);
     data.append("old", document.getElementById("old-password").value);
     data.append("new", document.getElementById("password").value);

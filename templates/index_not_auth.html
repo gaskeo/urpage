@@ -6,6 +6,8 @@
     <link rel="stylesheet" href="../static/css/form.css">
     <link rel="stylesheet" href="../static/css/basic.css">
     <link rel="stylesheet" href="../static/css/main_page.css">
+    <script type="text/javascript" src="../static/js/check_passwords.js"></script>
+
 </head>
 <body>
 <div class="data-container">
@@ -18,7 +20,7 @@
     </div>
     <div class="form-container">
         <h1 class="form-header">Регистрация</h1>
-        <form class="form" action="/do/registration" method="post">
+        <form class="form" action="/do/registration" onsubmit="return checkPasswordsMatch()" method="post">
 
             <label for="username" class="form-label">Имя пользователя</label>
             <input id="username" name="username" class="form-input" type="text"><br>

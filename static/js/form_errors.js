@@ -4,6 +4,7 @@ const statusTexts = {
     "passwords-not-match": "Пароли не совпадают",
     "email-exist": "Пользователь с такой почтой уже существует",
     "other-error": "Что-то пошло не так...",
+    "empty-input": "Не все поля заполнены",
     "ok": "Успешно"
 };
 
@@ -13,6 +14,7 @@ const statusTextColors = {
     "passwords-not-match": "red",
     "email-exist": "red",
     "other-error": "red",
+    "empty-input": "red",
     "ok": "black"
 }
 

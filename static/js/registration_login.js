@@ -8,6 +8,15 @@ function sendRegistration() {
 
     let data = new FormData();
 
+    if (document.getElementById("username").value.replace(/\s/g, "") === "" ||
+        document.getElementById("email").value.replace(/\s/g, "") === "" ||
+        document.getElementById("password").value.replace(/\s/g, "") === "") {
+
+        setError("empty-input")
+        return false
+    }
+
+
     data.append("username", document.getElementById("username").value);
     data.append("email", document.getElementById("email").value)
     data.append("password", document.getElementById("password").value)
@@ -35,6 +44,13 @@ function sendLogin() {
     let status;
 
     let data = new FormData();
+
+    if (document.getElementById("email").value.replace(/\s/g, "") === "" ||
+        document.getElementById("password").value.replace(/\s/g, "") === "") {
+
+        setError("empty-input")
+        return false
+    }
 
     data.append("email", document.getElementById("email").value)
     data.append("password", document.getElementById("password").value)

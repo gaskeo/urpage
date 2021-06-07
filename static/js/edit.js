@@ -110,7 +110,7 @@ function addLink() {
 }
 
 function checkResponse(r) {
-    status = r.status
+    let status = r.status
 
     if (status === 200) {
         r.json().then(function (j) {
@@ -126,12 +126,14 @@ function checkResponse(r) {
 }
 
 function sendMain() {
-    let status;
-
     let data = new FormData();
 
     let photo = document.getElementById("img-request").files[0];
 
+    if (document.getElementById("username").value.replace(/\s/g, "") === "") {
+        setError("empty-input")
+        return false
+    }
     data.append("id", document.getElementById("id").value);
     data.append("username", document.getElementById("username").value);
     data.append("image", photo);
@@ -145,7 +147,7 @@ function sendMain() {
 }
 
 function sendLinks() {
-    let status, i, linkInputs, link;
+    let i, linkInputs, link;
     let links = ""
     let data = new FormData();
 
@@ -158,6 +160,9 @@ function sendLinks() {
         link = link.replace(/\s/g, "")
         if (link !== "") {
             links += link + " "
+        } else {
+            setError("empty-input")
+            return false
         }
     }
     links = links.slice(0, -1)
@@ -172,13 +177,15 @@ function sendLinks() {
 function sendPassword() {
     if (!checkPasswordsMatch()) {
         setError("passwords-not-match")
-
         return false
     }
 
-    let status;
-
     let data = new FormData();
+
+    if ((document.getElementById("old-password").value === "") || (document.getElementById("password").value === "")){
+        setError("empty-input")
+        return false
+    }
 
     data.append("id", document.getElementById("id").value);
     data.append("old", document.getElementById("old-password").value);

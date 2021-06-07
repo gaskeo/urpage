@@ -1,5 +1,6 @@
 function sendRegistration() {
     if (!checkPasswordsMatch()) {
+        setError("passwords-not-match")
         return false
     }
 
@@ -42,12 +43,11 @@ function sendLogin() {
         status = r.status
 
         if (status === 200) {
-            console.log(r)
             r.json().then(function (j) {
-                console.log(j)
                 if (j["Err"] === "") {
                     window.location.replace("/")
                 } else {
+                    console.log(123)
                     setError(j["Err"])
                 }
             })

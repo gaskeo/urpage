@@ -1,13 +1,12 @@
 package handlers
 
 import (
-	"fmt"
+	"encoding/json"
 	"go-site/constants"
 	"go-site/storage"
 	"go-site/utils"
 	"go-site/verify_utils"
 	"io"
-	"log"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -21,16 +20,24 @@ func DoEditMain(writer http.ResponseWriter, request *http.Request) {
 	var imageForm multipart.File
 	var err error
 
+	var jsonAnswer []byte
+
 	if request.Method != "POST" {
 		return
 	}
+
+	defer func() {
+		if len(jsonAnswer) > 0 {
+			writer.Header().Set("Content-Type", "application/json")
+			_, _ = writer.Write(jsonAnswer)
+		}
+	}()
 
 	{ // check user authed
 		userId, err = verify_utils.CheckIfUserAuth(writer, request)
 
 		if err != nil {
-			log.Println(err)
-			http.Redirect(writer, request, "/", http.StatusSeeOther)
+			http.Error(writer, "У вас нет доступа", http.StatusForbidden)
 			return
 		}
 	}
@@ -44,44 +51,49 @@ func DoEditMain(writer http.ResponseWriter, request *http.Request) {
 			defer func() {
 				err := imageForm.Close()
 				if err != nil {
-					log.Println(err)
+					jsonAnswer, _ = json.Marshal(Answer{Err: "other-error"})
+					return
 				}
 			}()
 
 			imageName, err = utils.GenerateImageName()
 
 			if err != nil {
-				panic(err)
+				jsonAnswer, _ = json.Marshal(Answer{Err: "other-error"})
 				return
 			}
 
 			_, err = os.Create(constants.UserImages[1:] + imageName + ".jpeg")
 
 			if err != nil {
-				log.Println(err, 1)
+				jsonAnswer, _ = json.Marshal(Answer{Err: "other-error"})
+				return
 			}
 
 			newImage, err := os.OpenFile(constants.UserImages[1:]+imageName+".jpeg", os.O_WRONLY, 0644)
 
 			if err != nil {
-				panic(err)
+				jsonAnswer, _ = json.Marshal(Answer{Err: "other-error"})
+				return
 			}
 
 			defer func() {
 				err = newImage.Close()
 
 				if err != nil {
-					log.Println(err)
+
+					jsonAnswer, _ = json.Marshal(Answer{Err: "other-error"})
+					return
 				}
 			}()
 
 			_, err = io.Copy(newImage, imageForm)
 
 			if err != nil {
-				log.Println(err, 2)
+
+				jsonAnswer, _ = json.Marshal(Answer{Err: "other-error"})
+				return
 			}
-		} else {
-			log.Println(err)
 		}
 	}
 
@@ -89,11 +101,11 @@ func DoEditMain(writer http.ResponseWriter, request *http.Request) {
 		userIdIntForm, err := strconv.Atoi(userIdStr)
 
 		if err != nil {
-			log.Println(err, 13)
+			jsonAnswer, _ = json.Marshal(Answer{Err: "other-error"})
 		}
 
 		if userId != userIdIntForm {
-			http.Redirect(writer, request, "/", http.StatusSeeOther)
+			http.Error(writer, "У вас нет доступа", http.StatusForbidden)
 			return
 		}
 	}
@@ -102,13 +114,13 @@ func DoEditMain(writer http.ResponseWriter, request *http.Request) {
 		user, err = storage.GetUserViaId(userId)
 
 		if err != nil {
-			log.Println(err)
+			http.Error(writer, "Ошибка с БД", http.StatusForbidden)
+			return
 		}
 	}
 
 	{ // set new data
 		if len(imageName) > 0 {
-			fmt.Println(imageName)
 			user.ImagePath = imageName + ".jpeg"
 		} else {
 			user.ImagePath = user.ImagePath[len(constants.UserImages):]
@@ -121,9 +133,10 @@ func DoEditMain(writer http.ResponseWriter, request *http.Request) {
 		err = storage.UpdateUser(user)
 
 		if err != nil {
-			panic(err)
+			jsonAnswer, _ = json.Marshal(Answer{Err: "other-error"})
 			return
 		}
 
+		jsonAnswer, _ = json.Marshal(Answer{Err: ""})
 	}
 }

@@ -1,10 +1,10 @@
 package handlers
 
 import (
+	"encoding/json"
 	"go-site/constants"
 	"go-site/storage"
 	"go-site/verify_utils"
-	"log"
 	"net/http"
 	"strconv"
 )
@@ -15,16 +15,24 @@ func DoEditPassword(writer http.ResponseWriter, request *http.Request) {
 	var userIdStr, oldPassword, newPassword string
 	var err error
 
+	var jsonAnswer []byte
+
 	if request.Method != "POST" {
 		return
 	}
+
+	defer func() {
+		if len(jsonAnswer) > 0 {
+			writer.Header().Set("Content-Type", "application/json")
+			_, _ = writer.Write(jsonAnswer)
+		}
+	}()
 
 	{ // check user authed
 		userId, err = verify_utils.CheckIfUserAuth(writer, request)
 
 		if err != nil {
-			log.Println(err)
-			http.Redirect(writer, request, "/", http.StatusSeeOther)
+			http.Error(writer, "У вас нет доступа", http.StatusForbidden)
 			return
 		}
 	}
@@ -39,11 +47,12 @@ func DoEditPassword(writer http.ResponseWriter, request *http.Request) {
 		userIdIntForm, err := strconv.Atoi(userIdStr)
 
 		if err != nil {
-			log.Println(err, 13)
+			jsonAnswer, _ = json.Marshal(Answer{Err: "other-error"})
+			return
 		}
 
 		if userId != userIdIntForm {
-			http.Redirect(writer, request, "/", http.StatusSeeOther)
+			http.Error(writer, "У вас нет доступа", http.StatusForbidden)
 			return
 		}
 	}
@@ -52,14 +61,15 @@ func DoEditPassword(writer http.ResponseWriter, request *http.Request) {
 		user, err = storage.GetUserViaId(userId)
 
 		if err != nil {
-			log.Println(err)
+			http.Error(writer, "Ошибка с БД", http.StatusForbidden)
+			return
 		}
 	}
 
 	{ // check old password
 		correct, err := verify_utils.CheckPassword(oldPassword, user.Password)
 		if err != nil || !correct {
-			panic(err)
+			jsonAnswer, _ = json.Marshal(Answer{Err: "wrong-password"})
 			return
 		}
 	}
@@ -70,14 +80,15 @@ func DoEditPassword(writer http.ResponseWriter, request *http.Request) {
 		user.Password, err = verify_utils.HashPassword(newPassword)
 
 		if err != nil {
-			panic(err)
+			jsonAnswer, _ = json.Marshal(Answer{Err: "other-error"})
 			return
 		}
 
 		err = storage.UpdateUser(user)
 		if err != nil {
-			panic(err)
+			jsonAnswer, _ = json.Marshal(Answer{Err: "other-error"})
 			return
 		}
+		jsonAnswer, _ = json.Marshal(Answer{Err: ""})
 	}
 }

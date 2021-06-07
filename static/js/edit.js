@@ -72,7 +72,7 @@ function changePreview() {
     }
 
     if (file) {
-        console.log(reader.readAsDataURL(file));
+        reader.readAsDataURL(file);
     }
 
 }
@@ -125,7 +125,13 @@ function sendMain() {
         status = r.status
 
         if (status === 200) {
-            alert("Успешно");
+            r.json().then(function (j) {
+                if (j["Err"] !== "") {
+                    setError(j["Err"])
+                } else {
+                    setError("ok")
+                }
+            })
         } else {
             alert("что-то пошло не так...");
         }
@@ -141,7 +147,7 @@ function sendLinks() {
 
     data.append("id", document.getElementById("id").value);
 
-    linkInputs = document.getElementsByClassName("page-form-link");
+    linkInputs = document.getElementsByClassName("form-input-link");
 
     for (i = 0; i < linkInputs.length; i++) {
         link = linkInputs[i].value
@@ -150,12 +156,17 @@ function sendLinks() {
     }
     links = links.slice(0, -1)
     data.append("links", links)
-
     fetch("/do/edit_links", {method: 'post', body: data}).then(function (r) {
         status = r.status
 
         if (status === 200) {
-            alert("Успешно");
+            r.json().then(function (j) {
+                if (j["Err"] !== "") {
+                    setError(j["Err"])
+                } else {
+                    setError("ok")
+                }
+            })
         } else {
             alert("что-то пошло не так...");
         }
@@ -166,6 +177,8 @@ function sendLinks() {
 
 function sendPassword() {
     if (!checkPasswordsMatch()) {
+        setError("passwords-not-match")
+
         return false
     }
 
@@ -182,7 +195,13 @@ function sendPassword() {
         status = r.status
 
         if (status === 200) {
-            alert("Успешно");
+            r.json().then(function (j) {
+                if (j["Err"] !== "") {
+                    setError(j["Err"])
+                } else {
+                    setError("ok")
+                }
+            })
         } else {
             alert("что-то пошло не так...");
         }

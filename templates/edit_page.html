@@ -56,9 +56,9 @@
                 <label for="username" class="form-label">Имя пользователя</label>
                 <input id="username" name="username" class="form-input" type="text" value="{{ .Username }}"><br>
 
-                <input type="submit" class="form-submit" value="Сохранить">
+                <p class="form-error">.</p>
 
-                <p class="form-error">test</p>
+                <input type="submit" class="form-submit" value="Сохранить">
             </form>
         </div>
     </div>
@@ -82,6 +82,8 @@
                 {{ end }}
                 <button type="button" id="add-link-button" class="add-link-button" onclick="addLink()">Добавить ссылку</button>
 
+                <p class="form-error">.</p>
+
                 <input type="submit" class="form-submit" value="Сохранить">
             </form>
         </div>
@@ -103,6 +105,8 @@
 
                 <label for="password-again" class="form-label">Новый пароль еще раз</label>
                 <input id="password-again" name="password-again" class="form-input" type="password"><br>
+
+                <p class="form-error">.</p>
 
                 <input type="submit" class="form-submit" value="Сохранить">
             </form>

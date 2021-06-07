@@ -1,11 +1,20 @@
-
-const errors = {
+const statusTexts = {
     "wrong-password": "Неправильный пароль",
     "user-not-exist": "Пользователя не существует",
     "passwords-not-match": "Пароли не совпадают",
     "email-exist": "Пользователь с такой почтой уже существует",
-    "other-error": "Что-то пошло не так..."
+    "other-error": "Что-то пошло не так...",
+    "ok": "Успешно"
 };
+
+const statusTextColors = {
+    "wrong-password": "red",
+    "user-not-exist": "red",
+    "passwords-not-match": "red",
+    "email-exist": "red",
+    "other-error": "red",
+    "ok": "black"
+}
 
 function checkPasswordsMatch() {
     let password = document.getElementById("password").value;
@@ -20,7 +29,7 @@ function getErrorP() {
     let errorP
 
     for (let i = 0; i < errorsP.length; i++) {
-        if (errorsP[i].style.display !== "none") {
+        if (errorsP[i].offsetWidth > 0 && errorsP[i].offsetHeight > 0) {
             errorP = errorsP[i]
             return errorP
         }
@@ -33,16 +42,15 @@ function setError(err) {
     let errorP = getErrorP();
 
     if (errorP === null) {
-        console.log(1)
         return
     }
     if (err !== null) {
-        console.log(2)
 
-        for (let key in errors) {
+        for (let key in statusTexts) {
             if (err === key) {
-                errorP.textContent = errors[key];
-                errorP.style.display = "block"
+                errorP.style.color = statusTextColors[key]
+
+                errorP.textContent = statusTexts[key];
                 return
             }
         }

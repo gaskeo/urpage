@@ -2,7 +2,6 @@ const hrefs = ["tab-edit-base-info", "tab-edit-links", "tab-edit-password"]
 
 window.onload = function () {
     let i;
-    console.log(window.location.href)
 
     for (i = 0; i < hrefs.length; i++) {
         if (window.location.href.endsWith(hrefs[i])) {
@@ -10,6 +9,8 @@ window.onload = function () {
             break
         }
     }
+
+    setError()
 }
 
 function changeTab(evt, tab, section) {
@@ -164,13 +165,13 @@ function sendLinks() {
 }
 
 function sendPassword() {
-    let status;
-
-    let data = new FormData();
-
     if (!checkPasswordsMatch()) {
         return false
     }
+
+    let status;
+
+    let data = new FormData();
 
     data.append("id", document.getElementById("id").value);
     data.append("old", document.getElementById("old-password").value);

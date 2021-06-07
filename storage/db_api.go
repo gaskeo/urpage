@@ -116,10 +116,7 @@ func GetUserByEmailAndPassword(email string, password string) (User, error) {
 	{
 		PasswordsCompare, err := verify_utils.CheckPassword(password, user.Password)
 
-		if err != nil {
-			return User{}, err
-		}
-		if !PasswordsCompare {
+		if err != nil || !PasswordsCompare {
 			return User{}, ErrWrongPassword
 		}
 	}

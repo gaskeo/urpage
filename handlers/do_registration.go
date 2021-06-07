@@ -1,19 +1,30 @@
 package handlers
 
 import (
+	"encoding/json"
 	"github.com/jackc/pgx/v4"
 	"go-site/storage"
 	"go-site/verify_utils"
-	"log"
 	"net/http"
 )
+
+type Answer struct {
+	Err string
+}
 
 func DoRegistration(writer http.ResponseWriter, request *http.Request) {
 	var username, email, password, passwordHashed string
 	var err error
+	var jsonAnswer []byte
+
 	if request.Method != "POST" {
 		return
 	}
+
+	defer func() {
+		writer.Header().Set("Content-Type", "application/json")
+		_, _ = writer.Write(jsonAnswer)
+	}()
 
 	{
 		username = request.FormValue("username")
@@ -23,8 +34,7 @@ func DoRegistration(writer http.ResponseWriter, request *http.Request) {
 		passwordHashed, err = verify_utils.HashPassword(password)
 
 		if err != nil {
-			log.Println(err)
-			http.Redirect(writer, request, "/registration", http.StatusSeeOther)
+			jsonAnswer, _ = json.Marshal(Answer{Err: "other-error"})
 			return
 		}
 	}
@@ -33,8 +43,7 @@ func DoRegistration(writer http.ResponseWriter, request *http.Request) {
 		userExist, err := storage.CheckEmailExistInDB(email)
 
 		if userExist || err != pgx.ErrNoRows {
-			log.Println(err)
-			http.Redirect(writer, request, "/registration", http.StatusSeeOther)
+			jsonAnswer, _ = json.Marshal(Answer{Err: "email-exist"})
 			return
 		}
 	}
@@ -43,11 +52,10 @@ func DoRegistration(writer http.ResponseWriter, request *http.Request) {
 		_, err = storage.AddUser(username, passwordHashed, email, "", "")
 
 		if err != nil {
-			log.Println(err)
-			http.Redirect(writer, request, "/registration", http.StatusSeeOther)
+			jsonAnswer, _ = json.Marshal(Answer{Err: "other-error"})
 			return
 		}
 	}
 
-	http.Redirect(writer, request, "/login", http.StatusSeeOther)
+	jsonAnswer, err = json.Marshal(Answer{Err: ""})
 }

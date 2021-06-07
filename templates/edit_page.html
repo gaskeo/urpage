@@ -6,9 +6,11 @@
     <link rel="stylesheet" href="../static/css/form.css">
     <link rel="stylesheet" href="../static/css/basic.css">
     <link rel="stylesheet" href="../static/css/edit.css">
-    <script type="text/javascript" src="../static/js/check_passwords.js"></script>
+
+    <script type="text/javascript" src="../static/js/form_errors.js"></script>
 
     <script type="text/javascript" src="../static/js/edit.js"></script>
+
 
 
 </head>
@@ -55,6 +57,8 @@
                 <input id="username" name="username" class="form-input" type="text" value="{{ .Username }}"><br>
 
                 <input type="submit" class="form-submit" value="Сохранить">
+
+                <p class="form-error">test</p>
             </form>
         </div>
     </div>

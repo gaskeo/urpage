@@ -5,11 +5,14 @@
     <title>Вход</title>
     <link rel="stylesheet" href="../static/css/basic.css">
     <link rel="stylesheet" href="../static/css/form.css">
+
+    <script type="text/javascript" src="../static/js/form_errors.js"></script>
+    <script type="text/javascript" src="../static/js/registration_login.js"></script>
 </head>
 <body>
 <div class="form-container">
     <h1 class="form-header">Вход</h1>
-    <form class="form" action="/do/login" method="post">
+    <form class="form" onsubmit="return sendLogin()" method="post">
 
         <label for="email" class="form-label">Имя пользователя или почта</label>
         <input id="email" name="email" class="form-input" type="text"><br>
@@ -18,6 +21,8 @@
         <input id="password" name="password" class="form-input" type="password"><br>
 
         <input type="submit" class="form-submit" value="Войти">
+
+        <p class="form-error">test</p>
     </form>
 </div>
 </body>

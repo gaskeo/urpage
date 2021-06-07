@@ -152,7 +152,9 @@ function sendLinks() {
     for (i = 0; i < linkInputs.length; i++) {
         link = linkInputs[i].value
         link = link.replace(/\s/g, "")
-        links += link + " "
+        if (link !== "") {
+            links += link + " "
+        }
     }
     links = links.slice(0, -1)
     data.append("links", links)

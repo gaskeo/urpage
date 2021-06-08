@@ -63,7 +63,6 @@ function sendLogin() {
                 if (j["Err"] === "") {
                     window.location.replace("/")
                 } else {
-                    console.log(123)
                     setError(j["Err"])
                 }
             })

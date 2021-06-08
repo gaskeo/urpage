@@ -5,6 +5,7 @@ const statusTexts = {
     "email-exist": "Пользователь с такой почтой уже существует",
     "other-error": "Что-то пошло не так...",
     "empty-input": "Не все поля заполнены",
+    "no-csrf": "Соединение потеряно, перезагрузите страницу",
     "ok": "Успешно"
 };
 
@@ -15,6 +16,7 @@ const statusTextColors = {
     "email-exist": "red",
     "other-error": "red",
     "empty-input": "red",
+    "no-csrf": "red",
     "ok": "black"
 }
 

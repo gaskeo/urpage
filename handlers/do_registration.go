@@ -13,7 +13,7 @@ type Answer struct {
 }
 
 func DoRegistration(writer http.ResponseWriter, request *http.Request) {
-	var username, email, password, passwordHashed string
+	var username, email, password, passwordHashed, CSRFToken, CSRFTokenForm string
 	var err error
 	var jsonAnswer []byte
 
@@ -26,7 +26,23 @@ func DoRegistration(writer http.ResponseWriter, request *http.Request) {
 		_, _ = writer.Write(jsonAnswer)
 	}()
 
+	{ // CSRF check
+		_, CSRFToken, err = verify_utils.CheckSessionId(writer, request)
+
+		if err != nil {
+			jsonAnswer, _ = json.Marshal(Answer{Err: "no-csrf"})
+			return
+		}
+	}
+
 	{
+		CSRFTokenForm = request.FormValue("csrf")
+
+		if CSRFToken != CSRFTokenForm {
+			jsonAnswer, _ = json.Marshal(Answer{Err: "no-csrf"})
+			return
+		}
+
 		username = request.FormValue("username")
 		email = request.FormValue("email")
 		password = request.FormValue("password")

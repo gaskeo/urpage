@@ -4,6 +4,7 @@ import (
 	"go-site/constants"
 	"go-site/jwt"
 	"go-site/redis_api"
+	"go-site/session"
 	"golang.org/x/crypto/bcrypt"
 	"log"
 	"net/http"
@@ -106,6 +107,27 @@ func CheckIfUserAuth(writer http.ResponseWriter, request *http.Request) (int, er
 	}
 }
 
+func CheckSessionId(writer http.ResponseWriter, request *http.Request) (string, string, error) {
+	{ // check cookie
+		sessionIdCookie, err := request.Cookie("SessionId")
+		if err == nil {
+			CSRFToken, err := session.GetCSRFBySessionId(sessionIdCookie.Value)
+			return sessionIdCookie.Value, CSRFToken, err
+		}
+		sessionId := session.GenerateSessionId()
+		CSRFToken := session.GenerateCSRFToken()
+		expireTime := time.Now().Add(constants.SessionIdExpireTime)
+		err = session.AddInRedis(sessionId, CSRFToken, expireTime)
+
+		AddSessionId(sessionId, expireTime, writer)
+
+		if err != nil {
+			return "", "", err
+		}
+		return sessionId, CSRFToken, nil
+	}
+}
+
 func HashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	return string(bytes), err
@@ -131,12 +153,27 @@ func GenerateJWTToken(userId int) (string, jwt.Payload, time.Time, error) {
 	return token, payload, tokenExpireDate, nil
 }
 
+func AddSessionId(sessionId string, expireDate time.Time, writer http.ResponseWriter) {
+	cookieSessionId := http.Cookie{
+		Name:     "SessionId",
+		Value:    sessionId,
+		Expires:  expireDate,
+		Path:     "/",
+		HttpOnly: true,
+		SameSite: http.SameSiteStrictMode,
+	}
+
+	http.SetCookie(writer, &cookieSessionId)
+}
+
 func AddJWTCookie(token string, tokenExpireDate time.Time, writer http.ResponseWriter) {
 	cookieToken := http.Cookie{
-		Name:    "JWT",
-		Value:   token,
-		Expires: tokenExpireDate,
-		Path:    "/",
+		Name:     "JWT",
+		Value:    token,
+		Expires:  tokenExpireDate,
+		Path:     "/",
+		HttpOnly: true,
+		SameSite: http.SameSiteStrictMode,
 	}
 
 	http.SetCookie(writer, &cookieToken)
@@ -144,24 +181,30 @@ func AddJWTCookie(token string, tokenExpireDate time.Time, writer http.ResponseW
 
 func AddRefreshTokenCookie(refreshToken string, tokenId int64, userId int, refreshExpireDate time.Time, writer http.ResponseWriter) {
 	cookieRefresh := http.Cookie{
-		Name:    "RefreshToken",
-		Value:   refreshToken,
-		Expires: refreshExpireDate,
-		Path:    "/",
+		Name:     "RefreshToken",
+		Value:    refreshToken,
+		Expires:  refreshExpireDate,
+		Path:     "/",
+		HttpOnly: true,
+		SameSite: http.SameSiteStrictMode,
 	}
 
 	cookieRefreshId := http.Cookie{
-		Name:    "RefreshTokenId",
-		Value:   strconv.FormatInt(tokenId, 10),
-		Expires: refreshExpireDate,
-		Path:    "/",
+		Name:     "RefreshTokenId",
+		Value:    strconv.FormatInt(tokenId, 10),
+		Expires:  refreshExpireDate,
+		Path:     "/",
+		HttpOnly: true,
+		SameSite: http.SameSiteStrictMode,
 	}
 
 	cookieRefreshUserId := http.Cookie{
-		Name:    "RefreshTokenUserId",
-		Value:   strconv.Itoa(userId),
-		Expires: refreshExpireDate,
-		Path:    "/",
+		Name:     "RefreshTokenUserId",
+		Value:    strconv.Itoa(userId),
+		Expires:  refreshExpireDate,
+		Path:     "/",
+		HttpOnly: true,
+		SameSite: http.SameSiteStrictMode,
 	}
 
 	http.SetCookie(writer, &cookieRefresh)

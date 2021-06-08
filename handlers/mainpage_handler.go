@@ -1,18 +1,26 @@
 package handlers
 
 import (
+	"go-site/constants"
 	"go-site/storage"
 	"go-site/verify_utils"
 	"html/template"
-	"log"
 	"net/http"
 )
 
 func MainPageHandler(writer http.ResponseWriter, request *http.Request) {
-	var temp string
+	var temp, CSRFToken string
 	var userId int
 	var err error
 	var user storage.User
+
+	{
+		_, CSRFToken, err = verify_utils.CheckSessionId(writer, request)
+		if err != nil {
+			http.Error(writer, "что-то пошло не так...", http.StatusInternalServerError)
+			return
+		}
+	}
 
 	{ // user auth check
 		userId, err = verify_utils.CheckIfUserAuth(writer, request)
@@ -35,9 +43,13 @@ func MainPageHandler(writer http.ResponseWriter, request *http.Request) {
 		t, err := template.ParseFiles(temp)
 
 		if err != nil {
-			log.Println(err)
+			http.Error(writer, "что-то пошло не так...", http.StatusInternalServerError)
+			return
 		}
 
-		err = t.Execute(writer, user)
+		err = t.Execute(writer, constants.TemplateData{
+			"User": user,
+			"CSRF": CSRFToken,
+		})
 	}
 }

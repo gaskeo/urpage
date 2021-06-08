@@ -16,7 +16,7 @@ function sendRegistration() {
         return false
     }
 
-
+    data.append("csrf", document.getElementById("csrf").value)
     data.append("username", document.getElementById("username").value);
     data.append("email", document.getElementById("email").value)
     data.append("password", document.getElementById("password").value)

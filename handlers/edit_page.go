@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"go-site/constants"
 	"go-site/storage"
 	"go-site/verify_utils"
 	"html/template"
@@ -10,7 +11,18 @@ import (
 )
 
 func EditHandler(writer http.ResponseWriter, request *http.Request) {
+	var CSRFToken string
+	var err error
 	var authUser storage.User
+
+	{ // CSRF check
+		_, CSRFToken, err = verify_utils.CheckSessionId(writer, request)
+
+		if err != nil {
+			http.Error(writer, "что-то пошло не так...", http.StatusInternalServerError)
+			return
+		}
+	}
 
 	{ // user auth check
 		authUserId, err := verify_utils.CheckIfUserAuth(writer, request)
@@ -47,7 +59,7 @@ func EditHandler(writer http.ResponseWriter, request *http.Request) {
 			return
 		}
 
-		err = t.Execute(writer, authUser)
+		err = t.Execute(writer, constants.TemplateData{"AuthUser": authUser, "CSRF": CSRFToken})
 
 		if err != nil {
 			log.Println(err)

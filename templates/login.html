@@ -14,6 +14,8 @@
     <h1 class="form-header">Вход</h1>
     <form class="form" onsubmit="return sendLogin()" method="post">
 
+        <input id="csrf" value="{{ .CSRF }}" style="display: none">
+
         <label for="email" class="form-label">Имя пользователя или почта</label>
         <input id="email" name="email" class="form-input" type="email"><br>
 

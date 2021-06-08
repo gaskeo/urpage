@@ -10,12 +10,11 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
-	"strconv"
 )
 
 func DoEditMain(writer http.ResponseWriter, request *http.Request) {
 	var userId int
-	var userIdStr, username, imageName string
+	var username, imageName, CSRFToken, CSRFTokenForm string
 	var user storage.User
 	var imageForm multipart.File
 	var err error
@@ -33,6 +32,15 @@ func DoEditMain(writer http.ResponseWriter, request *http.Request) {
 		}
 	}()
 
+	{ // CSRF check
+		_, CSRFToken, err = verify_utils.CheckSessionId(writer, request)
+
+		if err != nil {
+			jsonAnswer, _ = json.Marshal(Answer{Err: "no-csrf"})
+			return
+		}
+	}
+
 	{ // check user authed
 		userId, err = verify_utils.CheckIfUserAuth(writer, request)
 
@@ -43,7 +51,13 @@ func DoEditMain(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	{ // work with form
-		userIdStr = request.FormValue("id")
+		CSRFTokenForm = request.FormValue("csrf")
+
+		if CSRFToken != CSRFTokenForm {
+			jsonAnswer, _ = json.Marshal(Answer{Err: "no-csrf"})
+			return
+		}
+
 		username = request.FormValue("username")
 		imageForm, _, err = request.FormFile("image") // header with name
 		// check format of file
@@ -94,19 +108,6 @@ func DoEditMain(writer http.ResponseWriter, request *http.Request) {
 				jsonAnswer, _ = json.Marshal(Answer{Err: "other-error"})
 				return
 			}
-		}
-	}
-
-	{ // compare form and authed user
-		userIdIntForm, err := strconv.Atoi(userIdStr)
-
-		if err != nil {
-			jsonAnswer, _ = json.Marshal(Answer{Err: "other-error"})
-		}
-
-		if userId != userIdIntForm {
-			http.Error(writer, "У вас нет доступа", http.StatusForbidden)
-			return
 		}
 	}
 

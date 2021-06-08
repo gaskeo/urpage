@@ -14,6 +14,15 @@ func PageHandler(writer http.ResponseWriter, request *http.Request) {
 	var authUser storage.User
 	var users storage.SomeUsers
 
+	{ // CSRF check
+		_, _, err := verify_utils.CheckSessionId(writer, request)
+
+		if err != nil {
+			http.Error(writer, "что-то пошло не так...", http.StatusInternalServerError)
+			return
+		}
+	}
+
 	{ // get user by user id in path
 		userIdStr := request.URL.Path[len("/id/"):]
 

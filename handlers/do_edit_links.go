@@ -7,14 +7,13 @@ import (
 	"go-site/utils"
 	"go-site/verify_utils"
 	"net/http"
-	"strconv"
 	"strings"
 )
 
 func DoEditLinks(writer http.ResponseWriter, request *http.Request) {
 	var user storage.User
 	var userId int
-	var userIdStr, links string
+	var links, CSRFToken, CSRFTokenForm string
 	var err error
 
 	var jsonAnswer []byte
@@ -30,6 +29,15 @@ func DoEditLinks(writer http.ResponseWriter, request *http.Request) {
 		}
 	}()
 
+	{ // CSRF check
+		_, CSRFToken, err = verify_utils.CheckSessionId(writer, request)
+
+		if err != nil {
+			jsonAnswer, _ = json.Marshal(Answer{Err: "no-csrf"})
+			return
+		}
+	}
+
 	{ // check user authed
 		userId, err = verify_utils.CheckIfUserAuth(writer, request)
 
@@ -40,22 +48,14 @@ func DoEditLinks(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	{ // work with form
-		userIdStr = request.FormValue("id")
+		CSRFTokenForm = request.FormValue("csrf")
+
+		if CSRFToken != CSRFTokenForm {
+			jsonAnswer, _ = json.Marshal(Answer{Err: "no-csrf"})
+			return
+		}
+
 		links = request.FormValue("links")
-	}
-
-	{ // compare form and authed user
-		userIdIntForm, err := strconv.Atoi(userIdStr)
-
-		if err != nil {
-			jsonAnswer, _ = json.Marshal(Answer{Err: "other-error"})
-			return
-		}
-
-		if userId != userIdIntForm {
-			http.Error(writer, "У вас нет доступа", http.StatusForbidden)
-			return
-		}
 	}
 
 	{ // get user

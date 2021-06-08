@@ -6,13 +6,12 @@ import (
 	"go-site/storage"
 	"go-site/verify_utils"
 	"net/http"
-	"strconv"
 )
 
 func DoEditPassword(writer http.ResponseWriter, request *http.Request) {
 	var user storage.User
 	var userId int
-	var userIdStr, oldPassword, newPassword string
+	var oldPassword, newPassword, CSRFToken, CSRFTokenForm string
 	var err error
 
 	var jsonAnswer []byte
@@ -28,6 +27,15 @@ func DoEditPassword(writer http.ResponseWriter, request *http.Request) {
 		}
 	}()
 
+	{ // CSRF check
+		_, CSRFToken, err = verify_utils.CheckSessionId(writer, request)
+
+		if err != nil {
+			jsonAnswer, _ = json.Marshal(Answer{Err: "no-csrf"})
+			return
+		}
+	}
+
 	{ // check user authed
 		userId, err = verify_utils.CheckIfUserAuth(writer, request)
 
@@ -38,23 +46,15 @@ func DoEditPassword(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	{ // work with form
-		userIdStr = request.FormValue("id")
+		CSRFTokenForm = request.FormValue("csrf")
+
+		if CSRFToken != CSRFTokenForm {
+			jsonAnswer, _ = json.Marshal(Answer{Err: "no-csrf"})
+			return
+		}
+
 		oldPassword = request.FormValue("old")
 		newPassword = request.FormValue("new")
-	}
-
-	{ // compare form and authed user
-		userIdIntForm, err := strconv.Atoi(userIdStr)
-
-		if err != nil {
-			jsonAnswer, _ = json.Marshal(Answer{Err: "other-error"})
-			return
-		}
-
-		if userId != userIdIntForm {
-			http.Error(writer, "У вас нет доступа", http.StatusForbidden)
-			return
-		}
 	}
 
 	{ // get user

@@ -23,7 +23,9 @@
     <div class="form-container">
         <h1 class="form-header">Регистрация</h1>
         <form class="form" onsubmit="return sendRegistration()" method="post">
+
             <input id="csrf" value="{{ .CSRF }}" style="display: none">
+
             <label for="username" class="form-label">Имя пользователя</label>
             <input id="username" name="username" class="form-input" type="text"><br>
 

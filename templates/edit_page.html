@@ -43,10 +43,10 @@
 
             <form class="form" id="page-form-main" method="post" onsubmit="return sendMain()" enctype=multipart/form-data>
 
-                <input id="id" name="id" style="display: none" type="text" value="{{ .UserId }}">
+                <input id="csrf" value="{{ .CSRF }}" style="display: none">
 
                 <div class="photo-container" data-title="Изменить картинку">
-                    <img class="form-image" id="img_src" src="{{ .ImagePath }}"><br>
+                    <img class="form-image" id="img_src" src="{{ .AuthUser.ImagePath }}"><br>
 
                     <label for="img-request" class="form-change-image-button">
                         Изменить картинку
@@ -54,7 +54,7 @@
                     <input type="file" id="img-request" style="display: none" onchange="changePreview()">
                 </div>
                 <label for="username" class="form-label">Имя пользователя</label>
-                <input id="username" name="username" class="form-input" type="text" value="{{ .Username }}"><br>
+                <input id="username" name="username" class="form-input" type="text" value="{{ .AuthUser.Username }}"><br>
 
                 <p class="form-error">.</p>
 
@@ -69,8 +69,9 @@
 
             <form class="page-form" id="page-form-links" method="post" onsubmit="return sendLinks()" enctype=multipart/form-data>
 
-                <input id="id" name="id" style="display: none" type="text" value="{{ .UserId }}">
-                {{ range $i, $elem := .Links }}
+                <input id="csrf" value="{{ .CSRF }}" style="display: none">
+
+                {{ range $i, $elem := .AuthUser.Links }}
                     <div style="display: inline; vertical-align: middle;" id="link-div-{{ $i }}" class="form-link-container">
 
                         <input id="link-{{ $i }}"
@@ -95,7 +96,7 @@
 
             <form class="form" id="page-form-password" method="post" onsubmit="return sendPassword()">
 
-                <input id="id" name="id" style="display: none" type="text" value="{{ .UserId }}">
+                <input id="csrf" value="{{ .CSRF }}" style="display: none">
 
                 <label for="old-password" class="form-label">Старый пароль</label>
                 <input id="old-password" name="old-password" class="form-input" type="password"><br>

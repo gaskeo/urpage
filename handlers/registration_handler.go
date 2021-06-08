@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"go-site/constants"
 	"go-site/verify_utils"
 	"html/template"
 	"log"
@@ -8,6 +9,17 @@ import (
 )
 
 func RegistrationHandler(writer http.ResponseWriter, request *http.Request) {
+	var CSRFToken string
+	var err error
+
+	{ // check csrf
+		_, CSRFToken, err = verify_utils.CheckSessionId(writer, request)
+		if err != nil {
+			http.Error(writer, "что-то пошло не так...", http.StatusInternalServerError)
+			return
+		}
+	}
+
 	{ // user auth check
 		_, err := verify_utils.CheckIfUserAuth(writer, request)
 
@@ -24,7 +36,7 @@ func RegistrationHandler(writer http.ResponseWriter, request *http.Request) {
 			log.Println(err)
 		}
 
-		err = t.Execute(writer, "")
+		err = t.Execute(writer, constants.TemplateData{"CSRF": CSRFToken})
 
 		if err != nil {
 			log.Println(err)

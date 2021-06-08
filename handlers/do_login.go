@@ -14,6 +14,7 @@ import (
 func DoLogin(writer http.ResponseWriter, request *http.Request) {
 	var user storage.User
 	var err error
+	var CSRFToken, CSRFTokenForm string
 	var jsonAnswer []byte
 
 	if request.Method != "POST" {
@@ -25,7 +26,23 @@ func DoLogin(writer http.ResponseWriter, request *http.Request) {
 		_, _ = writer.Write(jsonAnswer)
 	}()
 
+	{ // CSRF check
+		_, CSRFToken, err = verify_utils.CheckSessionId(writer, request)
+
+		if err != nil {
+			jsonAnswer, _ = json.Marshal(Answer{Err: "no-csrf"})
+			return
+		}
+	}
+
 	{ // work with form
+		CSRFTokenForm = request.FormValue("csrf")
+
+		if CSRFToken != CSRFTokenForm {
+			jsonAnswer, _ = json.Marshal(Answer{Err: "no-csrf"})
+			return
+		}
+
 		email := request.FormValue("email")
 		password := request.FormValue("password")
 

@@ -14,7 +14,7 @@ func MainPageHandler(writer http.ResponseWriter, request *http.Request) {
 	var err error
 	var user storage.User
 
-	{
+	{ // check csrf
 		_, CSRFToken, err = verify_utils.CheckSessionId(writer, request)
 		if err != nil {
 			http.Error(writer, "что-то пошло не так...", http.StatusInternalServerError)

@@ -12,17 +12,18 @@ import (
 	"time"
 )
 
-var conn *pgx.Conn
-
 func Connect(username string, password string, dbname string) (*pgx.Conn, error) {
-	var err error
+	var (
+		conn *pgx.Conn
+		err  error
+	)
 
 	conn, err = pgx.Connect(context.Background(), "postgres://"+username+":"+password+"@localhost:5432/"+dbname)
 
 	return conn, err
 }
 
-func GetUserViaId(userId int) (structs.User, error) {
+func GetUserViaId(conn *pgx.Conn, userId int) (structs.User, error) {
 	user := structs.User{}
 
 	var imageDB *string
@@ -65,7 +66,7 @@ func GetUserViaId(userId int) (structs.User, error) {
 	return user, nil
 }
 
-func AddUser(username string, password string, email string, imagePath string, links string) (int, error) {
+func AddUser(conn *pgx.Conn, username string, password string, email string, imagePath string, links string) (int, error) {
 	userId := -1
 
 	err := conn.QueryRow(context.Background(),
@@ -79,7 +80,7 @@ func AddUser(username string, password string, email string, imagePath string, l
 	return userId, nil
 }
 
-func CheckEmailExistInDB(email string) (bool, error) {
+func CheckEmailExistInDB(conn *pgx.Conn, email string) (bool, error) {
 	var emailDB string
 
 	err := conn.QueryRow(context.Background(), "SELECT email from user_info WHERE email=$1", email).Scan(&emailDB)
@@ -92,7 +93,7 @@ func CheckEmailExistInDB(email string) (bool, error) {
 	return emailDB == email, nil
 }
 
-func GetUserByEmailAndPassword(email string, password string) (structs.User, error) {
+func GetUserByEmailAndPassword(conn *pgx.Conn, email string, password string) (structs.User, error) {
 	user := structs.User{}
 
 	var imageDB *string
@@ -143,7 +144,7 @@ func GetUserByEmailAndPassword(email string, password string) (structs.User, err
 	return user, nil
 }
 
-func UpdateUser(user structs.User) error {
+func UpdateUser(conn *pgx.Conn, user structs.User) error {
 	var userId int
 
 	links := utils.CreateDBLinksFromPairs(user.Links)

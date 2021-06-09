@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"github.com/go-redis/redis/v8"
+	"github.com/jackc/pgx/v4"
 	"go-site/jwt"
 	"go-site/session"
 	"go-site/structs"
@@ -9,41 +11,45 @@ import (
 	"net/http"
 )
 
-func RegistrationHandler(writer http.ResponseWriter, request *http.Request) {
-	var CSRFToken string
+func CreateRegistrationHandler(_ *pgx.Conn, rds *redis.Client) {
+	registrationHandler := func(writer http.ResponseWriter, request *http.Request) {
+		var (
+			CSRFToken string
+			t         *template.Template
+			err       error
+		)
 
-	var t *template.Template
+		{ // check csrf
+			_, CSRFToken, err = session.CheckSessionId(writer, request, rds)
+			if err != nil {
+				http.Error(writer, "что-то пошло не так...", http.StatusInternalServerError)
+				return
+			}
+		}
 
-	var err error
+		{ // user auth check
+			_, err = jwt.CheckIfUserAuth(writer, request, rds)
 
-	{ // check csrf
-		_, CSRFToken, err = session.CheckSessionId(writer, request)
-		if err != nil {
-			http.Error(writer, "что-то пошло не так...", http.StatusInternalServerError)
-			return
+			if err == nil {
+				http.Redirect(writer, request, "/", http.StatusSeeOther)
+				return
+			}
+		}
+
+		{ // generate template
+			t, err = template.ParseFiles("templates/registration.html")
+
+			if err != nil {
+				log.Println(err)
+			}
+
+			err = t.Execute(writer, structs.TemplateData{"CSRF": CSRFToken})
+
+			if err != nil {
+				log.Println(err)
+			}
 		}
 	}
 
-	{ // user auth check
-		_, err = jwt.CheckIfUserAuth(writer, request)
-
-		if err == nil {
-			http.Redirect(writer, request, "/", http.StatusSeeOther)
-			return
-		}
-	}
-
-	{ // generate template
-		t, err = template.ParseFiles("templates/registration.html")
-
-		if err != nil {
-			log.Println(err)
-		}
-
-		err = t.Execute(writer, structs.TemplateData{"CSRF": CSRFToken})
-
-		if err != nil {
-			log.Println(err)
-		}
-	}
+	http.HandleFunc("/registration", registrationHandler)
 }

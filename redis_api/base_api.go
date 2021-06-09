@@ -8,21 +8,19 @@ import (
 
 var ctx = context.Background()
 
-var rdb *redis.Client
-
-func Connect(address string, password string, db int) (bool, error) {
-	rdb = redis.NewClient(&redis.Options{
+func Connect(address string, password string, db int) (*redis.Client, error) {
+	rdb := redis.NewClient(&redis.Options{
 		Addr:     address,
 		Password: password,
 		DB:       db,
 	})
 
-	pong, err := rdb.Ping(ctx).Result()
+	_, err := rdb.Ping(ctx).Result()
 
-	return pong == "PONG", err
+	return rdb, err
 }
 
-func Set(key string, value string, expiredDate time.Time) error {
+func Set(rdb *redis.Client, key string, value string, expiredDate time.Time) error {
 	var expiredTime time.Duration
 
 	zeroTime := time.Time{}
@@ -38,7 +36,7 @@ func Set(key string, value string, expiredDate time.Time) error {
 	return err
 }
 
-func Get(key string) (string, error) {
+func Get(rdb *redis.Client, key string) (string, error) {
 	result, err := rdb.Get(ctx, key).Result()
 
 	if err != nil {

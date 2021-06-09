@@ -6,9 +6,9 @@ import (
 )
 
 func main() {
-	connectStorages()
+	conn, rds := connectStorages()
 
-	generateHandlers()
+	generateHandlers(conn, rds)
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

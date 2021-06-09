@@ -3,6 +3,7 @@ package session
 import (
 	"crypto/rand"
 	"fmt"
+	"github.com/go-redis/redis/v8"
 	"go-site/constants"
 	"go-site/redis_api"
 	"log"
@@ -32,22 +33,22 @@ func GenerateCSRFToken() string {
 	return fmt.Sprintf("%x", token)
 }
 
-func GetCSRFBySessionId(sessionId string) (string, error) {
-	CSRFToken, err := redis_api.Get(sessionId)
+func GetCSRFBySessionId(rds *redis.Client, sessionId string) (string, error) {
+	CSRFToken, err := redis_api.Get(rds, sessionId)
 	return CSRFToken, err
 }
 
-func CheckSessionId(writer http.ResponseWriter, request *http.Request) (string, string, error) {
+func CheckSessionId(writer http.ResponseWriter, request *http.Request, rds *redis.Client) (string, string, error) {
 	{ // check cookie
 		sessionIdCookie, err := request.Cookie("SessionId")
 		if err == nil {
-			CSRFToken, err := GetCSRFBySessionId(sessionIdCookie.Value)
+			CSRFToken, err := GetCSRFBySessionId(rds, sessionIdCookie.Value)
 			return sessionIdCookie.Value, CSRFToken, err
 		}
 		sessionId := GenerateSessionId()
 		CSRFToken := GenerateCSRFToken()
 		expireTime := time.Now().Add(constants.SessionIdExpireTime)
-		err = redis_api.SetSession(sessionId, CSRFToken, expireTime)
+		err = redis_api.SetSession(rds, sessionId, CSRFToken, expireTime)
 
 		AddSessionIdCookie(sessionId, expireTime, writer)
 

@@ -3,9 +3,9 @@ package handlers
 import (
 	"encoding/json"
 	"github.com/jackc/pgx/v4"
+	"go-site/session"
 	"go-site/storage"
 	"go-site/structs"
-	"go-site/verify_utils"
 	"net/http"
 )
 
@@ -21,10 +21,10 @@ func DoRegistration(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	defer SendJson(writer, jsonAnswer)
+	defer func() { SendJson(writer, jsonAnswer) }()
 
 	{ // CSRF check
-		_, CSRFToken, err = verify_utils.CheckSessionId(writer, request)
+		_, CSRFToken, err = session.CheckSessionId(writer, request)
 
 		if err != nil {
 			jsonAnswer, _ = json.Marshal(structs.Answer{Err: "no-csrf"})
@@ -44,7 +44,7 @@ func DoRegistration(writer http.ResponseWriter, request *http.Request) {
 		email = request.FormValue("email")
 		password = request.FormValue("password")
 
-		passwordHashed, err = verify_utils.HashPassword(password)
+		passwordHashed, err = storage.HashPassword(password)
 
 		if err != nil {
 			jsonAnswer, _ = json.Marshal(structs.Answer{Err: "other-error"})
@@ -55,7 +55,7 @@ func DoRegistration(writer http.ResponseWriter, request *http.Request) {
 	{ // email exist check
 		userExist, err = storage.CheckEmailExistInDB(email)
 
-		if userExist || err != pgx.ErrNoRows {
+		if err != nil && (userExist || err != pgx.ErrNoRows) {
 			jsonAnswer, _ = json.Marshal(structs.Answer{Err: "email-exist"})
 			return
 		}

@@ -3,9 +3,10 @@ package handlers
 import (
 	"encoding/json"
 	"go-site/constants"
+	"go-site/jwt"
+	"go-site/session"
 	"go-site/storage"
 	"go-site/structs"
-	"go-site/verify_utils"
 	"net/http"
 )
 
@@ -24,10 +25,10 @@ func DoEditPassword(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	defer SendJson(writer, jsonAnswer)
+	defer func() { SendJson(writer, jsonAnswer) }()
 
 	{ // CSRF check
-		_, CSRFToken, err = verify_utils.CheckSessionId(writer, request)
+		_, CSRFToken, err = session.CheckSessionId(writer, request)
 
 		if err != nil {
 			jsonAnswer, _ = json.Marshal(structs.Answer{Err: "no-csrf"})
@@ -36,7 +37,7 @@ func DoEditPassword(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	{ // check user authed
-		userId, err = verify_utils.CheckIfUserAuth(writer, request)
+		userId, err = jwt.CheckIfUserAuth(writer, request)
 
 		if err != nil {
 			http.Error(writer, "У вас нет доступа", http.StatusForbidden)
@@ -66,7 +67,7 @@ func DoEditPassword(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	{ // check old password
-		correct, err = verify_utils.CheckPassword(oldPassword, user.Password)
+		correct, err = storage.CheckPassword(oldPassword, user.Password)
 		if err != nil || !correct {
 			jsonAnswer, _ = json.Marshal(structs.Answer{Err: "wrong-password"})
 			return
@@ -76,7 +77,7 @@ func DoEditPassword(writer http.ResponseWriter, request *http.Request) {
 	{ // set new data
 		user.ImagePath = user.ImagePath[len(constants.UserImages):]
 
-		user.Password, err = verify_utils.HashPassword(newPassword)
+		user.Password, err = storage.HashPassword(newPassword)
 
 		if err != nil {
 			jsonAnswer, _ = json.Marshal(structs.Answer{Err: "other-error"})

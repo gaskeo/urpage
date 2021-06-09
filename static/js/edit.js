@@ -134,7 +134,8 @@ function sendMain() {
         setError("empty-input")
         return false
     }
-    data.append("id", document.getElementById("id").value);
+
+    data.append("csrf", document.getElementById("csrf").value)
     data.append("username", document.getElementById("username").value);
     data.append("image", photo);
 
@@ -151,7 +152,7 @@ function sendLinks() {
     let links = ""
     let data = new FormData();
 
-    data.append("id", document.getElementById("id").value);
+    data.append("csrf", document.getElementById("csrf").value)
 
     linkInputs = document.getElementsByClassName("form-input-link");
 
@@ -187,7 +188,7 @@ function sendPassword() {
         return false
     }
 
-    data.append("id", document.getElementById("id").value);
+    data.append("csrf", document.getElementById("csrf").value)
     data.append("old", document.getElementById("old-password").value);
     data.append("new", document.getElementById("password").value);
 

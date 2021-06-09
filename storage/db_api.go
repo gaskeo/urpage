@@ -7,7 +7,6 @@ import (
 	"go-site/errs"
 	"go-site/structs"
 	"go-site/utils"
-	"go-site/verify_utils"
 	"log"
 	"strings"
 	"time"
@@ -116,7 +115,7 @@ func GetUserByEmailAndPassword(email string, password string) (structs.User, err
 	}
 
 	{
-		PasswordsCompare, err := verify_utils.CheckPassword(password, user.Password)
+		PasswordsCompare, err := CheckPassword(password, user.Password)
 
 		if err != nil || !PasswordsCompare {
 			return structs.User{}, errs.ErrWrongPassword

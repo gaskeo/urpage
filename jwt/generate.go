@@ -2,34 +2,30 @@ package jwt
 
 import (
 	"github.com/dgrijalva/jwt-go"
-	"go-site/errs"
+	"go-site/constants"
 	"go-site/structs"
 	"time"
 )
 
-const minSecretKeySize = 32
-
 var SecretKey = GenerateKey()
 
-func GenerateJWTToken(id int, expiredAt time.Time, secretKey string) (structs.Payload, string, error) {
+func GenerateJWTToken(id int) (structs.Payload, string, time.Time, error) {
+	tokenExpireDate := time.Now().Add(constants.JWTExpireTime)
+
 	payloadId, err := GenerateId()
 
 	if err != nil {
-		return structs.Payload{}, "", err
+		return structs.Payload{}, "", time.Time{}, err
 	}
 
 	payload := structs.Payload{UserId: id,
 		PayloadId: payloadId,
 		IssuedAt:  time.Now(),
-		ExpiredAt: expiredAt}
-
-	if len(secretKey) < minSecretKeySize {
-		return structs.Payload{}, "", errs.ErrSmallSecretKey
-	}
+		ExpiredAt: tokenExpireDate}
 
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, &payload)
 
-	JWTString, err := jwtToken.SignedString([]byte(secretKey))
+	JWTString, err := jwtToken.SignedString([]byte(SecretKey))
 
-	return payload, JWTString, err
+	return payload, JWTString, tokenExpireDate, err
 }

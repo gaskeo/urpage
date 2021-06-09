@@ -3,10 +3,11 @@ package handlers
 import (
 	"encoding/json"
 	"go-site/constants"
+	"go-site/jwt"
+	"go-site/session"
 	"go-site/storage"
 	"go-site/structs"
 	"go-site/utils"
-	"go-site/verify_utils"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -30,10 +31,10 @@ func DoEditMain(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	defer SendJson(writer, jsonAnswer)
+	defer func() { SendJson(writer, jsonAnswer) }()
 
 	{ // CSRF check
-		_, CSRFToken, err = verify_utils.CheckSessionId(writer, request)
+		_, CSRFToken, err = session.CheckSessionId(writer, request)
 
 		if err != nil {
 			jsonAnswer, _ = json.Marshal(structs.Answer{Err: "no-csrf"})
@@ -42,7 +43,7 @@ func DoEditMain(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	{ // check user authed
-		userId, err = verify_utils.CheckIfUserAuth(writer, request)
+		userId, err = jwt.CheckIfUserAuth(writer, request)
 
 		if err != nil {
 			http.Error(writer, "У вас нет доступа", http.StatusForbidden)

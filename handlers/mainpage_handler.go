@@ -1,9 +1,10 @@
 package handlers
 
 import (
+	"go-site/jwt"
+	"go-site/session"
 	"go-site/storage"
 	"go-site/structs"
-	"go-site/verify_utils"
 	"html/template"
 	"net/http"
 )
@@ -19,7 +20,7 @@ func MainPageHandler(writer http.ResponseWriter, request *http.Request) {
 	var err error
 
 	{ // check csrf
-		_, CSRFToken, err = verify_utils.CheckSessionId(writer, request)
+		_, CSRFToken, err = session.CheckSessionId(writer, request)
 		if err != nil {
 			http.Error(writer, "что-то пошло не так...", http.StatusInternalServerError)
 			return
@@ -27,7 +28,7 @@ func MainPageHandler(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	{ // user auth check
-		userId, err = verify_utils.CheckIfUserAuth(writer, request)
+		userId, err = jwt.CheckIfUserAuth(writer, request)
 
 		if err != nil {
 			temp = "templates/index_not_auth.html"

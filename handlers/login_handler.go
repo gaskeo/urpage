@@ -1,8 +1,9 @@
 package handlers
 
 import (
+	"go-site/jwt"
+	"go-site/session"
 	"go-site/structs"
-	"go-site/verify_utils"
 	"html/template"
 	"log"
 	"net/http"
@@ -16,7 +17,7 @@ func LoginHandler(writer http.ResponseWriter, request *http.Request) {
 	var err error
 
 	{ // check csrf
-		_, CSRFToken, err = verify_utils.CheckSessionId(writer, request)
+		_, CSRFToken, err = session.CheckSessionId(writer, request)
 		if err != nil {
 			http.Error(writer, "что-то пошло не так...", http.StatusInternalServerError)
 			return
@@ -24,7 +25,7 @@ func LoginHandler(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	{ // check user authed
-		_, err = verify_utils.CheckIfUserAuth(writer, request)
+		_, err = jwt.CheckIfUserAuth(writer, request)
 
 		if err == nil {
 			http.Redirect(writer, request, "/", http.StatusSeeOther)

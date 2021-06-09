@@ -6,9 +6,10 @@ import (
 	"go-site/constants"
 	"go-site/errs"
 	"go-site/jwt"
+	"go-site/redis_api"
+	"go-site/session"
 	"go-site/storage"
 	"go-site/structs"
-	"go-site/verify_utils"
 	"net/http"
 	"time"
 )
@@ -29,10 +30,10 @@ func DoLogin(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	defer SendJson(writer, jsonAnswer)
+	defer func() { SendJson(writer, jsonAnswer) }()
 
 	{ // CSRF check
-		_, CSRFToken, err = verify_utils.CheckSessionId(writer, request)
+		_, CSRFToken, err = session.CheckSessionId(writer, request)
 
 		if err != nil {
 			jsonAnswer, _ = json.Marshal(structs.Answer{Err: "no-csrf"})
@@ -69,7 +70,7 @@ func DoLogin(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	{ // work with JWT
-		token, payload, tokenExpireDate, err = verify_utils.GenerateJWTToken(user.UserId)
+		payload, token, tokenExpireDate, err = jwt.GenerateJWTToken(user.UserId)
 
 		if err != nil {
 			jsonAnswer, err = json.Marshal(structs.Answer{Err: "other-error"})
@@ -85,17 +86,17 @@ func DoLogin(writer http.ResponseWriter, request *http.Request) {
 			return
 		}
 
-		verify_utils.AddJWTCookie(token, tokenExpireDate, writer)
-		verify_utils.AddRefreshTokenCookie(refreshToken, payload.PayloadId, payload.UserId, refreshExpireDate, writer)
+		jwt.AddJWTCookie(token, tokenExpireDate, writer)
+		jwt.AddRefreshTokenCookie(refreshToken, payload.PayloadId, payload.UserId, refreshExpireDate, writer)
 
-		err = verify_utils.AddJWSTokenInRedis(payload, token, tokenExpireDate)
+		err = redis_api.SetJWSToken(payload, token, tokenExpireDate)
 
 		if err != nil {
 			jsonAnswer, err = json.Marshal(structs.Answer{Err: "other-error"})
 			return
 		}
 
-		err = verify_utils.AddRefreshTokenInRedis(payload, refreshToken, refreshExpireDate)
+		err = redis_api.SetRefreshToken(payload, refreshToken, refreshExpireDate)
 
 		if err != nil {
 			jsonAnswer, err = json.Marshal(structs.Answer{Err: "other-error"})

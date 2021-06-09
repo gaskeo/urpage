@@ -9,10 +9,14 @@ import (
 )
 
 func MainPageHandler(writer http.ResponseWriter, request *http.Request) {
-	var temp, CSRFToken string
 	var userId int
-	var err error
+	var temp, CSRFToken string
+
+	var t *template.Template
+
 	var user structs.User
+
+	var err error
 
 	{ // check csrf
 		_, CSRFToken, err = verify_utils.CheckSessionId(writer, request)
@@ -40,7 +44,7 @@ func MainPageHandler(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	{ // generate template
-		t, err := template.ParseFiles(temp)
+		t, err = template.ParseFiles(temp)
 
 		if err != nil {
 			http.Error(writer, "что-то пошло не так...", http.StatusInternalServerError)

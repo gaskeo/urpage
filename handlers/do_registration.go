@@ -11,17 +11,17 @@ import (
 
 func DoRegistration(writer http.ResponseWriter, request *http.Request) {
 	var username, email, password, passwordHashed, CSRFToken, CSRFTokenForm string
-	var err error
+	var userExist bool
+
 	var jsonAnswer []byte
+
+	var err error
 
 	if request.Method != "POST" {
 		return
 	}
 
-	defer func() {
-		writer.Header().Set("Content-Type", "application/json")
-		_, _ = writer.Write(jsonAnswer)
-	}()
+	defer SendJson(writer, jsonAnswer)
 
 	{ // CSRF check
 		_, CSRFToken, err = verify_utils.CheckSessionId(writer, request)
@@ -53,7 +53,7 @@ func DoRegistration(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	{ // email exist check
-		userExist, err := storage.CheckEmailExistInDB(email)
+		userExist, err = storage.CheckEmailExistInDB(email)
 
 		if userExist || err != pgx.ErrNoRows {
 			jsonAnswer, _ = json.Marshal(structs.Answer{Err: "email-exist"})

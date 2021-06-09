@@ -10,6 +10,9 @@ import (
 
 func LoginHandler(writer http.ResponseWriter, request *http.Request) {
 	var CSRFToken string
+
+	var t *template.Template
+
 	var err error
 
 	{ // check csrf
@@ -21,7 +24,7 @@ func LoginHandler(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	{ // check user authed
-		_, err := verify_utils.CheckIfUserAuth(writer, request)
+		_, err = verify_utils.CheckIfUserAuth(writer, request)
 
 		if err == nil {
 			http.Redirect(writer, request, "/", http.StatusSeeOther)
@@ -30,7 +33,7 @@ func LoginHandler(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	{ // generate login page
-		t, err := template.ParseFiles("templates/login.html")
+		t, err = template.ParseFiles("templates/login.html")
 
 		if err != nil {
 			log.Println(err)

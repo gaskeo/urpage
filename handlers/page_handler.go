@@ -11,12 +11,19 @@ import (
 )
 
 func PageHandler(writer http.ResponseWriter, request *http.Request) {
+	var userId, authUserId int
+	var userIdStr string
+
+	var t *template.Template
+
+	var templateData structs.TemplateData
 	var user structs.User
 	var authUser structs.User
-	var templateData structs.TemplateData
+
+	var err error
 
 	{ // CSRF check
-		_, _, err := verify_utils.CheckSessionId(writer, request)
+		_, _, err = verify_utils.CheckSessionId(writer, request)
 
 		if err != nil {
 			http.Error(writer, "что-то пошло не так...", http.StatusInternalServerError)
@@ -25,14 +32,14 @@ func PageHandler(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	{ // get user by user id in path
-		userIdStr := request.URL.Path[len("/id/"):]
+		userIdStr = request.URL.Path[len("/id/"):]
 
 		if len(userIdStr) == 0 {
 			http.Redirect(writer, request, "/", http.StatusSeeOther)
 			return
 		}
 
-		userId, err := strconv.Atoi(userIdStr)
+		userId, err = strconv.Atoi(userIdStr)
 
 		if err != nil {
 			log.Println(err)
@@ -47,7 +54,7 @@ func PageHandler(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	{ // user auth check
-		authUserId, err := verify_utils.CheckIfUserAuth(writer, request)
+		authUserId, err = verify_utils.CheckIfUserAuth(writer, request)
 
 		authUser, err = storage.GetUserViaId(authUserId)
 
@@ -57,7 +64,7 @@ func PageHandler(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	{ // generate template
-		t, err := template.ParseFiles("templates/page.html")
+		t, err = template.ParseFiles("templates/page.html")
 
 		if err != nil {
 			ErrorHandler(writer, request, http.StatusNotFound)

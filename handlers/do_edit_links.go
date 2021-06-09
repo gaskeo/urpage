@@ -12,25 +12,23 @@ import (
 )
 
 func DoEditLinks(writer http.ResponseWriter, request *http.Request) {
-	var user structs.User
 	var userId int
 	var links, CSRFToken, CSRFTokenForm string
-	var err error
 
+	var linksLst []string
 	var jsonAnswer []byte
+
+	var user structs.User
+
+	var err error
 
 	if request.Method != "POST" {
 		return
 	}
 
-	defer func() {
-		if len(jsonAnswer) > 0 {
-			writer.Header().Set("Content-Type", "application/json")
-			_, _ = writer.Write(jsonAnswer)
-		}
-	}()
+	defer SendJson(writer, jsonAnswer)
 
-	{ // CSRF check
+	{ // check is session has CSRF
 		_, CSRFToken, err = verify_utils.CheckSessionId(writer, request)
 
 		if err != nil {
@@ -48,7 +46,7 @@ func DoEditLinks(writer http.ResponseWriter, request *http.Request) {
 		}
 	}
 
-	{ // work with form
+	{ // work with form and check CSRF
 		CSRFTokenForm = request.FormValue("csrf")
 
 		if CSRFToken != CSRFTokenForm {
@@ -71,7 +69,7 @@ func DoEditLinks(writer http.ResponseWriter, request *http.Request) {
 	{ // set new data
 		user.ImagePath = user.ImagePath[len(constants.UserImages):]
 
-		linksLst := strings.Split(links, " ")
+		linksLst = strings.Split(links, " ")
 
 		user.Links, err = utils.CreateIconLinkPairs(linksLst)
 

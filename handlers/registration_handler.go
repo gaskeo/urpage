@@ -10,6 +10,9 @@ import (
 
 func RegistrationHandler(writer http.ResponseWriter, request *http.Request) {
 	var CSRFToken string
+
+	var t *template.Template
+
 	var err error
 
 	{ // check csrf
@@ -21,7 +24,7 @@ func RegistrationHandler(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	{ // user auth check
-		_, err := verify_utils.CheckIfUserAuth(writer, request)
+		_, err = verify_utils.CheckIfUserAuth(writer, request)
 
 		if err == nil {
 			http.Redirect(writer, request, "/", http.StatusSeeOther)
@@ -30,7 +33,7 @@ func RegistrationHandler(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	{ // generate template
-		t, err := template.ParseFiles("templates/registration.html")
+		t, err = template.ParseFiles("templates/registration.html")
 
 		if err != nil {
 			log.Println(err)

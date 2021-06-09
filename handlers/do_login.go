@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/jackc/pgx/v4"
 	"go-site/constants"
 	"go-site/errs"
@@ -11,22 +10,26 @@ import (
 	"go-site/structs"
 	"go-site/verify_utils"
 	"net/http"
+	"time"
 )
 
 func DoLogin(writer http.ResponseWriter, request *http.Request) {
-	var user structs.User
-	var err error
-	var CSRFToken, CSRFTokenForm string
+	var email, password, token, CSRFToken, CSRFTokenForm, refreshToken string
+
 	var jsonAnswer []byte
+
+	var tokenExpireDate, refreshExpireDate time.Time
+
+	var user structs.User
+	var payload structs.Payload
+
+	var err error
 
 	if request.Method != "POST" {
 		return
 	}
 
-	defer func() {
-		writer.Header().Set("Content-Type", "application/json")
-		_, _ = writer.Write(jsonAnswer)
-	}()
+	defer SendJson(writer, jsonAnswer)
 
 	{ // CSRF check
 		_, CSRFToken, err = verify_utils.CheckSessionId(writer, request)
@@ -45,13 +48,12 @@ func DoLogin(writer http.ResponseWriter, request *http.Request) {
 			return
 		}
 
-		email := request.FormValue("email")
-		password := request.FormValue("password")
+		email = request.FormValue("email")
+		password = request.FormValue("password")
 
 		user, err = storage.GetUserByEmailAndPassword(email, password)
 
 		if err != nil {
-			fmt.Println(err)
 			if err == errs.ErrWrongPassword {
 				jsonAnswer, _ = json.Marshal(structs.Answer{Err: "wrong-password"})
 				return
@@ -67,16 +69,16 @@ func DoLogin(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	{ // work with JWT
-		token, payload, tokenExpireDate, err := verify_utils.GenerateJWTToken(user.UserId)
+		token, payload, tokenExpireDate, err = verify_utils.GenerateJWTToken(user.UserId)
 
 		if err != nil {
 			jsonAnswer, err = json.Marshal(structs.Answer{Err: "other-error"})
 			return
 		}
 
-		refreshExpireDate := tokenExpireDate.Add(constants.RefreshTokenExpireTime)
+		refreshExpireDate = tokenExpireDate.Add(constants.RefreshTokenExpireTime)
 
-		refreshToken, err := jwt.GenerateRefreshToken()
+		refreshToken, err = jwt.GenerateRefreshToken()
 
 		if err != nil {
 			jsonAnswer, err = json.Marshal(structs.Answer{Err: "other-error"})

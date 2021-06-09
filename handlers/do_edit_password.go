@@ -10,23 +10,21 @@ import (
 )
 
 func DoEditPassword(writer http.ResponseWriter, request *http.Request) {
-	var user structs.User
 	var userId int
 	var oldPassword, newPassword, CSRFToken, CSRFTokenForm string
-	var err error
+	var correct bool
 
 	var jsonAnswer []byte
+
+	var user structs.User
+
+	var err error
 
 	if request.Method != "POST" {
 		return
 	}
 
-	defer func() {
-		if len(jsonAnswer) > 0 {
-			writer.Header().Set("Content-Type", "application/json")
-			_, _ = writer.Write(jsonAnswer)
-		}
-	}()
+	defer SendJson(writer, jsonAnswer)
 
 	{ // CSRF check
 		_, CSRFToken, err = verify_utils.CheckSessionId(writer, request)
@@ -68,7 +66,7 @@ func DoEditPassword(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	{ // check old password
-		correct, err := verify_utils.CheckPassword(oldPassword, user.Password)
+		correct, err = verify_utils.CheckPassword(oldPassword, user.Password)
 		if err != nil || !correct {
 			jsonAnswer, _ = json.Marshal(structs.Answer{Err: "wrong-password"})
 			return

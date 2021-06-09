@@ -16,22 +16,21 @@ import (
 func DoEditMain(writer http.ResponseWriter, request *http.Request) {
 	var userId int
 	var username, imageName, CSRFToken, CSRFTokenForm string
-	var user structs.User
-	var imageForm multipart.File
-	var err error
 
 	var jsonAnswer []byte
+
+	var newImage *os.File
+
+	var user structs.User
+	var imageForm multipart.File
+
+	var err error
 
 	if request.Method != "POST" {
 		return
 	}
 
-	defer func() {
-		if len(jsonAnswer) > 0 {
-			writer.Header().Set("Content-Type", "application/json")
-			_, _ = writer.Write(jsonAnswer)
-		}
-	}()
+	defer SendJson(writer, jsonAnswer)
 
 	{ // CSRF check
 		_, CSRFToken, err = verify_utils.CheckSessionId(writer, request)
@@ -64,7 +63,7 @@ func DoEditMain(writer http.ResponseWriter, request *http.Request) {
 		// check format of file
 		if err == nil {
 			defer func() {
-				err := imageForm.Close()
+				err = imageForm.Close()
 				if err != nil {
 					jsonAnswer, _ = json.Marshal(structs.Answer{Err: "other-error"})
 					return
@@ -84,8 +83,8 @@ func DoEditMain(writer http.ResponseWriter, request *http.Request) {
 				jsonAnswer, _ = json.Marshal(structs.Answer{Err: "other-error"})
 				return
 			}
-
-			newImage, err := os.OpenFile(constants.UserImages[1:]+imageName+".jpeg", os.O_WRONLY, 0644)
+			// todo check image type
+			newImage, err = os.OpenFile(constants.UserImages[1:]+imageName+".jpeg", os.O_WRONLY, 0644)
 
 			if err != nil {
 				jsonAnswer, _ = json.Marshal(structs.Answer{Err: "other-error"})

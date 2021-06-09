@@ -5,14 +5,16 @@ import (
 	"fmt"
 	"github.com/jackc/pgx/v4"
 	"go-site/constants"
+	"go-site/errs"
 	"go-site/jwt"
 	"go-site/storage"
+	"go-site/structs"
 	"go-site/verify_utils"
 	"net/http"
 )
 
 func DoLogin(writer http.ResponseWriter, request *http.Request) {
-	var user storage.User
+	var user structs.User
 	var err error
 	var CSRFToken, CSRFTokenForm string
 	var jsonAnswer []byte
@@ -30,7 +32,7 @@ func DoLogin(writer http.ResponseWriter, request *http.Request) {
 		_, CSRFToken, err = verify_utils.CheckSessionId(writer, request)
 
 		if err != nil {
-			jsonAnswer, _ = json.Marshal(Answer{Err: "no-csrf"})
+			jsonAnswer, _ = json.Marshal(structs.Answer{Err: "no-csrf"})
 			return
 		}
 	}
@@ -39,7 +41,7 @@ func DoLogin(writer http.ResponseWriter, request *http.Request) {
 		CSRFTokenForm = request.FormValue("csrf")
 
 		if CSRFToken != CSRFTokenForm {
-			jsonAnswer, _ = json.Marshal(Answer{Err: "no-csrf"})
+			jsonAnswer, _ = json.Marshal(structs.Answer{Err: "no-csrf"})
 			return
 		}
 
@@ -50,15 +52,15 @@ func DoLogin(writer http.ResponseWriter, request *http.Request) {
 
 		if err != nil {
 			fmt.Println(err)
-			if err == storage.ErrWrongPassword {
-				jsonAnswer, _ = json.Marshal(Answer{Err: "wrong-password"})
+			if err == errs.ErrWrongPassword {
+				jsonAnswer, _ = json.Marshal(structs.Answer{Err: "wrong-password"})
 				return
 			}
 			if err == pgx.ErrNoRows {
-				jsonAnswer, _ = json.Marshal(Answer{Err: "user-not-exist"})
+				jsonAnswer, _ = json.Marshal(structs.Answer{Err: "user-not-exist"})
 				return
 			} else {
-				jsonAnswer, _ = json.Marshal(Answer{Err: "other-error"})
+				jsonAnswer, _ = json.Marshal(structs.Answer{Err: "other-error"})
 				return
 			}
 		}
@@ -68,7 +70,7 @@ func DoLogin(writer http.ResponseWriter, request *http.Request) {
 		token, payload, tokenExpireDate, err := verify_utils.GenerateJWTToken(user.UserId)
 
 		if err != nil {
-			jsonAnswer, err = json.Marshal(Answer{Err: "other-error"})
+			jsonAnswer, err = json.Marshal(structs.Answer{Err: "other-error"})
 			return
 		}
 
@@ -77,7 +79,7 @@ func DoLogin(writer http.ResponseWriter, request *http.Request) {
 		refreshToken, err := jwt.GenerateRefreshToken()
 
 		if err != nil {
-			jsonAnswer, err = json.Marshal(Answer{Err: "other-error"})
+			jsonAnswer, err = json.Marshal(structs.Answer{Err: "other-error"})
 			return
 		}
 
@@ -87,17 +89,17 @@ func DoLogin(writer http.ResponseWriter, request *http.Request) {
 		err = verify_utils.AddJWSTokenInRedis(payload, token, tokenExpireDate)
 
 		if err != nil {
-			jsonAnswer, err = json.Marshal(Answer{Err: "other-error"})
+			jsonAnswer, err = json.Marshal(structs.Answer{Err: "other-error"})
 			return
 		}
 
 		err = verify_utils.AddRefreshTokenInRedis(payload, refreshToken, refreshExpireDate)
 
 		if err != nil {
-			jsonAnswer, err = json.Marshal(Answer{Err: "other-error"})
+			jsonAnswer, err = json.Marshal(structs.Answer{Err: "other-error"})
 			return
 		}
 	}
 
-	jsonAnswer, err = json.Marshal(Answer{Err: ""})
+	jsonAnswer, err = json.Marshal(structs.Answer{Err: ""})
 }

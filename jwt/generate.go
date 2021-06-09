@@ -1,8 +1,9 @@
 package jwt
 
 import (
-	"errors"
 	"github.com/dgrijalva/jwt-go"
+	"go-site/errs"
+	"go-site/structs"
 	"time"
 )
 
@@ -10,41 +11,20 @@ const minSecretKeySize = 32
 
 var SecretKey = GenerateKey()
 
-var ErrExpiredToken = errors.New("token has expired")
-var ErrSmallSecretKey = errors.New("small secret key")
-var ErrInvalidToken = errors.New("invalid token")
-var ErrInvalidRefreshToken = errors.New("invalid refresh token")
-
-type Payload struct {
-	UserId    int
-	PayloadId int64
-	IssuedAt  time.Time
-	ExpiredAt time.Time
-}
-
-func (payload *Payload) Valid() error {
-
-	if time.Now().After(payload.ExpiredAt) {
-		return ErrExpiredToken
-	}
-
-	return nil
-}
-
-func GenerateJWTToken(id int, expiredAt time.Time, secretKey string) (Payload, string, error) {
+func GenerateJWTToken(id int, expiredAt time.Time, secretKey string) (structs.Payload, string, error) {
 	payloadId, err := GenerateId()
 
 	if err != nil {
-		return Payload{}, "", err
+		return structs.Payload{}, "", err
 	}
 
-	payload := Payload{id,
-		payloadId,
-		time.Now(),
-		expiredAt}
+	payload := structs.Payload{UserId: id,
+		PayloadId: payloadId,
+		IssuedAt:  time.Now(),
+		ExpiredAt: expiredAt}
 
 	if len(secretKey) < minSecretKeySize {
-		return Payload{}, "", ErrSmallSecretKey
+		return structs.Payload{}, "", errs.ErrSmallSecretKey
 	}
 
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, &payload)

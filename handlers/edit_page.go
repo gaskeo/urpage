@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"go-site/constants"
 	"go-site/storage"
+	"go-site/structs"
 	"go-site/verify_utils"
 	"html/template"
 	"log"
@@ -13,7 +13,7 @@ import (
 func EditHandler(writer http.ResponseWriter, request *http.Request) {
 	var CSRFToken string
 	var err error
-	var authUser storage.User
+	var authUser structs.User
 
 	{ // CSRF check
 		_, CSRFToken, err = verify_utils.CheckSessionId(writer, request)
@@ -30,7 +30,7 @@ func EditHandler(writer http.ResponseWriter, request *http.Request) {
 		authUser, err = storage.GetUserViaId(authUserId)
 
 		if err != nil {
-			authUser = storage.User{}
+			authUser = structs.User{}
 		}
 	}
 
@@ -59,7 +59,7 @@ func EditHandler(writer http.ResponseWriter, request *http.Request) {
 			return
 		}
 
-		err = t.Execute(writer, constants.TemplateData{"AuthUser": authUser, "CSRF": CSRFToken})
+		err = t.Execute(writer, structs.TemplateData{"AuthUser": authUser, "CSRF": CSRFToken})
 
 		if err != nil {
 			log.Println(err)

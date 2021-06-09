@@ -27,8 +27,3 @@ var LinksImagesPairs = map[string]string{
 const JWTExpireTime = time.Hour
 const RefreshTokenExpireTime = time.Hour * 730
 const SessionIdExpireTime = time.Hour * 2
-
-type Data interface {
-}
-
-type TemplateData map[string]Data

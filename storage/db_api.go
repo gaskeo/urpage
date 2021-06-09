@@ -4,6 +4,8 @@ import (
 	"context"
 	"github.com/jackc/pgx/v4"
 	"go-site/constants"
+	"go-site/errs"
+	"go-site/structs"
 	"go-site/utils"
 	"go-site/verify_utils"
 	"log"
@@ -21,8 +23,8 @@ func Connect(username string, password string, dbname string) (*pgx.Conn, error)
 	return conn, err
 }
 
-func GetUserViaId(userId int) (User, error) {
-	user := User{}
+func GetUserViaId(userId int) (structs.User, error) {
+	user := structs.User{}
 
 	var imageDB *string
 	var linksDB *string
@@ -41,7 +43,7 @@ func GetUserViaId(userId int) (User, error) {
 
 		if err != nil {
 			log.Println(err)
-			return User{}, err
+			return structs.User{}, err
 		}
 	}
 
@@ -56,7 +58,7 @@ func GetUserViaId(userId int) (User, error) {
 			linksLst := strings.Split(*linksDB, " ")
 			user.Links, err = utils.CreateIconLinkPairs(linksLst)
 			if err != nil {
-				return User{}, err
+				return structs.User{}, err
 			}
 		}
 	}
@@ -91,8 +93,8 @@ func CheckEmailExistInDB(email string) (bool, error) {
 	return emailDB == email, nil
 }
 
-func GetUserByEmailAndPassword(email string, password string) (User, error) {
-	user := User{}
+func GetUserByEmailAndPassword(email string, password string) (structs.User, error) {
+	user := structs.User{}
 
 	var imageDB *string
 	var linksDB *string
@@ -109,7 +111,7 @@ func GetUserByEmailAndPassword(email string, password string) (User, error) {
 			&linksDB)
 
 		if err != nil {
-			return User{}, err
+			return structs.User{}, err
 		}
 	}
 
@@ -117,7 +119,7 @@ func GetUserByEmailAndPassword(email string, password string) (User, error) {
 		PasswordsCompare, err := verify_utils.CheckPassword(password, user.Password)
 
 		if err != nil || !PasswordsCompare {
-			return User{}, ErrWrongPassword
+			return structs.User{}, errs.ErrWrongPassword
 		}
 	}
 
@@ -131,8 +133,9 @@ func GetUserByEmailAndPassword(email string, password string) (User, error) {
 		if linksDB != nil && len(*linksDB) != 0 {
 			linksLst := strings.Split(*linksDB, " ")
 			user.Links, err = utils.CreateIconLinkPairs(linksLst)
+
 			if err != nil {
-				return User{}, err
+				return structs.User{}, err
 			}
 
 		}
@@ -141,7 +144,7 @@ func GetUserByEmailAndPassword(email string, password string) (User, error) {
 	return user, nil
 }
 
-func UpdateUser(user User) error {
+func UpdateUser(user structs.User) error {
 	var userId int
 
 	links := utils.CreateDBLinksFromPairs(user.Links)

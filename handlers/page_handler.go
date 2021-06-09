@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"go-site/storage"
+	"go-site/structs"
 	"go-site/verify_utils"
 	"html/template"
 	"log"
@@ -10,9 +11,9 @@ import (
 )
 
 func PageHandler(writer http.ResponseWriter, request *http.Request) {
-	var user storage.User
-	var authUser storage.User
-	var users storage.SomeUsers
+	var user structs.User
+	var authUser structs.User
+	var templateData structs.TemplateData
 
 	{ // CSRF check
 		_, _, err := verify_utils.CheckSessionId(writer, request)
@@ -51,7 +52,7 @@ func PageHandler(writer http.ResponseWriter, request *http.Request) {
 		authUser, err = storage.GetUserViaId(authUserId)
 
 		if err != nil {
-			authUser = storage.User{}
+			authUser = structs.User{}
 		}
 	}
 
@@ -63,9 +64,9 @@ func PageHandler(writer http.ResponseWriter, request *http.Request) {
 			return
 		}
 
-		users = storage.SomeUsers{"User": user, "AuthUser": authUser}
+		templateData = structs.TemplateData{"User": user, "AuthUser": authUser}
 
-		err = t.Execute(writer, users)
+		err = t.Execute(writer, templateData)
 
 		if err != nil {
 			ErrorHandler(writer, request, http.StatusNotFound)

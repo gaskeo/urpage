@@ -4,13 +4,10 @@ import (
 	"encoding/json"
 	"github.com/jackc/pgx/v4"
 	"go-site/storage"
+	"go-site/structs"
 	"go-site/verify_utils"
 	"net/http"
 )
-
-type Answer struct {
-	Err string
-}
 
 func DoRegistration(writer http.ResponseWriter, request *http.Request) {
 	var username, email, password, passwordHashed, CSRFToken, CSRFTokenForm string
@@ -30,7 +27,7 @@ func DoRegistration(writer http.ResponseWriter, request *http.Request) {
 		_, CSRFToken, err = verify_utils.CheckSessionId(writer, request)
 
 		if err != nil {
-			jsonAnswer, _ = json.Marshal(Answer{Err: "no-csrf"})
+			jsonAnswer, _ = json.Marshal(structs.Answer{Err: "no-csrf"})
 			return
 		}
 	}
@@ -39,7 +36,7 @@ func DoRegistration(writer http.ResponseWriter, request *http.Request) {
 		CSRFTokenForm = request.FormValue("csrf")
 
 		if CSRFToken != CSRFTokenForm {
-			jsonAnswer, _ = json.Marshal(Answer{Err: "no-csrf"})
+			jsonAnswer, _ = json.Marshal(structs.Answer{Err: "no-csrf"})
 			return
 		}
 
@@ -50,7 +47,7 @@ func DoRegistration(writer http.ResponseWriter, request *http.Request) {
 		passwordHashed, err = verify_utils.HashPassword(password)
 
 		if err != nil {
-			jsonAnswer, _ = json.Marshal(Answer{Err: "other-error"})
+			jsonAnswer, _ = json.Marshal(structs.Answer{Err: "other-error"})
 			return
 		}
 	}
@@ -59,7 +56,7 @@ func DoRegistration(writer http.ResponseWriter, request *http.Request) {
 		userExist, err := storage.CheckEmailExistInDB(email)
 
 		if userExist || err != pgx.ErrNoRows {
-			jsonAnswer, _ = json.Marshal(Answer{Err: "email-exist"})
+			jsonAnswer, _ = json.Marshal(structs.Answer{Err: "email-exist"})
 			return
 		}
 	}
@@ -68,10 +65,10 @@ func DoRegistration(writer http.ResponseWriter, request *http.Request) {
 		_, err = storage.AddUser(username, passwordHashed, email, "", "")
 
 		if err != nil {
-			jsonAnswer, _ = json.Marshal(Answer{Err: "other-error"})
+			jsonAnswer, _ = json.Marshal(structs.Answer{Err: "other-error"})
 			return
 		}
 	}
 
-	jsonAnswer, err = json.Marshal(Answer{Err: ""})
+	jsonAnswer, err = json.Marshal(structs.Answer{Err: ""})
 }

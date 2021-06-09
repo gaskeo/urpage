@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"go-site/constants"
 	"go-site/storage"
+	"go-site/structs"
 	"go-site/utils"
 	"go-site/verify_utils"
 	"io"
@@ -15,7 +16,7 @@ import (
 func DoEditMain(writer http.ResponseWriter, request *http.Request) {
 	var userId int
 	var username, imageName, CSRFToken, CSRFTokenForm string
-	var user storage.User
+	var user structs.User
 	var imageForm multipart.File
 	var err error
 
@@ -36,7 +37,7 @@ func DoEditMain(writer http.ResponseWriter, request *http.Request) {
 		_, CSRFToken, err = verify_utils.CheckSessionId(writer, request)
 
 		if err != nil {
-			jsonAnswer, _ = json.Marshal(Answer{Err: "no-csrf"})
+			jsonAnswer, _ = json.Marshal(structs.Answer{Err: "no-csrf"})
 			return
 		}
 	}
@@ -54,7 +55,7 @@ func DoEditMain(writer http.ResponseWriter, request *http.Request) {
 		CSRFTokenForm = request.FormValue("csrf")
 
 		if CSRFToken != CSRFTokenForm {
-			jsonAnswer, _ = json.Marshal(Answer{Err: "no-csrf"})
+			jsonAnswer, _ = json.Marshal(structs.Answer{Err: "no-csrf"})
 			return
 		}
 
@@ -65,7 +66,7 @@ func DoEditMain(writer http.ResponseWriter, request *http.Request) {
 			defer func() {
 				err := imageForm.Close()
 				if err != nil {
-					jsonAnswer, _ = json.Marshal(Answer{Err: "other-error"})
+					jsonAnswer, _ = json.Marshal(structs.Answer{Err: "other-error"})
 					return
 				}
 			}()
@@ -73,21 +74,21 @@ func DoEditMain(writer http.ResponseWriter, request *http.Request) {
 			imageName, err = utils.GenerateImageName()
 
 			if err != nil {
-				jsonAnswer, _ = json.Marshal(Answer{Err: "other-error"})
+				jsonAnswer, _ = json.Marshal(structs.Answer{Err: "other-error"})
 				return
 			}
 
 			_, err = os.Create(constants.UserImages[1:] + imageName + ".jpeg")
 
 			if err != nil {
-				jsonAnswer, _ = json.Marshal(Answer{Err: "other-error"})
+				jsonAnswer, _ = json.Marshal(structs.Answer{Err: "other-error"})
 				return
 			}
 
 			newImage, err := os.OpenFile(constants.UserImages[1:]+imageName+".jpeg", os.O_WRONLY, 0644)
 
 			if err != nil {
-				jsonAnswer, _ = json.Marshal(Answer{Err: "other-error"})
+				jsonAnswer, _ = json.Marshal(structs.Answer{Err: "other-error"})
 				return
 			}
 
@@ -96,7 +97,7 @@ func DoEditMain(writer http.ResponseWriter, request *http.Request) {
 
 				if err != nil {
 
-					jsonAnswer, _ = json.Marshal(Answer{Err: "other-error"})
+					jsonAnswer, _ = json.Marshal(structs.Answer{Err: "other-error"})
 					return
 				}
 			}()
@@ -105,7 +106,7 @@ func DoEditMain(writer http.ResponseWriter, request *http.Request) {
 
 			if err != nil {
 
-				jsonAnswer, _ = json.Marshal(Answer{Err: "other-error"})
+				jsonAnswer, _ = json.Marshal(structs.Answer{Err: "other-error"})
 				return
 			}
 		}
@@ -134,10 +135,10 @@ func DoEditMain(writer http.ResponseWriter, request *http.Request) {
 		err = storage.UpdateUser(user)
 
 		if err != nil {
-			jsonAnswer, _ = json.Marshal(Answer{Err: "other-error"})
+			jsonAnswer, _ = json.Marshal(structs.Answer{Err: "other-error"})
 			return
 		}
 
-		jsonAnswer, _ = json.Marshal(Answer{Err: ""})
+		jsonAnswer, _ = json.Marshal(structs.Answer{Err: ""})
 	}
 }

@@ -2,9 +2,11 @@ package verify_utils
 
 import (
 	"go-site/constants"
+	"go-site/errs"
 	"go-site/jwt"
 	"go-site/redis_api"
 	"go-site/session"
+	"go-site/structs"
 	"golang.org/x/crypto/bcrypt"
 	"log"
 	"net/http"
@@ -20,12 +22,12 @@ func CheckIfUserAuth(writer http.ResponseWriter, request *http.Request) (int, er
 		if err == nil {
 			payload, err := jwt.VerifyToken(JWTToken.Value, jwt.SecretKey)
 
-			if err == jwt.ErrInvalidToken {
+			if err == errs.ErrInvalidToken {
 				log.Println(err)
 				return 0, err
 			}
 
-			if err != jwt.ErrExpiredToken && payload != nil {
+			if err != errs.ErrExpiredToken && payload != nil {
 
 				redisJWTKey := strconv.FormatInt(payload.PayloadId, 10) + strconv.Itoa(payload.UserId) + "JWT"
 				redisJWTValue, err := redis_api.Get(redisJWTKey)
@@ -40,7 +42,7 @@ func CheckIfUserAuth(writer http.ResponseWriter, request *http.Request) (int, er
 
 				} else {
 					log.Println("invalid token")
-					return 0, jwt.ErrInvalidToken
+					return 0, errs.ErrInvalidToken
 				}
 			}
 		}
@@ -80,7 +82,7 @@ func CheckIfUserAuth(writer http.ResponseWriter, request *http.Request) (int, er
 
 		if refreshToken.Value != redisRefreshTokenValue {
 			log.Println("invalid refresh token")
-			return 0, jwt.ErrInvalidRefreshToken
+			return 0, errs.ErrInvalidRefreshToken
 		}
 
 		userId, err := strconv.Atoi(refreshTokenUserId.Value)
@@ -141,13 +143,13 @@ func CheckPassword(password string, hash string) (bool, error) {
 	return true, nil
 }
 
-func GenerateJWTToken(userId int) (string, jwt.Payload, time.Time, error) {
+func GenerateJWTToken(userId int) (string, structs.Payload, time.Time, error) {
 	tokenExpireDate := time.Now().Add(constants.JWTExpireTime)
 
 	payload, token, err := jwt.GenerateJWTToken(userId, tokenExpireDate, jwt.SecretKey)
 
 	if err != nil {
-		return "", jwt.Payload{}, time.Time{}, err
+		return "", structs.Payload{}, time.Time{}, err
 	}
 
 	return token, payload, tokenExpireDate, nil
@@ -212,7 +214,7 @@ func AddRefreshTokenCookie(refreshToken string, tokenId int64, userId int, refre
 	http.SetCookie(writer, &cookieRefreshUserId)
 }
 
-func AddJWSTokenInRedis(payload jwt.Payload, JWTToken string, tokenExpireDate time.Time) error {
+func AddJWSTokenInRedis(payload structs.Payload, JWTToken string, tokenExpireDate time.Time) error {
 	JWTKey := strconv.FormatInt(payload.PayloadId, 10) + strconv.Itoa(payload.UserId) + "JWT"
 
 	err := redis_api.Set(JWTKey, JWTToken, tokenExpireDate)
@@ -224,7 +226,7 @@ func AddJWSTokenInRedis(payload jwt.Payload, JWTToken string, tokenExpireDate ti
 	return nil
 }
 
-func AddRefreshTokenInRedis(payload jwt.Payload, refreshToken string, refreshTokenExpireDate time.Time) error {
+func AddRefreshTokenInRedis(payload structs.Payload, refreshToken string, refreshTokenExpireDate time.Time) error {
 	refreshKey := strconv.FormatInt(payload.PayloadId, 10) + strconv.Itoa(payload.UserId) + "Refresh"
 
 	err := redis_api.Set(refreshKey, refreshToken, refreshTokenExpireDate)

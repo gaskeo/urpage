@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"go-site/constants"
+	"go-site/structs"
 	"go-site/verify_utils"
 	"html/template"
 	"log"
@@ -36,7 +36,7 @@ func RegistrationHandler(writer http.ResponseWriter, request *http.Request) {
 			log.Println(err)
 		}
 
-		err = t.Execute(writer, constants.TemplateData{"CSRF": CSRFToken})
+		err = t.Execute(writer, structs.TemplateData{"CSRF": CSRFToken})
 
 		if err != nil {
 			log.Println(err)

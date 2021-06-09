@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"go-site/constants"
 	"go-site/storage"
+	"go-site/structs"
 	"go-site/verify_utils"
 	"html/template"
 	"net/http"
@@ -12,7 +12,7 @@ func MainPageHandler(writer http.ResponseWriter, request *http.Request) {
 	var temp, CSRFToken string
 	var userId int
 	var err error
-	var user storage.User
+	var user structs.User
 
 	{ // check csrf
 		_, CSRFToken, err = verify_utils.CheckSessionId(writer, request)
@@ -28,13 +28,13 @@ func MainPageHandler(writer http.ResponseWriter, request *http.Request) {
 		if err != nil {
 			temp = "templates/index_not_auth.html"
 
-			user = storage.User{}
+			user = structs.User{}
 		} else {
 			temp = "templates/index_auth.html"
 
 			user, err = storage.GetUserViaId(userId)
 			if err != nil {
-				user = storage.User{}
+				user = structs.User{}
 			}
 		}
 	}
@@ -47,7 +47,7 @@ func MainPageHandler(writer http.ResponseWriter, request *http.Request) {
 			return
 		}
 
-		err = t.Execute(writer, constants.TemplateData{
+		err = t.Execute(writer, structs.TemplateData{
 			"User": user,
 			"CSRF": CSRFToken,
 		})

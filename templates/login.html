@@ -10,22 +10,27 @@
     <script type="text/javascript" src="../static/js/registration_login.js"></script>
 </head>
 <body>
-<div class="form-container">
-    <h1 class="form-header">Вход</h1>
-    <form class="form" onsubmit="return sendLogin()" method="post">
+<div class="data-container">
+    <div class="header">
+        <a href="/" style="text-decoration: none"><span class="arrow"></span><h2 class="logo">На главную</h2></a>
+    </div>
+    <div class="form-container">
+        <h1 class="form-header">Вход</h1>
+        <form class="form" onsubmit="return sendLogin()" method="post">
 
-        <input id="csrf" value="{{ .CSRF }}" style="display: none">
+            <input id="csrf" value="{{ .CSRF }}" style="display: none">
 
-        <label for="email" class="form-label">Имя пользователя или почта</label>
-        <input id="email" name="email" class="form-input" type="email"><br>
+            <label for="email" class="form-label">Имя пользователя или почта</label>
+            <input id="email" name="email" class="form-input" type="email"><br>
 
-        <label for="password" class="form-label">Пароль</label>
-        <input id="password" name="password" class="form-input" type="password"><br>
+            <label for="password" class="form-label">Пароль</label>
+            <input id="password" name="password" class="form-input" type="password"><br>
 
-        <p class="form-error">.</p>
+            <p class="form-error">.</p>
 
-        <input type="submit" class="form-submit" value="Войти">
-    </form>
+            <input type="submit" class="form-submit" value="Войти">
+        </form>
+    </div>
 </div>
 </body>
 </html>

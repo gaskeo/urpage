@@ -10,30 +10,36 @@
     <script type="text/javascript" src="../static/js/registration_login.js"></script>
 </head>
 <body>
-
-<div class="form-container">
-    <h1 class="form-header">Регистрация</h1>
-    <form class="form" onsubmit="return sendRegistration()" method="post">
-
-        <input id="csrf" value="{{ .CSRF }}" style="display: none">
-
-        <label for="username" class="form-label">Имя пользователя</label>
-        <input id="username" name="username" class="form-input" type="text"><br>
-
-        <label for="email" class="form-label">Почта</label>
-        <input id="email" name="email" class="form-input" type="email"><br>
-
-        <label for="password" class="form-label">Пароль</label>
-        <input id="password" name="password" class="form-input" type="password"><br>
-
-        <label for="password-again" class="form-label">Пароль еще раз</label>
-        <input id="password-again" name="password-again" class="form-input" type="password"><br>
-
-        <p class="form-error">.</p>
-
-        <input type="submit" class="form-submit" value="Зарегистрироваться">
-    </form>
+<div class="header-container">
+    <div class="header">
+        <a href="/" style="text-decoration: none"><span class="arrow"></span>
+            <h2 class="logo">На главную</h2></a>
+    </div>
 </div>
+<div class="data-container">
+    <div class="form-container">
+        <h1 class="form-header">Регистрация</h1>
+        <form class="form" onsubmit="return sendRegistration()" method="post">
 
+            <input id="csrf" value="{{ .CSRF }}" style="display: none">
+
+            <label for="username" class="form-label">Имя пользователя</label>
+            <input id="username" name="username" class="form-input" type="text"><br>
+
+            <label for="email" class="form-label">Почта</label>
+            <input id="email" name="email" class="form-input" type="email"><br>
+
+            <label for="password" class="form-label">Пароль</label>
+            <input id="password" name="password" class="form-input" type="password"><br>
+
+            <label for="password-again" class="form-label">Пароль еще раз</label>
+            <input id="password-again" name="password-again" class="form-input" type="password"><br>
+
+            <p class="form-error">.</p>
+
+            <input type="submit" class="form-submit" value="Зарегистрироваться">
+        </form>
+    </div>
+</div>
 </body>
 </html>

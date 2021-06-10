@@ -44,6 +44,13 @@ body {
         margin-right: 10%;
     }
 
+    .header-container {
+        width: 80%;
+
+        margin-left: 10%;
+        margin-right: 10%;
+    }
+
     .button-link {
         font: 0.9em "Arial";
 
@@ -69,6 +76,12 @@ body {
 
 @media screen and (max-width: 1023px) {
     .data-container {
+        width: 90%;
+        padding-left: 5%;
+        padding-right: 5%;
+    }
+
+    .header-container {
         width: 90%;
         padding-left: 5%;
         padding-right: 5%;

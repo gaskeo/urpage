@@ -12,9 +12,14 @@
     <script type="text/javascript" src="../static/js/edit.js"></script>
 
 
-
 </head>
 <body>
+<div class="header-container">
+    <div class="header">
+        <a href="/" style="text-decoration: none"><span class="arrow"></span>
+            <h2 class="logo">На главную</h2></a>
+    </div>
+</div>
 <div class="data-container">
     <div class="tabs">
         <button class="tabs-button active-tab" id="tab-edit-base-info"
@@ -41,7 +46,8 @@
         <div class="form-container form-container-edit-page">
             <h1 class="form-header">Смена основных данных</h1>
 
-            <form class="form" id="page-form-main" method="post" onsubmit="return sendMain()" enctype=multipart/form-data>
+            <form class="form" id="page-form-main" method="post" onsubmit="return sendMain()"
+                  enctype=multipart/form-data>
 
                 <input id="csrf" value="{{ .CSRF }}" style="display: none">
 
@@ -54,7 +60,8 @@
                     <input type="file" id="img-request" style="display: none" onchange="changePreview()">
                 </div>
                 <label for="username" class="form-label">Имя пользователя</label>
-                <input id="username" name="username" class="form-input" type="text" value="{{ .AuthUser.Username }}"><br>
+                <input id="username" name="username" class="form-input" type="text"
+                       value="{{ .AuthUser.Username }}"><br>
 
                 <p class="form-error">.</p>
 
@@ -67,21 +74,26 @@
         <div class="form-container">
             <h1 class="form-header">Редактирование ссылок</h1>
 
-            <form class="page-form" id="page-form-links" method="post" onsubmit="return sendLinks()" enctype=multipart/form-data>
+            <form class="page-form" id="page-form-links" method="post" onsubmit="return sendLinks()"
+                  enctype=multipart/form-data>
 
                 <input id="csrf" value="{{ .CSRF }}" style="display: none">
 
                 {{ range $i, $elem := .AuthUser.Links }}
-                    <div style="display: inline; vertical-align: middle;" id="link-div-{{ $i }}" class="form-link-container">
+                    <div style="display: inline; vertical-align: middle;" id="link-div-{{ $i }}"
+                         class="form-link-container">
 
                         <input id="link-{{ $i }}"
                                name="link" class="form-input form-input-link" type="text" value="{{ index $elem 0 }}"
-                        ><button type="button" id="delete-link-{{ $i }}"
-                                 class="delete-link-button" onclick="deleteLink('link-div-{{ $i }}')">-</button>
+                        >
+                        <button type="button" id="delete-link-{{ $i }}"
+                                class="delete-link-button" onclick="deleteLink('link-div-{{ $i }}')">-
+                        </button>
 
                     </div>
                 {{ end }}
-                <button type="button" id="add-link-button" class="add-link-button" onclick="addLink()">Добавить ссылку</button>
+                <button type="button" id="add-link-button" class="add-link-button" onclick="addLink()">Добавить ссылку
+                </button>
 
                 <p class="form-error">.</p>
 

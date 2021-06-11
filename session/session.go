@@ -58,3 +58,8 @@ func CheckSessionId(writer http.ResponseWriter, request *http.Request, rds *redi
 		return sessionId, CSRFToken, nil
 	}
 }
+
+func DeleteSession(writer http.ResponseWriter, rds *redis.Client, sessionId string) error {
+	DeleteSessionIdCookie(writer)
+	return redis_api.DeleteSession(rds, sessionId)
+}

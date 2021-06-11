@@ -109,6 +109,12 @@
     appearance: none;
 }
 
+.header-links-container {
+    display: inline;
+    float: right;
+
+}
+
 @media screen and (min-width: 1024px) {
     .data-container {
         display: flex;
@@ -137,6 +143,10 @@
 
     .tabs-separator {
         height: 2px;
+    }
+
+    .header-links-container {
+        margin-top: 1.5rem;
     }
 
     .section {
@@ -225,6 +235,10 @@
         display: inline-block;
 
         width: 2px;
+    }
+
+    .header-links-container {
+        margin-top: 2rem;
     }
 
     .form-header {

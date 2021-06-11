@@ -20,6 +20,7 @@ func generateHandlers(conn *pgx.Conn, rds *redis.Client) {
 		handlers.CreateDoEditPassword,
 		handlers.CreateEditHandler,
 		handlers.CreatePageHandler,
+		handlers.CreateDoLogout,
 	}
 
 	fs := http.FileServer(http.Dir("./static"))

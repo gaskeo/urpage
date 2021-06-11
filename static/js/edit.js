@@ -199,3 +199,15 @@ function sendPassword() {
 
     return false
 }
+
+function sendLogout() {
+    let data = new FormData();
+
+    data.append("csrf", document.getElementById("csrf").value)
+
+    fetch("/do/logout", {method: 'post', body: data}).then(function (r) {
+        if (r.status === 200) {
+            location.reload()
+        }
+    })
+}

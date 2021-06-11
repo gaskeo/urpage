@@ -51,3 +51,39 @@ func AddRefreshTokenCookie(refreshToken string, tokenId int64, userId int, refre
 	http.SetCookie(writer, &cookieRefreshId)
 	http.SetCookie(writer, &cookieRefreshUserId)
 }
+
+func DeleteJWTCookie(writer http.ResponseWriter) {
+	http.SetCookie(writer,
+		&http.Cookie{
+			Name:    "JWT",
+			Value:   "",
+			Path:    "/",
+			Expires: time.Now(),
+		})
+}
+
+func DeleteRefreshTokenCookie(writer http.ResponseWriter) {
+	http.SetCookie(writer,
+		&http.Cookie{
+			Name:    "RefreshToken",
+			Value:   "",
+			Path:    "/",
+			Expires: time.Now(),
+		})
+
+	http.SetCookie(writer,
+		&http.Cookie{
+			Name:    "RefreshTokenId",
+			Value:   "",
+			Path:    "/",
+			Expires: time.Now(),
+		})
+
+	http.SetCookie(writer,
+		&http.Cookie{
+			Name:    "RefreshTokenUserId",
+			Value:   "",
+			Path:    "/",
+			Expires: time.Now(),
+		})
+}

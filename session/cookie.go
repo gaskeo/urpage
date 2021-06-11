@@ -17,3 +17,13 @@ func AddSessionIdCookie(sessionId string, expireDate time.Time, writer http.Resp
 
 	http.SetCookie(writer, &cookieSessionId)
 }
+
+func DeleteSessionIdCookie(writer http.ResponseWriter) {
+	http.SetCookie(writer,
+		&http.Cookie{
+			Name:    "SessionId",
+			Value:   "",
+			Path:    "/",
+			Expires: time.Now(),
+		})
+}

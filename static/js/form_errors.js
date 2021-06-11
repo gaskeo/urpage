@@ -6,6 +6,7 @@ const statusTexts = {
     "other-error": "Что-то пошло не так...",
     "empty-input": "Не все поля заполнены",
     "no-csrf": "Соединение потеряно, перезагрузите страницу",
+    "bad-image-error": "недопустимый формат картинки",
     "ok": "Успешно"
 };
 
@@ -17,6 +18,7 @@ const statusTextColors = {
     "other-error": "red",
     "empty-input": "red",
     "no-csrf": "red",
+    "bad-image-error": "red",
     "ok": "black"
 }
 

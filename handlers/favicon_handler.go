@@ -2,4 +2,4 @@ package handlers
 
 import "net/http"
 
-func FaviconHandler(w http.ResponseWriter, r *http.Request) {}
+func FaviconHandler(_ http.ResponseWriter, _ *http.Request) {}

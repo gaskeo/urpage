@@ -12,7 +12,7 @@ import (
 func connectStorages() (*pgx.Conn, *redis.Client) {
 	var (
 		conn *pgx.Conn
-		rds  *redis.Client
+		rdb  *redis.Client
 	)
 	var err error
 
@@ -27,7 +27,7 @@ func connectStorages() (*pgx.Conn, *redis.Client) {
 	}
 
 	{ // connect to redis
-		rds, err = redis_api.Connect(os.Getenv("REDIS_ADDRESS"), os.Getenv("REDIS_PASSWORD"), 0)
+		rdb, err = redis_api.Connect(os.Getenv("REDIS_ADDRESS"), os.Getenv("REDIS_PASSWORD"), 0)
 
 		if err != nil {
 			log.Fatal("redis problem", err)
@@ -36,5 +36,5 @@ func connectStorages() (*pgx.Conn, *redis.Client) {
 		log.Println("connected to redis")
 	}
 
-	return conn, rds
+	return conn, rdb
 }

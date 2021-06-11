@@ -18,12 +18,11 @@ func CreateDoEditLinks(conn *pgx.Conn, rdb *redis.Client) {
 
 	doEditLinks := func(writer http.ResponseWriter, request *http.Request) {
 		var (
-			userId                          int
-			links, CSRFToken, CSRFTokenForm string
-			linksLst                        []string
-			jsonAnswer                      []byte
-			user                            structs.User
-			err                             error
+			userId           int
+			links, CSRFToken string
+			jsonAnswer       []byte
+			user             structs.User
+			err              error
 		)
 
 		if request.Method != "POST" {
@@ -51,7 +50,7 @@ func CreateDoEditLinks(conn *pgx.Conn, rdb *redis.Client) {
 		}
 
 		{ // work with form and check CSRF
-			CSRFTokenForm = request.FormValue("csrf")
+			CSRFTokenForm := request.FormValue("csrf")
 
 			if CSRFToken != CSRFTokenForm {
 				jsonAnswer, _ = json.Marshal(structs.Answer{Err: "no-csrf"})
@@ -73,7 +72,7 @@ func CreateDoEditLinks(conn *pgx.Conn, rdb *redis.Client) {
 		{ // set new data
 			user.ImagePath = user.ImagePath[len(constants.UserImages):]
 
-			linksLst = strings.Split(links, " ")
+			linksLst := strings.Split(links, " ")
 
 			user.Links, err = utils.CreateIconLinkPairs(linksLst)
 

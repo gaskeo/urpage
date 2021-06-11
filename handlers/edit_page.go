@@ -17,11 +17,9 @@ func CreateEditHandler(conn *pgx.Conn, rdb *redis.Client) {
 
 	editHandler := func(writer http.ResponseWriter, request *http.Request) {
 		var (
-			authUserId, requestedId int
-			CSRFToken               string
-			t                       *template.Template
-			authUser                structs.User
-			err                     error
+			CSRFToken string
+			authUser  structs.User
+			err       error
 		)
 
 		{ // CSRF check
@@ -34,7 +32,7 @@ func CreateEditHandler(conn *pgx.Conn, rdb *redis.Client) {
 		}
 
 		{ // user auth check
-			authUserId, err = jwt.CheckIfUserAuth(writer, request, rdb)
+			authUserId, err := jwt.CheckIfUserAuth(writer, request, rdb)
 
 			authUser, err = storage.GetUserViaId(conn, authUserId)
 
@@ -44,7 +42,7 @@ func CreateEditHandler(conn *pgx.Conn, rdb *redis.Client) {
 		}
 
 		{ // check url
-			requestedId, err = strconv.Atoi(request.URL.Path[len("/edit/"):])
+			requestedId, err := strconv.Atoi(request.URL.Path[len("/edit/"):])
 
 			if err != nil {
 				log.Println(err)
@@ -60,7 +58,7 @@ func CreateEditHandler(conn *pgx.Conn, rdb *redis.Client) {
 		}
 
 		{ // generate template
-			t, err = template.ParseFiles("templates/edit_page.html")
+			t, err := template.ParseFiles("templates/edit_page.html")
 			if err != nil {
 				log.Println(err)
 

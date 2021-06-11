@@ -15,7 +15,6 @@ func CreateRegistrationHandler(_ *pgx.Conn, rdb *redis.Client) {
 	registrationHandler := func(writer http.ResponseWriter, request *http.Request) {
 		var (
 			CSRFToken string
-			t         *template.Template
 			err       error
 		)
 
@@ -37,7 +36,7 @@ func CreateRegistrationHandler(_ *pgx.Conn, rdb *redis.Client) {
 		}
 
 		{ // generate template
-			t, err = template.ParseFiles("templates/registration.html")
+			t, err := template.ParseFiles("templates/registration.html")
 
 			if err != nil {
 				log.Println(err)

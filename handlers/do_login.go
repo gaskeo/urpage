@@ -11,19 +11,16 @@ import (
 	"go-site/storage"
 	"go-site/structs"
 	"net/http"
-	"time"
 )
 
 func CreateDoLogin(conn *pgx.Conn, rdb *redis.Client) {
 
 	doLogin := func(writer http.ResponseWriter, request *http.Request) {
 		var (
-			email, password, token, CSRFToken, CSRFTokenForm, refreshToken string
-			jsonAnswer                                                     []byte
-			tokenExpireDate, refreshExpireDate                             time.Time
-			user                                                           structs.User
-			payload                                                        structs.Payload
-			err                                                            error
+			CSRFToken  string
+			jsonAnswer []byte
+			user       structs.User
+			err        error
 		)
 
 		if request.Method != "POST" {
@@ -42,15 +39,15 @@ func CreateDoLogin(conn *pgx.Conn, rdb *redis.Client) {
 		}
 
 		{ // work with form
-			CSRFTokenForm = request.FormValue("csrf")
+			CSRFTokenForm := request.FormValue("csrf")
 
 			if CSRFToken != CSRFTokenForm {
 				jsonAnswer, _ = json.Marshal(structs.Answer{Err: "no-csrf"})
 				return
 			}
 
-			email = request.FormValue("email")
-			password = request.FormValue("password")
+			email := request.FormValue("email")
+			password := request.FormValue("password")
 
 			user, err = storage.GetUserByEmailAndPassword(conn, email, password)
 
@@ -70,14 +67,14 @@ func CreateDoLogin(conn *pgx.Conn, rdb *redis.Client) {
 		}
 
 		{ // work with JWT
-			payload, token, tokenExpireDate, err = jwt.GenerateJWTToken(writer, user.UserId)
+			payload, token, tokenExpireDate, err := jwt.GenerateJWTToken(writer, user.UserId)
 
 			if err != nil {
 				jsonAnswer, err = json.Marshal(structs.Answer{Err: "other-error"})
 				return
 			}
 
-			refreshToken, refreshExpireDate, err = jwt.GenerateRefreshToken(writer, payload)
+			refreshToken, refreshExpireDate, err := jwt.GenerateRefreshToken(writer, payload)
 
 			if err != nil {
 				jsonAnswer, err = json.Marshal(structs.Answer{Err: "other-error"})

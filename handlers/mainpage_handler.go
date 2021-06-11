@@ -15,9 +15,7 @@ func CreateMainPageHandler(conn *pgx.Conn, rdb *redis.Client) {
 
 	mainPageHandler := func(writer http.ResponseWriter, request *http.Request) {
 		var (
-			userId          int
 			temp, CSRFToken string
-			t               *template.Template
 			user            structs.User
 			err             error
 		)
@@ -31,7 +29,7 @@ func CreateMainPageHandler(conn *pgx.Conn, rdb *redis.Client) {
 		}
 
 		{ // user auth check
-			userId, err = jwt.CheckIfUserAuth(writer, request, rdb)
+			userId, err := jwt.CheckIfUserAuth(writer, request, rdb)
 
 			if err != nil {
 				temp = "templates/index_not_auth.html"
@@ -48,7 +46,7 @@ func CreateMainPageHandler(conn *pgx.Conn, rdb *redis.Client) {
 		}
 
 		{ // generate template
-			t, err = template.ParseFiles(temp)
+			t, err := template.ParseFiles(temp)
 
 			if err != nil {
 				http.Error(writer, "что-то пошло не так...", http.StatusInternalServerError)

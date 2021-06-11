@@ -15,12 +15,11 @@ import (
 func CreateDoEditPassword(conn *pgx.Conn, rdb *redis.Client) {
 	doEditPassword := func(writer http.ResponseWriter, request *http.Request) {
 		var (
-			userId                                             int
-			oldPassword, newPassword, CSRFToken, CSRFTokenForm string
-			correct                                            bool
-			jsonAnswer                                         []byte
-			user                                               structs.User
-			err                                                error
+			userId                              int
+			oldPassword, newPassword, CSRFToken string
+			jsonAnswer                          []byte
+			user                                structs.User
+			err                                 error
 		)
 
 		if request.Method != "POST" {
@@ -48,7 +47,7 @@ func CreateDoEditPassword(conn *pgx.Conn, rdb *redis.Client) {
 		}
 
 		{ // work with form
-			CSRFTokenForm = request.FormValue("csrf")
+			CSRFTokenForm := request.FormValue("csrf")
 
 			if CSRFToken != CSRFTokenForm {
 				jsonAnswer, _ = json.Marshal(structs.Answer{Err: "no-csrf"})
@@ -69,7 +68,7 @@ func CreateDoEditPassword(conn *pgx.Conn, rdb *redis.Client) {
 		}
 
 		{ // check old password
-			correct, err = storage.CheckPassword(oldPassword, user.Password)
+			correct, err := storage.CheckPassword(oldPassword, user.Password)
 			if err != nil || !correct {
 				jsonAnswer, _ = json.Marshal(structs.Answer{Err: "wrong-password"})
 				return

@@ -14,10 +14,9 @@ func CreateDoRegistration(conn *pgx.Conn, rdb *redis.Client) {
 
 	doRegistration := func(writer http.ResponseWriter, request *http.Request) {
 		var (
-			username, email, password, passwordHashed, CSRFToken, CSRFTokenForm string
-			userExist                                                           bool
-			jsonAnswer                                                          []byte
-			err                                                                 error
+			username, email, passwordHashed, CSRFToken string
+			jsonAnswer                                 []byte
+			err                                        error
 		)
 
 		if request.Method != "POST" {
@@ -36,7 +35,7 @@ func CreateDoRegistration(conn *pgx.Conn, rdb *redis.Client) {
 		}
 
 		{
-			CSRFTokenForm = request.FormValue("csrf")
+			CSRFTokenForm := request.FormValue("csrf")
 
 			if CSRFToken != CSRFTokenForm {
 				jsonAnswer, _ = json.Marshal(structs.Answer{Err: "no-csrf"})
@@ -45,7 +44,7 @@ func CreateDoRegistration(conn *pgx.Conn, rdb *redis.Client) {
 
 			username = request.FormValue("username")
 			email = request.FormValue("email")
-			password = request.FormValue("password")
+			password := request.FormValue("password")
 
 			passwordHashed, err = storage.HashPassword(password)
 
@@ -56,7 +55,7 @@ func CreateDoRegistration(conn *pgx.Conn, rdb *redis.Client) {
 		}
 
 		{ // email exist check
-			userExist, err = storage.CheckEmailExistInDB(conn, email)
+			userExist, err := storage.CheckEmailExistInDB(conn, email)
 
 			if err != nil && (userExist || err != pgx.ErrNoRows) {
 				jsonAnswer, _ = json.Marshal(structs.Answer{Err: "email-exist"})

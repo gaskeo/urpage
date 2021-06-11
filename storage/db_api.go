@@ -68,7 +68,7 @@ func GetUserViaId(conn *pgx.Conn, userId int) (structs.User, error) {
 }
 
 func AddUser(conn *pgx.Conn, username string, password string, email string, imagePath string, links string) (int, error) {
-	userId := -1
+	var userId int
 
 	err := conn.QueryRow(context.Background(),
 		"INSERT INTO user_info (Username, Password, Email, create_date, image_path, Links)"+

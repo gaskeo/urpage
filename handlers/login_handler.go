@@ -16,7 +16,6 @@ func CreateLoginHandler(_ *pgx.Conn, rdb *redis.Client) {
 	loginHandler := func(writer http.ResponseWriter, request *http.Request) {
 		var (
 			CSRFToken string
-			t         *template.Template
 			err       error
 		)
 
@@ -38,7 +37,7 @@ func CreateLoginHandler(_ *pgx.Conn, rdb *redis.Client) {
 		}
 
 		{ // generate login page
-			t, err = template.ParseFiles("templates/login.html")
+			t, err := template.ParseFiles("templates/login.html")
 
 			if err != nil {
 				log.Println(err)

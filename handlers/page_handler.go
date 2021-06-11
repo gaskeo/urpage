@@ -17,13 +17,9 @@ func CreatePageHandler(conn *pgx.Conn, rdb *redis.Client) {
 
 	pageHandler := func(writer http.ResponseWriter, request *http.Request) {
 		var (
-			userId, authUserId int
-			userIdStr          string
-			t                  *template.Template
-			templateData       structs.TemplateData
-			user               structs.User
-			authUser           structs.User
-			err                error
+			user     structs.User
+			authUser structs.User
+			err      error
 		)
 
 		{ // CSRF check
@@ -36,14 +32,14 @@ func CreatePageHandler(conn *pgx.Conn, rdb *redis.Client) {
 		}
 
 		{ // get user by user id in path
-			userIdStr = request.URL.Path[len("/id/"):]
+			userIdStr := request.URL.Path[len("/id/"):]
 
 			if len(userIdStr) == 0 {
 				http.Redirect(writer, request, "/", http.StatusSeeOther)
 				return
 			}
 
-			userId, err = strconv.Atoi(userIdStr)
+			userId, err := strconv.Atoi(userIdStr)
 
 			if err != nil {
 				log.Println(err)
@@ -58,7 +54,7 @@ func CreatePageHandler(conn *pgx.Conn, rdb *redis.Client) {
 		}
 
 		{ // user auth check
-			authUserId, err = jwt.CheckIfUserAuth(writer, request, rdb)
+			authUserId, err := jwt.CheckIfUserAuth(writer, request, rdb)
 
 			authUser, err = storage.GetUserViaId(conn, authUserId)
 
@@ -68,14 +64,14 @@ func CreatePageHandler(conn *pgx.Conn, rdb *redis.Client) {
 		}
 
 		{ // generate template
-			t, err = template.ParseFiles("templates/page.html")
+			t, err := template.ParseFiles("templates/page.html")
 
 			if err != nil {
 				ErrorHandler(writer, request, http.StatusNotFound)
 				return
 			}
 
-			templateData = structs.TemplateData{"User": user, "AuthUser": authUser}
+			templateData := structs.TemplateData{"User": user, "AuthUser": authUser}
 
 			err = t.Execute(writer, templateData)
 

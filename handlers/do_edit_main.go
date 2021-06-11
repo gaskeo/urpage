@@ -11,7 +11,6 @@ import (
 	"go-site/structs"
 	"go-site/utils"
 	"io"
-	"mime/multipart"
 	"net/http"
 	"os"
 	"strings"
@@ -21,14 +20,11 @@ func CreateDoEditMain(conn *pgx.Conn, rdb *redis.Client) {
 
 	doEditMain := func(writer http.ResponseWriter, request *http.Request) {
 		var (
-			userId                                                   int
-			username, imageName, CSRFToken, CSRFTokenForm, imageType string
-			jsonAnswer                                               []byte
-			newImage                                                 *os.File
-			header                                                   *multipart.FileHeader
-			user                                                     structs.User
-			imageForm                                                multipart.File
-			err                                                      error
+			userId                                    int
+			username, imageName, CSRFToken, imageType string
+			jsonAnswer                                []byte
+			user                                      structs.User
+			err                                       error
 		)
 
 		if request.Method != "POST" {
@@ -56,7 +52,7 @@ func CreateDoEditMain(conn *pgx.Conn, rdb *redis.Client) {
 		}
 
 		{ // work with form
-			CSRFTokenForm = request.FormValue("csrf")
+			CSRFTokenForm := request.FormValue("csrf")
 
 			if CSRFToken != CSRFTokenForm {
 				jsonAnswer, _ = json.Marshal(structs.Answer{Err: "no-csrf"})
@@ -64,7 +60,7 @@ func CreateDoEditMain(conn *pgx.Conn, rdb *redis.Client) {
 			}
 
 			username = request.FormValue("username")
-			imageForm, header, err = request.FormFile("image") // header with name
+			imageForm, header, err := request.FormFile("image") // header with name
 			// check format of file
 			if err == nil {
 				defer func() {
@@ -98,7 +94,7 @@ func CreateDoEditMain(conn *pgx.Conn, rdb *redis.Client) {
 					return
 				}
 
-				newImage, err = os.OpenFile(constants.UserImages[1:]+imageName+"."+imageType, os.O_WRONLY, 0644)
+				newImage, err := os.OpenFile(constants.UserImages[1:]+imageName+"."+imageType, os.O_WRONLY, 0644)
 
 				if err != nil {
 					jsonAnswer, _ = json.Marshal(structs.Answer{Err: "other-error"})

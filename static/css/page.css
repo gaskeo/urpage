@@ -1,5 +1,5 @@
 .user-img {
-    display: block;
+    display: inline;
 
     margin-right: auto;
     margin-left: auto;
@@ -73,11 +73,80 @@ footer {
     border-radius: 50%;
 }
 
+.pencil-erase {
+    display: block;
+    background-color: white;
+}
+
+.pencil-body {
+    display: block;
+    background-color: white;
+}
+
+.pencil-head {
+    display: block;
+    background-color: white;
+
+    transform: rotate(45deg);
+
+}
+
+.pencil {
+    display: inline-block;
+
+    background-color: black;
+
+    border-radius: 50%;
+
+    transform: rotate(35deg);
+}
+
+.image-container {
+    margin-left: auto;
+    margin-right: auto;
+}
+
 @media screen and (min-width: 1024px) {
     .user-img {
         width: 14rem;
         height: 14rem;
 
+    }
+
+    .pencil {
+        width: 3rem;
+        height: 3rem;
+
+        vertical-align: top;
+
+        margin-left: -3rem;
+        margin-top: 16rem;
+    }
+
+    .pencil-head {
+        width: 8px;
+        height: 8px;
+
+        border-radius: 0 2px 0 0;
+
+        margin: -0.2rem auto;
+    }
+
+    .pencil-body {
+        width: 10px;
+        height: 22px;
+
+        border-radius: 2px 2px 0 0;
+
+        margin: 0 auto 0;
+    }
+
+    .pencil-erase {
+        width: 10px;
+        height: 4px;
+
+        border-radius: 2px;
+        margin: 0.5rem auto 0.1rem;
     }
 
     .user-username {
@@ -105,6 +174,42 @@ footer {
     .user-img {
         width: 24rem;
         height: 24rem;
+    }
+
+    .pencil {
+        width: 6rem;
+        height: 6rem;
+
+        vertical-align: top;
+
+        margin-left: -5.5rem;
+        margin-top: 22.5rem;
+    }
+
+    .pencil-head {
+        width: 15px;
+        height: 15px;
+
+        border-radius: 0 2px 0 0;
+
+        margin: -0.4rem auto;
+    }
+
+    .pencil-body {
+        width: 20px;
+        height: 38px;
+
+        border-radius: 2px 2px 0 0;
+
+        margin: 0 auto 0;
+    }
+
+    .pencil-erase {
+        width: 20px;
+        height: 8px;
+
+        border-radius: 2px;
+        margin: 1.2rem auto 0.1rem;
     }
 
     .user-username {

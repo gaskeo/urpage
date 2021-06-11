@@ -8,7 +8,15 @@
 </head>
 <body>
 <div class="data-container">
-    <img class="user-img" src="{{ .User.ImagePath }}">
+    <div class="image-container">
+        <img class="user-img" src="{{ .User.ImagePath }}">
+        {{ if eq .AuthUser.UserId .User.UserId}}
+        <a href="/edit/{{ .AuthUser.UserId }}"><div class="pencil">
+            <span class="pencil-erase"></span><span class="pencil-body"></span><span class="pencil-head"></span>
+            </div></a>
+        {{ end }}
+
+    </div>
     <h1 class="user-username">{{ .User.Username }}</h1>
     <ul class="user-links">
         {{ range .User.Links }}
@@ -24,7 +32,7 @@
             {{ if eq .AuthUser.UserId 0}}
                 <a class="footer-link" href="/login">Войти</a>
                 <a class="footer-link" href="/registration">Зарегистрироваться</a>
-            {{ else }}
+            {{ else if ne .AuthUser.UserId .User.UserId }}
                 <a class="footer-link" href="/id/{{ .AuthUser.UserId }}">
                     <img class="footer-img" src="{{ .AuthUser.ImagePath }}">
                     {{ .AuthUser.Username }}

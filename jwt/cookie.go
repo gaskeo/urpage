@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func AddJWTCookie(token string, tokenExpireDate time.Time, writer http.ResponseWriter) {
+func AddJWTCookie(writer http.ResponseWriter, token string, tokenExpireDate time.Time) {
 	cookieToken := http.Cookie{
 		Name:     "JWT",
 		Value:    token,
@@ -19,7 +19,7 @@ func AddJWTCookie(token string, tokenExpireDate time.Time, writer http.ResponseW
 	http.SetCookie(writer, &cookieToken)
 }
 
-func AddRefreshTokenCookie(refreshToken string, tokenId int64, userId int, refreshExpireDate time.Time, writer http.ResponseWriter) {
+func AddRefreshTokenCookie(writer http.ResponseWriter, refreshToken string, tokenId int64, userId int, refreshExpireDate time.Time) {
 	cookieRefresh := http.Cookie{
 		Name:     "RefreshToken",
 		Value:    refreshToken,

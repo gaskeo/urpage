@@ -26,10 +26,11 @@ func Connect(username string, password string, dbname string) (*pgx.Conn, error)
 func GetUserViaId(conn *pgx.Conn, userId int) (structs.User, error) {
 	user := structs.User{}
 
-	var imageDB *string
-	var linksDB *string
-
-	var err error
+	var (
+		imageDB *string
+		linksDB *string
+		err     error
+	)
 
 	{
 		err = conn.QueryRow(context.Background(), "SELECT * from user_info WHERE user_id=$1", userId).Scan(

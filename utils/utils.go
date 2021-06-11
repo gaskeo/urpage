@@ -48,6 +48,7 @@ func CreateDBLinksFromPairs(LinkPairs [][]string) string {
 	for _, linkPair := range LinkPairs {
 		DBLinks = append(DBLinks, linkPair[0])
 	}
+
 	return strings.Join(DBLinks, " ")
 }
 

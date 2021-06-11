@@ -11,7 +11,7 @@ import (
 	"net/http"
 )
 
-func CreateLoginHandler(_ *pgx.Conn, rds *redis.Client) {
+func CreateLoginHandler(_ *pgx.Conn, rdb *redis.Client) {
 
 	loginHandler := func(writer http.ResponseWriter, request *http.Request) {
 		var (
@@ -21,7 +21,7 @@ func CreateLoginHandler(_ *pgx.Conn, rds *redis.Client) {
 		)
 
 		{ // check csrf
-			_, CSRFToken, err = session.CheckSessionId(writer, request, rds)
+			_, CSRFToken, err = session.CheckSessionId(writer, request, rdb)
 			if err != nil {
 				http.Error(writer, "что-то пошло не так...", http.StatusInternalServerError)
 				return
@@ -29,7 +29,7 @@ func CreateLoginHandler(_ *pgx.Conn, rds *redis.Client) {
 		}
 
 		{ // check user authed
-			_, err = jwt.CheckIfUserAuth(writer, request, rds)
+			_, err = jwt.CheckIfUserAuth(writer, request, rdb)
 
 			if err == nil {
 				http.Redirect(writer, request, "/", http.StatusSeeOther)

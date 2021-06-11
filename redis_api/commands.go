@@ -36,5 +36,6 @@ func DeleteJWTToken(rdb *redis.Client, payload structs.Payload) error {
 
 func DeleteRefreshToken(rdb *redis.Client, payload structs.Payload) error {
 	refreshKey := strconv.FormatInt(payload.PayloadId, 10) + strconv.Itoa(payload.UserId) + "Refresh"
+
 	return Set(rdb, refreshKey, "", time.Now())
 }

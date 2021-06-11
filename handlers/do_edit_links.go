@@ -14,7 +14,7 @@ import (
 	"strings"
 )
 
-func CreateDoEditLinks(conn *pgx.Conn, rds *redis.Client) {
+func CreateDoEditLinks(conn *pgx.Conn, rdb *redis.Client) {
 
 	doEditLinks := func(writer http.ResponseWriter, request *http.Request) {
 		var (
@@ -33,7 +33,7 @@ func CreateDoEditLinks(conn *pgx.Conn, rds *redis.Client) {
 		defer func() { SendJson(writer, jsonAnswer) }()
 
 		{ // check is session has CSRF
-			_, CSRFToken, err = session.CheckSessionId(writer, request, rds)
+			_, CSRFToken, err = session.CheckSessionId(writer, request, rdb)
 
 			if err != nil {
 				jsonAnswer, _ = json.Marshal(structs.Answer{Err: "no-csrf"})
@@ -42,7 +42,7 @@ func CreateDoEditLinks(conn *pgx.Conn, rds *redis.Client) {
 		}
 
 		{ // check user authed
-			userId, err = jwt.CheckIfUserAuth(writer, request, rds)
+			userId, err = jwt.CheckIfUserAuth(writer, request, rdb)
 
 			if err != nil {
 				http.Error(writer, "У вас нет доступа", http.StatusForbidden)

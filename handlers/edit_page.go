@@ -13,7 +13,7 @@ import (
 	"strconv"
 )
 
-func CreateEditHandler(conn *pgx.Conn, rds *redis.Client) {
+func CreateEditHandler(conn *pgx.Conn, rdb *redis.Client) {
 
 	editHandler := func(writer http.ResponseWriter, request *http.Request) {
 		var (
@@ -25,7 +25,7 @@ func CreateEditHandler(conn *pgx.Conn, rds *redis.Client) {
 		)
 
 		{ // CSRF check
-			_, CSRFToken, err = session.CheckSessionId(writer, request, rds)
+			_, CSRFToken, err = session.CheckSessionId(writer, request, rdb)
 
 			if err != nil {
 				http.Error(writer, "что-то пошло не так...", http.StatusInternalServerError)
@@ -34,7 +34,7 @@ func CreateEditHandler(conn *pgx.Conn, rds *redis.Client) {
 		}
 
 		{ // user auth check
-			authUserId, err = jwt.CheckIfUserAuth(writer, request, rds)
+			authUserId, err = jwt.CheckIfUserAuth(writer, request, rdb)
 
 			authUser, err = storage.GetUserViaId(conn, authUserId)
 
@@ -47,7 +47,7 @@ func CreateEditHandler(conn *pgx.Conn, rds *redis.Client) {
 			requestedId, err = strconv.Atoi(request.URL.Path[len("/edit/"):])
 
 			if err != nil {
-				log.Println(err, 123)
+				log.Println(err)
 				ErrorHandler(writer, request, http.StatusNotFound)
 				return
 			}

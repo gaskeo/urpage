@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"github.com/go-redis/redis/v8"
 	"github.com/jackc/pgx/v4"
-	"go-site/constants"
 	"go-site/errs"
 	"go-site/jwt"
 	"go-site/redis_api"
@@ -15,7 +14,7 @@ import (
 	"time"
 )
 
-func CreateDoLogin(conn *pgx.Conn, rds *redis.Client) {
+func CreateDoLogin(conn *pgx.Conn, rdb *redis.Client) {
 
 	doLogin := func(writer http.ResponseWriter, request *http.Request) {
 		var (
@@ -34,7 +33,7 @@ func CreateDoLogin(conn *pgx.Conn, rds *redis.Client) {
 		defer func() { SendJson(writer, jsonAnswer) }()
 
 		{ // CSRF check
-			_, CSRFToken, err = session.CheckSessionId(writer, request, rds)
+			_, CSRFToken, err = session.CheckSessionId(writer, request, rdb)
 
 			if err != nil {
 				jsonAnswer, _ = json.Marshal(structs.Answer{Err: "no-csrf"})
@@ -71,33 +70,28 @@ func CreateDoLogin(conn *pgx.Conn, rds *redis.Client) {
 		}
 
 		{ // work with JWT
-			payload, token, tokenExpireDate, err = jwt.GenerateJWTToken(user.UserId)
+			payload, token, tokenExpireDate, err = jwt.GenerateJWTToken(writer, user.UserId)
 
 			if err != nil {
 				jsonAnswer, err = json.Marshal(structs.Answer{Err: "other-error"})
 				return
 			}
 
-			refreshExpireDate = tokenExpireDate.Add(constants.RefreshTokenExpireTime)
-
-			refreshToken, err = jwt.GenerateRefreshToken()
+			refreshToken, refreshExpireDate, err = jwt.GenerateRefreshToken(writer, payload)
 
 			if err != nil {
 				jsonAnswer, err = json.Marshal(structs.Answer{Err: "other-error"})
 				return
 			}
 
-			jwt.AddJWTCookie(token, tokenExpireDate, writer)
-			jwt.AddRefreshTokenCookie(refreshToken, payload.PayloadId, payload.UserId, refreshExpireDate, writer)
-
-			err = redis_api.SetJWSToken(rds, payload, token, tokenExpireDate)
+			err = redis_api.SetJWSToken(rdb, payload, token, tokenExpireDate)
 
 			if err != nil {
 				jsonAnswer, err = json.Marshal(structs.Answer{Err: "other-error"})
 				return
 			}
 
-			err = redis_api.SetRefreshToken(rds, payload, refreshToken, refreshExpireDate)
+			err = redis_api.SetRefreshToken(rdb, payload, refreshToken, refreshExpireDate)
 
 			if err != nil {
 				jsonAnswer, err = json.Marshal(structs.Answer{Err: "other-error"})

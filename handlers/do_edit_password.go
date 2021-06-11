@@ -12,17 +12,16 @@ import (
 	"net/http"
 )
 
-func CreateDoEditPassword(conn *pgx.Conn, rds *redis.Client) {
+func CreateDoEditPassword(conn *pgx.Conn, rdb *redis.Client) {
 	doEditPassword := func(writer http.ResponseWriter, request *http.Request) {
-		var userId int
-		var oldPassword, newPassword, CSRFToken, CSRFTokenForm string
-		var correct bool
-
-		var jsonAnswer []byte
-
-		var user structs.User
-
-		var err error
+		var (
+			userId                                             int
+			oldPassword, newPassword, CSRFToken, CSRFTokenForm string
+			correct                                            bool
+			jsonAnswer                                         []byte
+			user                                               structs.User
+			err                                                error
+		)
 
 		if request.Method != "POST" {
 			return
@@ -31,7 +30,7 @@ func CreateDoEditPassword(conn *pgx.Conn, rds *redis.Client) {
 		defer func() { SendJson(writer, jsonAnswer) }()
 
 		{ // CSRF check
-			_, CSRFToken, err = session.CheckSessionId(writer, request, rds)
+			_, CSRFToken, err = session.CheckSessionId(writer, request, rdb)
 
 			if err != nil {
 				jsonAnswer, _ = json.Marshal(structs.Answer{Err: "no-csrf"})
@@ -40,7 +39,7 @@ func CreateDoEditPassword(conn *pgx.Conn, rds *redis.Client) {
 		}
 
 		{ // check user authed
-			userId, err = jwt.CheckIfUserAuth(writer, request, rds)
+			userId, err = jwt.CheckIfUserAuth(writer, request, rdb)
 
 			if err != nil {
 				http.Error(writer, "У вас нет доступа", http.StatusForbidden)

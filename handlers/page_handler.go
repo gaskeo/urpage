@@ -13,7 +13,7 @@ import (
 	"strconv"
 )
 
-func CreatePageHandler(conn *pgx.Conn, rds *redis.Client) {
+func CreatePageHandler(conn *pgx.Conn, rdb *redis.Client) {
 
 	pageHandler := func(writer http.ResponseWriter, request *http.Request) {
 		var (
@@ -27,7 +27,7 @@ func CreatePageHandler(conn *pgx.Conn, rds *redis.Client) {
 		)
 
 		{ // CSRF check
-			_, _, err = session.CheckSessionId(writer, request, rds)
+			_, _, err = session.CheckSessionId(writer, request, rdb)
 
 			if err != nil {
 				http.Error(writer, "что-то пошло не так...", http.StatusInternalServerError)
@@ -58,7 +58,7 @@ func CreatePageHandler(conn *pgx.Conn, rds *redis.Client) {
 		}
 
 		{ // user auth check
-			authUserId, err = jwt.CheckIfUserAuth(writer, request, rds)
+			authUserId, err = jwt.CheckIfUserAuth(writer, request, rdb)
 
 			authUser, err = storage.GetUserViaId(conn, authUserId)
 

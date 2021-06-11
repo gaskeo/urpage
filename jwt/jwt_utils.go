@@ -27,14 +27,3 @@ func GenerateKey() string {
 
 	return fmt.Sprintf("%x", key)
 }
-
-func GenerateRefreshToken() (string, error) {
-	refreshToken := make([]byte, 16)
-	_, err := rand.Read(refreshToken)
-
-	if err != nil {
-		return "", err
-	}
-
-	return fmt.Sprintf("%x", refreshToken), nil
-}

@@ -207,6 +207,7 @@ function sendLogout() {
 
     fetch("/do/logout", {method: 'post', body: data}).then(function (r) {
         if (r.status === 200) {
+            history.pushState("", "", `/`)
             location.reload()
         }
     })

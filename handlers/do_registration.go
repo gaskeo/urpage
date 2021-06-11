@@ -10,7 +10,7 @@ import (
 	"net/http"
 )
 
-func CreateDoRegistration(conn *pgx.Conn, rds *redis.Client) {
+func CreateDoRegistration(conn *pgx.Conn, rdb *redis.Client) {
 
 	doRegistration := func(writer http.ResponseWriter, request *http.Request) {
 		var (
@@ -27,7 +27,7 @@ func CreateDoRegistration(conn *pgx.Conn, rds *redis.Client) {
 		defer func() { SendJson(writer, jsonAnswer) }()
 
 		{ // CSRF check
-			_, CSRFToken, err = session.CheckSessionId(writer, request, rds)
+			_, CSRFToken, err = session.CheckSessionId(writer, request, rdb)
 
 			if err != nil {
 				jsonAnswer, _ = json.Marshal(structs.Answer{Err: "no-csrf"})

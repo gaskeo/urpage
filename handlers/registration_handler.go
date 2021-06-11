@@ -11,7 +11,7 @@ import (
 	"net/http"
 )
 
-func CreateRegistrationHandler(_ *pgx.Conn, rds *redis.Client) {
+func CreateRegistrationHandler(_ *pgx.Conn, rdb *redis.Client) {
 	registrationHandler := func(writer http.ResponseWriter, request *http.Request) {
 		var (
 			CSRFToken string
@@ -20,7 +20,7 @@ func CreateRegistrationHandler(_ *pgx.Conn, rds *redis.Client) {
 		)
 
 		{ // check csrf
-			_, CSRFToken, err = session.CheckSessionId(writer, request, rds)
+			_, CSRFToken, err = session.CheckSessionId(writer, request, rdb)
 			if err != nil {
 				http.Error(writer, "что-то пошло не так...", http.StatusInternalServerError)
 				return
@@ -28,7 +28,7 @@ func CreateRegistrationHandler(_ *pgx.Conn, rds *redis.Client) {
 		}
 
 		{ // user auth check
-			_, err = jwt.CheckIfUserAuth(writer, request, rds)
+			_, err = jwt.CheckIfUserAuth(writer, request, rdb)
 
 			if err == nil {
 				http.Redirect(writer, request, "/", http.StatusSeeOther)

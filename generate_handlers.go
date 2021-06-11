@@ -7,9 +7,9 @@ import (
 	"net/http"
 )
 
-func generateHandlers(conn *pgx.Conn, rds *redis.Client) {
+func generateHandlers(conn *pgx.Conn, rdb *redis.Client) {
 
-	handlerNames := []func(conn *pgx.Conn, rds *redis.Client){
+	handlerNames := []func(conn *pgx.Conn, rdb *redis.Client){
 		handlers.CreateRegistrationHandler,
 		handlers.CreateLoginHandler,
 		handlers.CreateDoRegistration,
@@ -29,6 +29,6 @@ func generateHandlers(conn *pgx.Conn, rds *redis.Client) {
 	http.HandleFunc("/favicon.ico", handlers.FaviconHandler)
 
 	for _, handler := range handlerNames {
-		handler(conn, rds)
+		handler(conn, rdb)
 	}
 }

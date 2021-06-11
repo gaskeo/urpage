@@ -11,7 +11,7 @@ import (
 	"net/http"
 )
 
-func CreateMainPageHandler(conn *pgx.Conn, rds *redis.Client) {
+func CreateMainPageHandler(conn *pgx.Conn, rdb *redis.Client) {
 
 	mainPageHandler := func(writer http.ResponseWriter, request *http.Request) {
 		var (
@@ -23,7 +23,7 @@ func CreateMainPageHandler(conn *pgx.Conn, rds *redis.Client) {
 		)
 
 		{ // check csrf
-			_, CSRFToken, err = session.CheckSessionId(writer, request, rds)
+			_, CSRFToken, err = session.CheckSessionId(writer, request, rdb)
 			if err != nil {
 				http.Error(writer, "что-то пошло не так...", http.StatusInternalServerError)
 				return
@@ -31,7 +31,7 @@ func CreateMainPageHandler(conn *pgx.Conn, rds *redis.Client) {
 		}
 
 		{ // user auth check
-			userId, err = jwt.CheckIfUserAuth(writer, request, rds)
+			userId, err = jwt.CheckIfUserAuth(writer, request, rdb)
 
 			if err != nil {
 				temp = "templates/index_not_auth.html"

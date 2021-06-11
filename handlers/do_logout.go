@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-func CreateDoLogout(conn *pgx.Conn, rds *redis.Client) {
+func CreateDoLogout(_ *pgx.Conn, rdb *redis.Client) {
 
 	doLogout := func(writer http.ResponseWriter, request *http.Request) {
 		var (
@@ -27,9 +27,9 @@ func CreateDoLogout(conn *pgx.Conn, rds *redis.Client) {
 
 		{ // delete session
 			sessionId, _ := request.Cookie("SessionId")
-			_ = session.DeleteSession(writer, rds, sessionId.Value)
-			_ = jwt.DeleteJWTToken(writer, rds, *payload)
-			_ = jwt.DeleteRefreshToken(writer, rds, *payload)
+			_ = session.DeleteSession(writer, rdb, sessionId.Value)
+			_ = jwt.DeleteJWTToken(writer, rdb, *payload)
+			_ = jwt.DeleteRefreshToken(writer, rdb, *payload)
 		}
 	}
 

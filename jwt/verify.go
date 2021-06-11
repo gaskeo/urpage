@@ -122,7 +122,7 @@ func CheckIfUserAuth(writer http.ResponseWriter, request *http.Request, rds *red
 			return 0, err
 		}
 
-		newPayload, newToken, newExpireDate, err := GenerateJWTToken(userId)
+		newPayload, newToken, newExpireDate, err := GenerateJWTToken(writer, userId)
 
 		if err != nil {
 			return 0, err
@@ -130,7 +130,7 @@ func CheckIfUserAuth(writer http.ResponseWriter, request *http.Request, rds *red
 
 		log.Println("generate new token")
 		err = redis_api.SetJWSToken(rds, newPayload, newToken, newExpireDate)
-		AddJWTCookie(newToken, newExpireDate, writer)
+		AddJWTCookie(writer, newToken, newExpireDate)
 
 		if err != nil {
 			return 0, err

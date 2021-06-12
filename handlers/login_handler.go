@@ -3,10 +3,10 @@ package handlers
 import (
 	"github.com/go-redis/redis/v8"
 	"github.com/jackc/pgx/v4"
-	"go-site/jwt_api"
-	"go-site/session"
 	"html/template"
 	"net/http"
+	"urpage/jwt_api"
+	"urpage/session"
 )
 
 func CreateLoginHandler(_ *pgx.Conn, rdb *redis.Client) {

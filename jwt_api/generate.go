@@ -5,9 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
-	"go-site/constants"
 	"net/http"
 	"time"
+	"urpage/constants"
 )
 
 var SecretKey = GenerateKey()

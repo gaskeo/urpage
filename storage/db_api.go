@@ -4,11 +4,11 @@ import (
 	"context"
 	"errors"
 	"github.com/jackc/pgx/v4"
-	"go-site/constants"
-	"go-site/utils"
 	"log"
 	"strings"
 	"time"
+	"urpage/constants"
+	"urpage/utils"
 )
 
 var ErrWrongPassword = errors.New("wrong password")
@@ -23,13 +23,13 @@ type User struct {
 	Links      [][]string
 }
 
-func Connect(username string, password string, dbname string) (*pgx.Conn, error) {
+func Connect(host string, username string, password string, dbname string) (*pgx.Conn, error) {
 	var (
 		conn *pgx.Conn
 		err  error
 	)
 
-	conn, err = pgx.Connect(context.Background(), "postgres://"+username+":"+password+"@localhost:5432/"+dbname)
+	conn, err = pgx.Connect(context.Background(), "postgres://"+username+":"+password+"@"+host+"/"+dbname)
 
 	return conn, err
 }

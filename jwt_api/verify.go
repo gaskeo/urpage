@@ -4,10 +4,10 @@ import (
 	"errors"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/go-redis/redis/v8"
-	"go-site/redis_api"
 	"log"
 	"net/http"
 	"strconv"
+	"urpage/redis_api"
 )
 
 func VerifyToken(token string) (*Payload, error) {

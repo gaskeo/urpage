@@ -3,11 +3,11 @@ package handlers
 import (
 	"github.com/go-redis/redis/v8"
 	"github.com/jackc/pgx/v4"
-	"go-site/jwt_api"
-	"go-site/session"
 	"html/template"
 	"log"
 	"net/http"
+	"urpage/jwt_api"
+	"urpage/session"
 )
 
 func CreateRegistrationHandler(_ *pgx.Conn, rdb *redis.Client) {

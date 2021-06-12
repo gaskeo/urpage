@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"github.com/go-redis/redis/v8"
 	"github.com/jackc/pgx/v4"
-	"go-site/jwt_api"
-	"go-site/redis_api"
-	"go-site/session"
-	"go-site/storage"
 	"net/http"
+	"urpage/jwt_api"
+	"urpage/redis_api"
+	"urpage/session"
+	"urpage/storage"
 )
 
 func CreateDoLogin(conn *pgx.Conn, rdb *redis.Client) {

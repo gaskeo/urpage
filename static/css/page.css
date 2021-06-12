@@ -71,6 +71,12 @@ footer {
     height: 5rem;
     object-fit: cover;
     border-radius: 50%;
+    transition: transform 0.3s;
+
+}
+
+.user-linked-img:hover {
+    transform: scale(0.9);
 }
 
 .pencil-erase {

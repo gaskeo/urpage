@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"github.com/go-redis/redis/v8"
 	"github.com/jackc/pgx/v4"
-	"go-site/session"
-	"go-site/storage"
 	"net/http"
+	"urpage/session"
+	"urpage/storage"
 )
 
 func CreateDoRegistration(conn *pgx.Conn, rdb *redis.Client) {

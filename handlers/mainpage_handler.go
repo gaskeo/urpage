@@ -3,11 +3,11 @@ package handlers
 import (
 	"github.com/go-redis/redis/v8"
 	"github.com/jackc/pgx/v4"
-	"go-site/jwt_api"
-	"go-site/session"
-	"go-site/storage"
 	"html/template"
 	"net/http"
+	"urpage/jwt_api"
+	"urpage/session"
+	"urpage/storage"
 )
 
 func CreateMainPageHandler(conn *pgx.Conn, rdb *redis.Client) {

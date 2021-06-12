@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"github.com/go-redis/redis/v8"
 	"github.com/jackc/pgx/v4"
-	"go-site/constants"
-	"go-site/jwt_api"
-	"go-site/session"
-	"go-site/storage"
 	"net/http"
+	"urpage/constants"
+	"urpage/jwt_api"
+	"urpage/session"
+	"urpage/storage"
 )
 
 func CreateDoEditPassword(conn *pgx.Conn, rdb *redis.Client) {

@@ -2,8 +2,8 @@ package jwt_api
 
 import (
 	"github.com/go-redis/redis/v8"
-	"go-site/redis_api"
 	"net/http"
+	"urpage/redis_api"
 )
 
 func DeleteJWTToken(writer http.ResponseWriter, rdb *redis.Client, payload Payload) error {

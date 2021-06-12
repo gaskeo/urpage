@@ -3,9 +3,9 @@ package handlers
 import (
 	"github.com/go-redis/redis/v8"
 	"github.com/jackc/pgx/v4"
-	"go-site/jwt_api"
-	"go-site/session"
 	"net/http"
+	"urpage/jwt_api"
+	"urpage/session"
 )
 
 func CreateDoLogout(_ *pgx.Conn, rdb *redis.Client) {

@@ -4,11 +4,11 @@ import (
 	"crypto/rand"
 	"fmt"
 	"github.com/go-redis/redis/v8"
-	"go-site/constants"
-	"go-site/redis_api"
 	"log"
 	"net/http"
 	"time"
+	"urpage/constants"
+	"urpage/redis_api"
 )
 
 func GenerateSessionId() string {

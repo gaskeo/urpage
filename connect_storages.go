@@ -3,10 +3,10 @@ package main
 import (
 	"github.com/go-redis/redis/v8"
 	"github.com/jackc/pgx/v4"
-	"go-site/redis_api"
-	"go-site/storage"
 	"log"
 	"os"
+	"urpage/redis_api"
+	"urpage/storage"
 )
 
 func connectStorages() (*pgx.Conn, *redis.Client) {
@@ -17,7 +17,7 @@ func connectStorages() (*pgx.Conn, *redis.Client) {
 	var err error
 
 	{ // connect to DB
-		conn, err = storage.Connect(os.Getenv("DB_USERNAME"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_NAME"))
+		conn, err = storage.Connect(os.Getenv("DB_ADDRESS"), os.Getenv("DB_USERNAME"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_NAME"))
 
 		if err != nil {
 			log.Fatal("database problem", err)

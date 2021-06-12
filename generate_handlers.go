@@ -3,8 +3,8 @@ package main
 import (
 	"github.com/go-redis/redis/v8"
 	"github.com/jackc/pgx/v4"
-	"go-site/handlers"
 	"net/http"
+	"urpage/handlers"
 )
 
 func generateHandlers(conn *pgx.Conn, rdb *redis.Client) {

@@ -2,11 +2,11 @@ package utils
 
 import (
 	"crypto/rand"
-	"go-site/constants"
 	"math/big"
 	"net/url"
 	"strconv"
 	"strings"
+	"urpage/constants"
 )
 
 func CreateIconLinkPairs(links []string) ([][]string, error) {

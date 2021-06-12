@@ -4,15 +4,15 @@ import (
 	"encoding/json"
 	"github.com/go-redis/redis/v8"
 	"github.com/jackc/pgx/v4"
-	"go-site/constants"
-	"go-site/jwt_api"
-	"go-site/session"
-	"go-site/storage"
-	"go-site/utils"
 	"io"
 	"net/http"
 	"os"
 	"strings"
+	"urpage/constants"
+	"urpage/jwt_api"
+	"urpage/session"
+	"urpage/storage"
+	"urpage/utils"
 )
 
 func CreateDoEditMain(conn *pgx.Conn, rdb *redis.Client) {

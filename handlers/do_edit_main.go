@@ -8,7 +8,6 @@ import (
 	"go-site/jwt_api"
 	"go-site/session"
 	"go-site/storage"
-	"go-site/structs"
 	"go-site/utils"
 	"io"
 	"net/http"
@@ -23,7 +22,7 @@ func CreateDoEditMain(conn *pgx.Conn, rdb *redis.Client) {
 			userId                                    int
 			username, imageName, CSRFToken, imageType string
 			jsonAnswer                                []byte
-			user                                      structs.User
+			user                                      storage.User
 			err                                       error
 		)
 
@@ -37,7 +36,7 @@ func CreateDoEditMain(conn *pgx.Conn, rdb *redis.Client) {
 			_, CSRFToken, err = session.CheckSessionId(writer, request, rdb)
 
 			if err != nil {
-				jsonAnswer, _ = json.Marshal(structs.Answer{Err: "no-csrf"})
+				jsonAnswer, _ = json.Marshal(Answer{Err: "no-csrf"})
 				return
 			}
 		}
@@ -55,7 +54,7 @@ func CreateDoEditMain(conn *pgx.Conn, rdb *redis.Client) {
 			CSRFTokenForm := request.FormValue("csrf")
 
 			if CSRFToken != CSRFTokenForm {
-				jsonAnswer, _ = json.Marshal(structs.Answer{Err: "no-csrf"})
+				jsonAnswer, _ = json.Marshal(Answer{Err: "no-csrf"})
 				return
 			}
 
@@ -74,7 +73,7 @@ func CreateDoEditMain(conn *pgx.Conn, rdb *redis.Client) {
 				imageName, err = utils.GenerateImageName()
 
 				if err != nil {
-					jsonAnswer, _ = json.Marshal(structs.Answer{Err: "other-error"})
+					jsonAnswer, _ = json.Marshal(Answer{Err: "other-error"})
 					return
 				}
 
@@ -86,11 +85,11 @@ func CreateDoEditMain(conn *pgx.Conn, rdb *redis.Client) {
 					_, err = os.Create(constants.UserImages[1:] + imageName + "." + imageType)
 
 					if err != nil {
-						jsonAnswer, _ = json.Marshal(structs.Answer{Err: "other-error"})
+						jsonAnswer, _ = json.Marshal(Answer{Err: "other-error"})
 						return
 					}
 				default:
-					jsonAnswer, _ = json.Marshal(structs.Answer{Err: "bad-image-error"})
+					jsonAnswer, _ = json.Marshal(Answer{Err: "bad-image-error"})
 					return
 				}
 
@@ -146,7 +145,7 @@ func CreateDoEditMain(conn *pgx.Conn, rdb *redis.Client) {
 				return
 			}
 
-			jsonAnswer, _ = json.Marshal(structs.Answer{Err: ""})
+			jsonAnswer, _ = json.Marshal(Answer{Err: ""})
 		}
 	}
 

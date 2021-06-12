@@ -5,7 +5,6 @@ import (
 	"github.com/jackc/pgx/v4"
 	"go-site/jwt_api"
 	"go-site/session"
-	"go-site/structs"
 	"html/template"
 	"log"
 	"net/http"
@@ -42,7 +41,7 @@ func CreateRegistrationHandler(_ *pgx.Conn, rdb *redis.Client) {
 				log.Println(err)
 			}
 
-			err = t.Execute(writer, structs.TemplateData{"CSRF": CSRFToken})
+			err = t.Execute(writer, TemplateData{"CSRF": CSRFToken})
 
 			if err != nil {
 				log.Println(err)

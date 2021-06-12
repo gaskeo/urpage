@@ -6,7 +6,6 @@ import (
 	"go-site/jwt_api"
 	"go-site/session"
 	"go-site/storage"
-	"go-site/structs"
 	"html/template"
 	"net/http"
 )
@@ -16,7 +15,7 @@ func CreateMainPageHandler(conn *pgx.Conn, rdb *redis.Client) {
 	mainPageHandler := func(writer http.ResponseWriter, request *http.Request) {
 		var (
 			temp, CSRFToken string
-			user            structs.User
+			user            storage.User
 			err             error
 		)
 
@@ -34,7 +33,7 @@ func CreateMainPageHandler(conn *pgx.Conn, rdb *redis.Client) {
 			if err != nil {
 				temp = "templates/index_not_auth.html"
 
-				user = structs.User{}
+				user = storage.User{}
 			} else {
 				temp = "templates/index_auth.html"
 
@@ -53,7 +52,7 @@ func CreateMainPageHandler(conn *pgx.Conn, rdb *redis.Client) {
 				return
 			}
 
-			err = t.Execute(writer, structs.TemplateData{
+			err = t.Execute(writer, TemplateData{
 				"User": user,
 				"CSRF": CSRFToken,
 			})

@@ -4,42 +4,40 @@ import (
 	"errors"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/go-redis/redis/v8"
-	"go-site/errs"
 	"go-site/redis_api"
-	"go-site/structs"
 	"log"
 	"net/http"
 	"strconv"
 )
 
-func VerifyToken(token string) (*structs.Payload, error) {
+func VerifyToken(token string) (*Payload, error) {
 	keyFunc := func(token *jwt.Token) (interface{}, error) {
 
 		_, ok := token.Method.(*jwt.SigningMethodHMAC)
 
 		if !ok {
-			return nil, errs.ErrInvalidToken
+			return nil, ErrInvalidToken
 		}
 
 		return []byte(SecretKey), nil
 	}
 
-	jwtToken, err := jwt.ParseWithClaims(token, &structs.Payload{}, keyFunc)
+	jwtToken, err := jwt.ParseWithClaims(token, &Payload{}, keyFunc)
 
 	if err != nil {
 		ver, ok := err.(*jwt.ValidationError)
 
-		if ok && errors.Is(ver.Inner, errs.ErrExpiredToken) {
-			return nil, errs.ErrExpiredToken
+		if ok && errors.Is(ver.Inner, ErrExpiredToken) {
+			return nil, ErrExpiredToken
 		}
 
-		return nil, errs.ErrInvalidToken
+		return nil, ErrInvalidToken
 	}
 
-	payload, ok := jwtToken.Claims.(*structs.Payload)
+	payload, ok := jwtToken.Claims.(*Payload)
 
 	if !ok {
-		return nil, errs.ErrInvalidToken
+		return nil, ErrInvalidToken
 	}
 
 	return payload, nil
@@ -53,11 +51,11 @@ func CheckIfUserAuth(writer http.ResponseWriter, request *http.Request, rds *red
 		if err == nil {
 			payload, err := VerifyToken(JWTToken.Value)
 
-			if err == errs.ErrInvalidToken {
+			if err == ErrInvalidToken {
 				return 0, err
 			}
 
-			if err != errs.ErrExpiredToken && payload != nil {
+			if err != ErrExpiredToken && payload != nil {
 
 				redisJWTKey := strconv.FormatInt(payload.PayloadId, 10) + strconv.Itoa(payload.UserId) + "JWT"
 				redisJWTValue, err := redis_api.Get(rds, redisJWTKey)
@@ -72,7 +70,7 @@ func CheckIfUserAuth(writer http.ResponseWriter, request *http.Request, rds *red
 
 				} else {
 					log.Println("invalid token")
-					return 0, errs.ErrInvalidToken
+					return 0, ErrInvalidToken
 				}
 			}
 		}
@@ -105,7 +103,7 @@ func CheckIfUserAuth(writer http.ResponseWriter, request *http.Request, rds *red
 		}
 
 		if refreshToken.Value != redisRefreshTokenValue {
-			return 0, errs.ErrInvalidRefreshToken
+			return 0, ErrInvalidRefreshToken
 		}
 
 		userId, err := strconv.Atoi(refreshTokenUserId.Value)
@@ -120,7 +118,7 @@ func CheckIfUserAuth(writer http.ResponseWriter, request *http.Request, rds *red
 		}
 
 		log.Println("generate new token")
-		err = redis_api.SetJWSToken(rds, newPayload, newToken, newExpireDate)
+		err = redis_api.SetJWSToken(rds, newPayload.PayloadId, newPayload.UserId, newToken, newExpireDate)
 		AddJWTCookie(writer, newToken, newExpireDate)
 
 		if err != nil {

@@ -6,7 +6,6 @@ import (
 	"go-site/jwt_api"
 	"go-site/session"
 	"go-site/storage"
-	"go-site/structs"
 	"html/template"
 	"net/http"
 	"strconv"
@@ -17,7 +16,7 @@ func CreateEditHandler(conn *pgx.Conn, rdb *redis.Client) {
 	editHandler := func(writer http.ResponseWriter, request *http.Request) {
 		var (
 			CSRFToken string
-			authUser  structs.User
+			authUser  storage.User
 			err       error
 		)
 
@@ -67,7 +66,7 @@ func CreateEditHandler(conn *pgx.Conn, rdb *redis.Client) {
 				return
 			}
 
-			err = t.Execute(writer, structs.TemplateData{"AuthUser": authUser, "CSRF": CSRFToken})
+			err = t.Execute(writer, TemplateData{"AuthUser": authUser, "CSRF": CSRFToken})
 
 			if err != nil {
 				http.Error(writer, "error creating page", http.StatusInternalServerError)

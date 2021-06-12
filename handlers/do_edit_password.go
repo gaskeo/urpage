@@ -8,7 +8,6 @@ import (
 	"go-site/jwt_api"
 	"go-site/session"
 	"go-site/storage"
-	"go-site/structs"
 	"net/http"
 )
 
@@ -18,7 +17,7 @@ func CreateDoEditPassword(conn *pgx.Conn, rdb *redis.Client) {
 			userId                              int
 			oldPassword, newPassword, CSRFToken string
 			jsonAnswer                          []byte
-			user                                structs.User
+			user                                storage.User
 			err                                 error
 		)
 
@@ -32,7 +31,7 @@ func CreateDoEditPassword(conn *pgx.Conn, rdb *redis.Client) {
 			_, CSRFToken, err = session.CheckSessionId(writer, request, rdb)
 
 			if err != nil {
-				jsonAnswer, _ = json.Marshal(structs.Answer{Err: "no-csrf"})
+				jsonAnswer, _ = json.Marshal(Answer{Err: "no-csrf"})
 				return
 			}
 		}
@@ -50,7 +49,7 @@ func CreateDoEditPassword(conn *pgx.Conn, rdb *redis.Client) {
 			CSRFTokenForm := request.FormValue("csrf")
 
 			if CSRFToken != CSRFTokenForm {
-				jsonAnswer, _ = json.Marshal(structs.Answer{Err: "no-csrf"})
+				jsonAnswer, _ = json.Marshal(Answer{Err: "no-csrf"})
 				return
 			}
 
@@ -70,7 +69,7 @@ func CreateDoEditPassword(conn *pgx.Conn, rdb *redis.Client) {
 		{ // check old password
 			correct, err := storage.CheckPassword(oldPassword, user.Password)
 			if err != nil || !correct {
-				jsonAnswer, _ = json.Marshal(structs.Answer{Err: "wrong-password"})
+				jsonAnswer, _ = json.Marshal(Answer{Err: "wrong-password"})
 				return
 			}
 		}
@@ -90,7 +89,7 @@ func CreateDoEditPassword(conn *pgx.Conn, rdb *redis.Client) {
 				http.Error(writer, "error updating user", http.StatusInternalServerError)
 				return
 			}
-			jsonAnswer, _ = json.Marshal(structs.Answer{Err: ""})
+			jsonAnswer, _ = json.Marshal(Answer{Err: ""})
 		}
 	}
 

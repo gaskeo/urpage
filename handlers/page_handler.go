@@ -6,7 +6,6 @@ import (
 	"go-site/jwt_api"
 	"go-site/session"
 	"go-site/storage"
-	"go-site/structs"
 	"html/template"
 	"log"
 	"net/http"
@@ -17,9 +16,8 @@ func CreatePageHandler(conn *pgx.Conn, rdb *redis.Client) {
 
 	pageHandler := func(writer http.ResponseWriter, request *http.Request) {
 		var (
-			user     structs.User
-			authUser structs.User
-			err      error
+			user, authUser storage.User
+			err            error
 		)
 
 		{ // CSRF check
@@ -57,7 +55,7 @@ func CreatePageHandler(conn *pgx.Conn, rdb *redis.Client) {
 			authUserId, err := jwt_api.CheckIfUserAuth(writer, request, rdb)
 
 			if err != nil {
-				authUser = structs.User{}
+				authUser = storage.User{}
 			} else {
 				authUser, _ = storage.GetUserViaId(conn, authUserId)
 			}
@@ -72,7 +70,7 @@ func CreatePageHandler(conn *pgx.Conn, rdb *redis.Client) {
 				return
 			}
 
-			templateData := structs.TemplateData{"User": user, "AuthUser": authUser}
+			templateData := TemplateData{"User": user, "AuthUser": authUser}
 
 			err = t.Execute(writer, templateData)
 

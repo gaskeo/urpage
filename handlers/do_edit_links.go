@@ -8,7 +8,6 @@ import (
 	"go-site/jwt_api"
 	"go-site/session"
 	"go-site/storage"
-	"go-site/structs"
 	"go-site/utils"
 	"net/http"
 	"strings"
@@ -21,7 +20,7 @@ func CreateDoEditLinks(conn *pgx.Conn, rdb *redis.Client) {
 			userId           int
 			links, CSRFToken string
 			jsonAnswer       []byte
-			user             structs.User
+			user             storage.User
 			err              error
 		)
 
@@ -35,7 +34,7 @@ func CreateDoEditLinks(conn *pgx.Conn, rdb *redis.Client) {
 			_, CSRFToken, err = session.CheckSessionId(writer, request, rdb)
 
 			if err != nil {
-				jsonAnswer, _ = json.Marshal(structs.Answer{Err: "no-csrf"})
+				jsonAnswer, _ = json.Marshal(Answer{Err: "no-csrf"})
 				return
 			}
 		}
@@ -53,7 +52,7 @@ func CreateDoEditLinks(conn *pgx.Conn, rdb *redis.Client) {
 			CSRFTokenForm := request.FormValue("csrf")
 
 			if CSRFToken != CSRFTokenForm {
-				jsonAnswer, _ = json.Marshal(structs.Answer{Err: "no-csrf"})
+				jsonAnswer, _ = json.Marshal(Answer{Err: "no-csrf"})
 				return
 			}
 
@@ -87,7 +86,7 @@ func CreateDoEditLinks(conn *pgx.Conn, rdb *redis.Client) {
 				http.Error(writer, "error updating user", http.StatusInternalServerError)
 				return
 			}
-			jsonAnswer, _ = json.Marshal(structs.Answer{Err: ""})
+			jsonAnswer, _ = json.Marshal(Answer{Err: ""})
 
 		}
 	}

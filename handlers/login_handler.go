@@ -5,7 +5,6 @@ import (
 	"github.com/jackc/pgx/v4"
 	"go-site/jwt_api"
 	"go-site/session"
-	"go-site/structs"
 	"html/template"
 	"net/http"
 )
@@ -43,7 +42,7 @@ func CreateLoginHandler(_ *pgx.Conn, rdb *redis.Client) {
 				return
 			}
 
-			err = t.Execute(writer, structs.TemplateData{"CSRF": CSRFToken})
+			err = t.Execute(writer, TemplateData{"CSRF": CSRFToken})
 
 			if err != nil {
 				http.Error(writer, "error creating page", http.StatusInternalServerError)

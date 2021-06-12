@@ -5,14 +5,13 @@ import (
 	"github.com/jackc/pgx/v4"
 	"go-site/jwt_api"
 	"go-site/session"
-	"go-site/structs"
 	"net/http"
 )
 
 func CreateDoLogout(_ *pgx.Conn, rdb *redis.Client) {
 
 	doLogout := func(writer http.ResponseWriter, request *http.Request) {
-		var payload *structs.Payload
+		var payload *jwt_api.Payload
 
 		if request.Method != "POST" {
 			return

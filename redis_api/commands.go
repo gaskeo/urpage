@@ -2,20 +2,20 @@ package redis_api
 
 import (
 	"github.com/go-redis/redis/v8"
-	"go-site/structs"
 	"strconv"
 	"time"
 )
 
-func SetRefreshToken(rdb *redis.Client, payload structs.Payload, refreshToken string, refreshTokenExpireDate time.Time) error {
-	refreshKey := strconv.FormatInt(payload.PayloadId, 10) + strconv.Itoa(payload.UserId) + "Refresh"
+func SetRefreshToken(
+	rdb *redis.Client, payloadId int64, userId int, refreshToken string, refreshTokenExpireDate time.Time) error {
+	refreshKey := strconv.FormatInt(payloadId, 10) + strconv.Itoa(userId) + "Refresh"
 
 	return Set(rdb, refreshKey, refreshToken, refreshTokenExpireDate)
 
 }
 
-func SetJWSToken(rdb *redis.Client, payload structs.Payload, JWTToken string, tokenExpireDate time.Time) error {
-	JWTKey := strconv.FormatInt(payload.PayloadId, 10) + strconv.Itoa(payload.UserId) + "JWT"
+func SetJWSToken(rdb *redis.Client, payloadId int64, userId int, JWTToken string, tokenExpireDate time.Time) error {
+	JWTKey := strconv.FormatInt(payloadId, 10) + strconv.Itoa(userId) + "JWT"
 
 	return Set(rdb, JWTKey, JWTToken, tokenExpireDate)
 }
@@ -28,14 +28,14 @@ func DeleteSession(rdb *redis.Client, sessionId string) error {
 	return Set(rdb, sessionId, "", time.Now())
 }
 
-func DeleteJWTToken(rdb *redis.Client, payload structs.Payload) error {
-	JWTKey := strconv.FormatInt(payload.PayloadId, 10) + strconv.Itoa(payload.UserId) + "JWT"
+func DeleteJWTToken(rdb *redis.Client, payloadId int64, userId int) error {
+	JWTKey := strconv.FormatInt(payloadId, 10) + strconv.Itoa(userId) + "JWT"
 
 	return Set(rdb, JWTKey, "", time.Now())
 }
 
-func DeleteRefreshToken(rdb *redis.Client, payload structs.Payload) error {
-	refreshKey := strconv.FormatInt(payload.PayloadId, 10) + strconv.Itoa(payload.UserId) + "Refresh"
+func DeleteRefreshToken(rdb *redis.Client, payloadId int64, userId int) error {
+	refreshKey := strconv.FormatInt(payloadId, 10) + strconv.Itoa(userId) + "Refresh"
 
 	return Set(rdb, refreshKey, "", time.Now())
 }

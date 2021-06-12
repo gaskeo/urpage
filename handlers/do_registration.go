@@ -6,7 +6,6 @@ import (
 	"github.com/jackc/pgx/v4"
 	"go-site/session"
 	"go-site/storage"
-	"go-site/structs"
 	"net/http"
 )
 
@@ -29,7 +28,7 @@ func CreateDoRegistration(conn *pgx.Conn, rdb *redis.Client) {
 			_, CSRFToken, err = session.CheckSessionId(writer, request, rdb)
 
 			if err != nil {
-				jsonAnswer, _ = json.Marshal(structs.Answer{Err: "no-csrf"})
+				jsonAnswer, _ = json.Marshal(Answer{Err: "no-csrf"})
 				return
 			}
 		}
@@ -38,7 +37,7 @@ func CreateDoRegistration(conn *pgx.Conn, rdb *redis.Client) {
 			CSRFTokenForm := request.FormValue("csrf")
 
 			if CSRFToken != CSRFTokenForm {
-				jsonAnswer, _ = json.Marshal(structs.Answer{Err: "no-csrf"})
+				jsonAnswer, _ = json.Marshal(Answer{Err: "no-csrf"})
 				return
 			}
 
@@ -55,10 +54,10 @@ func CreateDoRegistration(conn *pgx.Conn, rdb *redis.Client) {
 		}
 
 		{ // email exist check
-			userExist, err := storage.CheckEmailExistInDB(conn, email)
+			_, err := storage.CheckEmailExistInDB(conn, email)
 
-			if err != nil && (userExist || err != pgx.ErrNoRows) {
-				jsonAnswer, _ = json.Marshal(structs.Answer{Err: "email-exist"})
+			if err != pgx.ErrNoRows {
+				jsonAnswer, _ = json.Marshal(Answer{Err: "email-exist"})
 				return
 			}
 		}
@@ -72,7 +71,7 @@ func CreateDoRegistration(conn *pgx.Conn, rdb *redis.Client) {
 			}
 		}
 
-		jsonAnswer, err = json.Marshal(structs.Answer{Err: ""})
+		jsonAnswer, err = json.Marshal(Answer{Err: ""})
 	}
 
 	http.HandleFunc("/do/registration", doRegistration)

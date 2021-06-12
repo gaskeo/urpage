@@ -2,15 +2,26 @@ package storage
 
 import (
 	"context"
+	"errors"
 	"github.com/jackc/pgx/v4"
 	"go-site/constants"
-	"go-site/errs"
-	"go-site/structs"
 	"go-site/utils"
 	"log"
 	"strings"
 	"time"
 )
+
+var ErrWrongPassword = errors.New("wrong password")
+
+type User struct {
+	UserId     int
+	Username   string
+	Password   string
+	Email      string
+	CreateDate time.Time
+	ImagePath  string
+	Links      [][]string
+}
 
 func Connect(username string, password string, dbname string) (*pgx.Conn, error) {
 	var (
@@ -23,8 +34,8 @@ func Connect(username string, password string, dbname string) (*pgx.Conn, error)
 	return conn, err
 }
 
-func GetUserViaId(conn *pgx.Conn, userId int) (structs.User, error) {
-	user := structs.User{}
+func GetUserViaId(conn *pgx.Conn, userId int) (User, error) {
+	user := User{}
 
 	var (
 		imageDB *string
@@ -44,7 +55,7 @@ func GetUserViaId(conn *pgx.Conn, userId int) (structs.User, error) {
 
 		if err != nil {
 			log.Println(err)
-			return structs.User{}, err
+			return User{}, err
 		}
 	}
 
@@ -59,7 +70,7 @@ func GetUserViaId(conn *pgx.Conn, userId int) (structs.User, error) {
 			linksLst := strings.Split(*linksDB, " ")
 			user.Links, err = utils.CreateIconLinkPairs(linksLst)
 			if err != nil {
-				return structs.User{}, err
+				return User{}, err
 			}
 		}
 	}
@@ -94,8 +105,8 @@ func CheckEmailExistInDB(conn *pgx.Conn, email string) (bool, error) {
 	return emailDB == email, nil
 }
 
-func GetUserByEmailAndPassword(conn *pgx.Conn, email string, password string) (structs.User, error) {
-	user := structs.User{}
+func GetUserByEmailAndPassword(conn *pgx.Conn, email string, password string) (User, error) {
+	user := User{}
 
 	var imageDB *string
 	var linksDB *string
@@ -112,7 +123,7 @@ func GetUserByEmailAndPassword(conn *pgx.Conn, email string, password string) (s
 			&linksDB)
 
 		if err != nil {
-			return structs.User{}, err
+			return User{}, err
 		}
 	}
 
@@ -120,7 +131,7 @@ func GetUserByEmailAndPassword(conn *pgx.Conn, email string, password string) (s
 		PasswordsCompare, err := CheckPassword(password, user.Password)
 
 		if err != nil || !PasswordsCompare {
-			return structs.User{}, errs.ErrWrongPassword
+			return User{}, ErrWrongPassword
 		}
 	}
 
@@ -136,7 +147,7 @@ func GetUserByEmailAndPassword(conn *pgx.Conn, email string, password string) (s
 			user.Links, err = utils.CreateIconLinkPairs(linksLst)
 
 			if err != nil {
-				return structs.User{}, err
+				return User{}, err
 			}
 
 		}
@@ -145,7 +156,7 @@ func GetUserByEmailAndPassword(conn *pgx.Conn, email string, password string) (s
 	return user, nil
 }
 
-func UpdateUser(conn *pgx.Conn, user structs.User) error {
+func UpdateUser(conn *pgx.Conn, user User) error {
 	var userId int
 
 	links := utils.CreateDBLinksFromPairs(user.Links)

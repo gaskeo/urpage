@@ -40,6 +40,7 @@ func CreateMainPageHandler(conn *pgx.Conn, rdb *redis.Client) {
 				user, err = storage.GetUserViaId(conn, userId)
 				if err != nil {
 					http.Error(writer, "error getting user", http.StatusInternalServerError)
+					return
 				}
 			}
 		}

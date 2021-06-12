@@ -129,6 +129,16 @@ func CreateDoEditMain(conn *pgx.Conn, rdb *redis.Client) {
 			}
 		}
 
+		{ // delete exist image
+			if user.ImagePath != constants.UserImages+"default.jpeg" && len(imageName) > 0 {
+				err = os.Remove(user.ImagePath[1:])
+
+				if err != nil {
+					http.Error(writer, "error deleting old image", http.StatusInternalServerError)
+				}
+			}
+		}
+
 		{ // set new data
 			if len(imageName) > 0 {
 				user.ImagePath = imageName + "." + imageType

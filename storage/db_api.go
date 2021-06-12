@@ -63,7 +63,7 @@ func GetUserViaId(conn *pgx.Conn, userId int) (User, error) {
 		if imageDB != nil && len(*imageDB) != 0 {
 			user.ImagePath = constants.UserImages + *imageDB
 		} else {
-			user.ImagePath = constants.UserImages + "test.jpeg"
+			user.ImagePath = constants.UserImages + "default.jpeg"
 		}
 
 		if linksDB != nil && len(*linksDB) != 0 {
@@ -139,7 +139,7 @@ func GetUserByEmailAndPassword(conn *pgx.Conn, email string, password string) (U
 		if imageDB != nil && len(*imageDB) != 0 {
 			user.ImagePath = constants.UserImages + *imageDB
 		} else {
-			user.ImagePath = constants.UserImages + "test.jpeg"
+			user.ImagePath = constants.UserImages + "default.jpeg"
 		}
 
 		if linksDB != nil && len(*linksDB) != 0 {

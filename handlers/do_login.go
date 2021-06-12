@@ -5,7 +5,7 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/jackc/pgx/v4"
 	"go-site/errs"
-	"go-site/jwt"
+	"go-site/jwt_api"
 	"go-site/redis_api"
 	"go-site/session"
 	"go-site/storage"
@@ -67,31 +67,31 @@ func CreateDoLogin(conn *pgx.Conn, rdb *redis.Client) {
 		}
 
 		{ // work with JWT
-			payload, token, tokenExpireDate, err := jwt.GenerateJWTToken(writer, user.UserId)
+			payload, token, tokenExpireDate, err := jwt_api.GenerateJWTToken(writer, user.UserId)
 
 			if err != nil {
-				jsonAnswer, err = json.Marshal(structs.Answer{Err: "other-error"})
+				http.Error(writer, "error generating token", http.StatusInternalServerError)
 				return
 			}
 
-			refreshToken, refreshExpireDate, err := jwt.GenerateRefreshToken(writer, payload)
+			refreshToken, refreshExpireDate, err := jwt_api.GenerateRefreshToken(writer, payload)
 
 			if err != nil {
-				jsonAnswer, err = json.Marshal(structs.Answer{Err: "other-error"})
+				http.Error(writer, "error generating token", http.StatusInternalServerError)
 				return
 			}
 
 			err = redis_api.SetJWSToken(rdb, payload, token, tokenExpireDate)
 
 			if err != nil {
-				jsonAnswer, err = json.Marshal(structs.Answer{Err: "other-error"})
+				http.Error(writer, "error setting token", http.StatusInternalServerError)
 				return
 			}
 
 			err = redis_api.SetRefreshToken(rdb, payload, refreshToken, refreshExpireDate)
 
 			if err != nil {
-				jsonAnswer, err = json.Marshal(structs.Answer{Err: "other-error"})
+				http.Error(writer, "error setting token", http.StatusInternalServerError)
 				return
 			}
 		}

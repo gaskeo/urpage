@@ -1,4 +1,4 @@
-package jwt
+package jwt_api
 
 import (
 	"github.com/go-redis/redis/v8"

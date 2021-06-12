@@ -49,7 +49,7 @@ func CreateDoRegistration(conn *pgx.Conn, rdb *redis.Client) {
 			passwordHashed, err = storage.HashPassword(password)
 
 			if err != nil {
-				jsonAnswer, _ = json.Marshal(structs.Answer{Err: "other-error"})
+				http.Error(writer, "error hashing password", http.StatusInternalServerError)
 				return
 			}
 		}
@@ -67,7 +67,7 @@ func CreateDoRegistration(conn *pgx.Conn, rdb *redis.Client) {
 			_, err = storage.AddUser(conn, username, passwordHashed, email, "", "")
 
 			if err != nil {
-				jsonAnswer, _ = json.Marshal(structs.Answer{Err: "other-error"})
+				http.Error(writer, "error adding user", http.StatusInternalServerError)
 				return
 			}
 		}

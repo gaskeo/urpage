@@ -1,4 +1,4 @@
-package jwt
+package jwt_api
 
 import (
 	"errors"
@@ -47,14 +47,13 @@ func VerifyToken(token string) (*structs.Payload, error) {
 
 func CheckIfUserAuth(writer http.ResponseWriter, request *http.Request, rds *redis.Client) (int, error) {
 
-	{ // check jwt token block
+	{ // check jwt_api token block
 		JWTToken, err := request.Cookie("JWT")
 
 		if err == nil {
 			payload, err := VerifyToken(JWTToken.Value)
 
 			if err == errs.ErrInvalidToken {
-				log.Println(err)
 				return 0, err
 			}
 
@@ -79,27 +78,22 @@ func CheckIfUserAuth(writer http.ResponseWriter, request *http.Request, rds *red
 		}
 	}
 
-	log.Println("no jwtToken")
-
 	{ // check refresh token block
 		refreshToken, err := request.Cookie("RefreshToken")
 
 		if err != nil {
-			log.Println(err)
 			return 0, err
 		}
 
 		refreshTokenId, err := request.Cookie("RefreshTokenId")
 
 		if err != nil {
-			log.Println(err)
 			return 0, err
 		}
 
 		refreshTokenUserId, err := request.Cookie("RefreshTokenUserId")
 
 		if err != nil {
-			log.Println(err)
 			return 0, err
 		}
 
@@ -107,18 +101,15 @@ func CheckIfUserAuth(writer http.ResponseWriter, request *http.Request, rds *red
 		redisRefreshTokenValue, err := redis_api.Get(rds, redisRefreshTokenKey)
 
 		if err != nil {
-			log.Println(err)
 			return 0, err
 		}
 
 		if refreshToken.Value != redisRefreshTokenValue {
-			log.Println("invalid refresh token")
 			return 0, errs.ErrInvalidRefreshToken
 		}
 
 		userId, err := strconv.Atoi(refreshTokenUserId.Value)
 		if err != nil {
-			log.Println(err)
 			return 0, err
 		}
 

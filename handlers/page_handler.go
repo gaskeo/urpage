@@ -3,7 +3,7 @@ package handlers
 import (
 	"github.com/go-redis/redis/v8"
 	"github.com/jackc/pgx/v4"
-	"go-site/jwt"
+	"go-site/jwt_api"
 	"go-site/session"
 	"go-site/storage"
 	"go-site/structs"
@@ -26,7 +26,7 @@ func CreatePageHandler(conn *pgx.Conn, rdb *redis.Client) {
 			_, _, err = session.CheckSessionId(writer, request, rdb)
 
 			if err != nil {
-				http.Error(writer, "что-то пошло не так...", http.StatusInternalServerError)
+				http.Error(writer, "error session", http.StatusInternalServerError)
 				return
 			}
 		}
@@ -54,20 +54,21 @@ func CreatePageHandler(conn *pgx.Conn, rdb *redis.Client) {
 		}
 
 		{ // user auth check
-			authUserId, err := jwt.CheckIfUserAuth(writer, request, rdb)
-
-			authUser, err = storage.GetUserViaId(conn, authUserId)
+			authUserId, err := jwt_api.CheckIfUserAuth(writer, request, rdb)
 
 			if err != nil {
 				authUser = structs.User{}
+			} else {
+				authUser, _ = storage.GetUserViaId(conn, authUserId)
 			}
+
 		}
 
 		{ // generate template
 			t, err := template.ParseFiles("templates/page.html")
 
 			if err != nil {
-				ErrorHandler(writer, request, http.StatusNotFound)
+				http.Error(writer, "error creating page", http.StatusInternalServerError)
 				return
 			}
 
@@ -76,7 +77,7 @@ func CreatePageHandler(conn *pgx.Conn, rdb *redis.Client) {
 			err = t.Execute(writer, templateData)
 
 			if err != nil {
-				ErrorHandler(writer, request, http.StatusNotFound)
+				http.Error(writer, "error creating page", http.StatusInternalServerError)
 				return
 			}
 		}

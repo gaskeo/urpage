@@ -3,12 +3,11 @@ package handlers
 import (
 	"github.com/go-redis/redis/v8"
 	"github.com/jackc/pgx/v4"
-	"go-site/jwt"
+	"go-site/jwt_api"
 	"go-site/session"
 	"go-site/storage"
 	"go-site/structs"
 	"html/template"
-	"log"
 	"net/http"
 	"strconv"
 )
@@ -26,18 +25,24 @@ func CreateEditHandler(conn *pgx.Conn, rdb *redis.Client) {
 			_, CSRFToken, err = session.CheckSessionId(writer, request, rdb)
 
 			if err != nil {
-				http.Error(writer, "что-то пошло не так...", http.StatusInternalServerError)
+				http.Error(writer, "error session", http.StatusInternalServerError)
 				return
 			}
 		}
 
 		{ // user auth check
-			authUserId, err := jwt.CheckIfUserAuth(writer, request, rdb)
+			authUserId, err := jwt_api.CheckIfUserAuth(writer, request, rdb)
+
+			if err != nil {
+				http.Error(writer, "no jwt", http.StatusInternalServerError)
+				return
+			}
 
 			authUser, err = storage.GetUserViaId(conn, authUserId)
 
 			if err != nil {
-				authUser = structs.User{}
+				http.Error(writer, "error getting user", http.StatusInternalServerError)
+				return
 			}
 		}
 
@@ -45,14 +50,12 @@ func CreateEditHandler(conn *pgx.Conn, rdb *redis.Client) {
 			requestedId, err := strconv.Atoi(request.URL.Path[len("/edit/"):])
 
 			if err != nil {
-				log.Println(err)
-				ErrorHandler(writer, request, http.StatusNotFound)
+				http.Error(writer, "error getting id", http.StatusInternalServerError)
 				return
 			}
 
 			if authUser.UserId != requestedId {
-				log.Println("wrong id")
-				ErrorHandler(writer, request, http.StatusForbidden)
+				http.Error(writer, "error checking id", http.StatusInternalServerError)
 				return
 			}
 		}
@@ -60,17 +63,14 @@ func CreateEditHandler(conn *pgx.Conn, rdb *redis.Client) {
 		{ // generate template
 			t, err := template.ParseFiles("templates/edit_page.html")
 			if err != nil {
-				log.Println(err)
-
-				ErrorHandler(writer, request, http.StatusNotFound)
+				http.Error(writer, "error creating page", http.StatusInternalServerError)
 				return
 			}
 
 			err = t.Execute(writer, structs.TemplateData{"AuthUser": authUser, "CSRF": CSRFToken})
 
 			if err != nil {
-				log.Println(err)
-				ErrorHandler(writer, request, http.StatusNotFound)
+				http.Error(writer, "error creating page", http.StatusInternalServerError)
 				return
 			}
 		}

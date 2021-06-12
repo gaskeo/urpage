@@ -5,7 +5,7 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/jackc/pgx/v4"
 	"go-site/constants"
-	"go-site/jwt"
+	"go-site/jwt_api"
 	"go-site/session"
 	"go-site/storage"
 	"go-site/structs"
@@ -38,10 +38,10 @@ func CreateDoEditPassword(conn *pgx.Conn, rdb *redis.Client) {
 		}
 
 		{ // check user authed
-			userId, err = jwt.CheckIfUserAuth(writer, request, rdb)
+			userId, err = jwt_api.CheckIfUserAuth(writer, request, rdb)
 
 			if err != nil {
-				http.Error(writer, "У вас нет доступа", http.StatusForbidden)
+				http.Error(writer, "no jwt", http.StatusForbidden)
 				return
 			}
 		}
@@ -62,7 +62,7 @@ func CreateDoEditPassword(conn *pgx.Conn, rdb *redis.Client) {
 			user, err = storage.GetUserViaId(conn, userId)
 
 			if err != nil {
-				http.Error(writer, "Ошибка с БД", http.StatusForbidden)
+				http.Error(writer, "error getting user", http.StatusInternalServerError)
 				return
 			}
 		}
@@ -81,13 +81,13 @@ func CreateDoEditPassword(conn *pgx.Conn, rdb *redis.Client) {
 			user.Password, err = storage.HashPassword(newPassword)
 
 			if err != nil {
-				jsonAnswer, _ = json.Marshal(structs.Answer{Err: "other-error"})
+				http.Error(writer, "error hashing password", http.StatusInternalServerError)
 				return
 			}
 
 			err = storage.UpdateUser(conn, user)
 			if err != nil {
-				jsonAnswer, _ = json.Marshal(structs.Answer{Err: "other-error"})
+				http.Error(writer, "error updating user", http.StatusInternalServerError)
 				return
 			}
 			jsonAnswer, _ = json.Marshal(structs.Answer{Err: ""})

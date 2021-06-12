@@ -5,7 +5,7 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/jackc/pgx/v4"
 	"go-site/constants"
-	"go-site/jwt"
+	"go-site/jwt_api"
 	"go-site/session"
 	"go-site/storage"
 	"go-site/structs"
@@ -43,10 +43,10 @@ func CreateDoEditMain(conn *pgx.Conn, rdb *redis.Client) {
 		}
 
 		{ // check user authed
-			userId, err = jwt.CheckIfUserAuth(writer, request, rdb)
+			userId, err = jwt_api.CheckIfUserAuth(writer, request, rdb)
 
 			if err != nil {
-				http.Error(writer, "У вас нет доступа", http.StatusForbidden)
+				http.Error(writer, "no jwt", http.StatusForbidden)
 				return
 			}
 		}
@@ -66,7 +66,7 @@ func CreateDoEditMain(conn *pgx.Conn, rdb *redis.Client) {
 				defer func() {
 					err = imageForm.Close()
 					if err != nil {
-						jsonAnswer, _ = json.Marshal(structs.Answer{Err: "other-error"})
+						http.Error(writer, "error generating image", http.StatusInternalServerError)
 						return
 					}
 				}()
@@ -97,7 +97,7 @@ func CreateDoEditMain(conn *pgx.Conn, rdb *redis.Client) {
 				newImage, err := os.OpenFile(constants.UserImages[1:]+imageName+"."+imageType, os.O_WRONLY, 0644)
 
 				if err != nil {
-					jsonAnswer, _ = json.Marshal(structs.Answer{Err: "other-error"})
+					http.Error(writer, "error creating file", http.StatusForbidden)
 					return
 				}
 
@@ -106,7 +106,7 @@ func CreateDoEditMain(conn *pgx.Conn, rdb *redis.Client) {
 
 					if err != nil {
 
-						jsonAnswer, _ = json.Marshal(structs.Answer{Err: "other-error"})
+						http.Error(writer, "error saving file", http.StatusForbidden)
 						return
 					}
 				}()
@@ -115,7 +115,7 @@ func CreateDoEditMain(conn *pgx.Conn, rdb *redis.Client) {
 
 				if err != nil {
 
-					jsonAnswer, _ = json.Marshal(structs.Answer{Err: "other-error"})
+					http.Error(writer, "error getting file", http.StatusForbidden)
 					return
 				}
 			}
@@ -125,7 +125,7 @@ func CreateDoEditMain(conn *pgx.Conn, rdb *redis.Client) {
 			user, err = storage.GetUserViaId(conn, userId)
 
 			if err != nil {
-				http.Error(writer, "Ошибка с БД", http.StatusForbidden)
+				http.Error(writer, "error getting user", http.StatusInternalServerError)
 				return
 			}
 		}
@@ -133,8 +133,6 @@ func CreateDoEditMain(conn *pgx.Conn, rdb *redis.Client) {
 		{ // set new data
 			if len(imageName) > 0 {
 				user.ImagePath = imageName + "." + imageType
-			} else {
-				user.ImagePath = user.ImagePath[len(constants.UserImages):]
 			}
 
 			if len(username) > 0 {
@@ -144,7 +142,7 @@ func CreateDoEditMain(conn *pgx.Conn, rdb *redis.Client) {
 			err = storage.UpdateUser(conn, user)
 
 			if err != nil {
-				jsonAnswer, _ = json.Marshal(structs.Answer{Err: "other-error"})
+				http.Error(writer, "error updating user", http.StatusInternalServerError)
 				return
 			}
 

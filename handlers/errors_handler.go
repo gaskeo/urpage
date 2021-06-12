@@ -9,8 +9,8 @@ import (
 func ErrorHandler(writer http.ResponseWriter, _ *http.Request, status int) {
 	writer.WriteHeader(status)
 
-	if status == http.StatusNotFound {
-
+	switch status {
+	case http.StatusNotFound:
 		t, err := template.ParseFiles("templates/error404.html")
 		if err != nil {
 			log.Println(err)
@@ -21,6 +21,16 @@ func ErrorHandler(writer http.ResponseWriter, _ *http.Request, status int) {
 		if err != nil {
 			log.Println(err)
 		}
+	case http.StatusInternalServerError:
+		t, err := template.ParseFiles("templates/error500.html")
+		if err != nil {
+			log.Println(err)
 
+		}
+
+		err = t.Execute(writer, "")
+		if err != nil {
+			log.Println(err)
+		}
 	}
 }

@@ -3,11 +3,10 @@ package handlers
 import (
 	"github.com/go-redis/redis/v8"
 	"github.com/jackc/pgx/v4"
-	"go-site/jwt"
+	"go-site/jwt_api"
 	"go-site/session"
 	"go-site/structs"
 	"html/template"
-	"log"
 	"net/http"
 )
 
@@ -22,13 +21,13 @@ func CreateLoginHandler(_ *pgx.Conn, rdb *redis.Client) {
 		{ // check csrf
 			_, CSRFToken, err = session.CheckSessionId(writer, request, rdb)
 			if err != nil {
-				http.Error(writer, "что-то пошло не так...", http.StatusInternalServerError)
+				http.Error(writer, "error session", http.StatusInternalServerError)
 				return
 			}
 		}
 
 		{ // check user authed
-			_, err = jwt.CheckIfUserAuth(writer, request, rdb)
+			_, err = jwt_api.CheckIfUserAuth(writer, request, rdb)
 
 			if err == nil {
 				http.Redirect(writer, request, "/", http.StatusSeeOther)
@@ -40,13 +39,15 @@ func CreateLoginHandler(_ *pgx.Conn, rdb *redis.Client) {
 			t, err := template.ParseFiles("templates/login.html")
 
 			if err != nil {
-				log.Println(err)
+				http.Error(writer, "error creating page", http.StatusInternalServerError)
+				return
 			}
 
 			err = t.Execute(writer, structs.TemplateData{"CSRF": CSRFToken})
 
 			if err != nil {
-				log.Println(err)
+				http.Error(writer, "error creating page", http.StatusInternalServerError)
+				return
 			}
 		}
 	}

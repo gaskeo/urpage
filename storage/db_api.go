@@ -150,6 +150,10 @@ func UpdateUser(conn *pgx.Conn, user structs.User) error {
 
 	links := utils.CreateDBLinksFromPairs(user.Links)
 
+	if strings.Contains(user.ImagePath, constants.UserImages) {
+		user.ImagePath = user.ImagePath[len(constants.UserImages):]
+	}
+
 	err := conn.QueryRow(context.Background(), "UPDATE user_info SET "+
 		"username=$1, email=$2, password=$3, image_path=$4, links=$5 WHERE user_id=$6 RETURNING user_id",
 		user.Username, user.Email, user.Password, user.ImagePath, links, user.UserId).Scan(&userId)

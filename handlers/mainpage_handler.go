@@ -3,7 +3,7 @@ package handlers
 import (
 	"github.com/go-redis/redis/v8"
 	"github.com/jackc/pgx/v4"
-	"go-site/jwt"
+	"go-site/jwt_api"
 	"go-site/session"
 	"go-site/storage"
 	"go-site/structs"
@@ -23,13 +23,13 @@ func CreateMainPageHandler(conn *pgx.Conn, rdb *redis.Client) {
 		{ // check csrf
 			_, CSRFToken, err = session.CheckSessionId(writer, request, rdb)
 			if err != nil {
-				http.Error(writer, "что-то пошло не так...", http.StatusInternalServerError)
+				http.Error(writer, "error session", http.StatusInternalServerError)
 				return
 			}
 		}
 
 		{ // user auth check
-			userId, err := jwt.CheckIfUserAuth(writer, request, rdb)
+			userId, err := jwt_api.CheckIfUserAuth(writer, request, rdb)
 
 			if err != nil {
 				temp = "templates/index_not_auth.html"
@@ -40,7 +40,7 @@ func CreateMainPageHandler(conn *pgx.Conn, rdb *redis.Client) {
 
 				user, err = storage.GetUserViaId(conn, userId)
 				if err != nil {
-					user = structs.User{}
+					http.Error(writer, "error getting user", http.StatusInternalServerError)
 				}
 			}
 		}
@@ -49,7 +49,7 @@ func CreateMainPageHandler(conn *pgx.Conn, rdb *redis.Client) {
 			t, err := template.ParseFiles(temp)
 
 			if err != nil {
-				http.Error(writer, "что-то пошло не так...", http.StatusInternalServerError)
+				http.Error(writer, "error creating page", http.StatusInternalServerError)
 				return
 			}
 
@@ -57,6 +57,11 @@ func CreateMainPageHandler(conn *pgx.Conn, rdb *redis.Client) {
 				"User": user,
 				"CSRF": CSRFToken,
 			})
+
+			if err != nil {
+				http.Error(writer, "error creating page", http.StatusInternalServerError)
+				return
+			}
 		}
 	}
 

@@ -3,7 +3,7 @@ package handlers
 import (
 	"github.com/go-redis/redis/v8"
 	"github.com/jackc/pgx/v4"
-	"go-site/jwt"
+	"go-site/jwt_api"
 	"go-site/session"
 	"go-site/structs"
 	"net/http"
@@ -12,9 +12,7 @@ import (
 func CreateDoLogout(_ *pgx.Conn, rdb *redis.Client) {
 
 	doLogout := func(writer http.ResponseWriter, request *http.Request) {
-		var (
-			payload *structs.Payload
-		)
+		var payload *structs.Payload
 
 		if request.Method != "POST" {
 			return
@@ -22,14 +20,14 @@ func CreateDoLogout(_ *pgx.Conn, rdb *redis.Client) {
 
 		{ // check user authed
 			JWTToken, _ := request.Cookie("JWT")
-			payload, _ = jwt.VerifyToken(JWTToken.Value)
+			payload, _ = jwt_api.VerifyToken(JWTToken.Value)
 		}
 
 		{ // delete session
 			sessionId, _ := request.Cookie("SessionId")
 			_ = session.DeleteSession(writer, rdb, sessionId.Value)
-			_ = jwt.DeleteJWTToken(writer, rdb, *payload)
-			_ = jwt.DeleteRefreshToken(writer, rdb, *payload)
+			_ = jwt_api.DeleteJWTToken(writer, rdb, *payload)
+			_ = jwt_api.DeleteRefreshToken(writer, rdb, *payload)
 		}
 	}
 

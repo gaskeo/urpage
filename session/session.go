@@ -35,6 +35,7 @@ func GenerateCSRFToken() string {
 
 func GetCSRFBySessionId(rds *redis.Client, sessionId string) (string, error) {
 	CSRFToken, err := redis_api.Get(rds, sessionId)
+
 	return CSRFToken, err
 }
 
@@ -55,11 +56,13 @@ func CheckSessionId(writer http.ResponseWriter, request *http.Request, rds *redi
 		if err != nil {
 			return "", "", err
 		}
+
 		return sessionId, CSRFToken, nil
 	}
 }
 
 func DeleteSession(writer http.ResponseWriter, rds *redis.Client, sessionId string) error {
 	DeleteSessionIdCookie(writer)
+
 	return redis_api.DeleteSession(rds, sessionId)
 }

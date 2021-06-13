@@ -60,7 +60,7 @@ func CreateEditHandler(conn *pgx.Conn, rdb *redis.Client) {
 		}
 
 		{ // generate template
-			t, err := template.ParseFiles("templates/edit_page.html")
+			t, err := template.ParseFiles("templates/edit.html")
 			if err != nil {
 				http.Error(writer, "error creating page", http.StatusInternalServerError)
 				return

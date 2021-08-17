@@ -82,7 +82,7 @@ func AddUser(conn *pgx.Conn, username string, password string, email string, ima
 	var userId int
 
 	err := conn.QueryRow(context.Background(),
-		"INSERT INTO user_info (Username, Password, Email, create_date, image_path, Links)"+
+		"INSERT INTO user_info (username, password, email, create_date, image_path, links)"+
 			"VALUES ($1, $2, $3, $4, $5, $6) RETURNING user_id", username, password, email, time.Now(), imagePath, links).Scan(&userId)
 
 	if err != nil {

@@ -20,14 +20,14 @@ REDIS_PASSWORD | P@SSW0RD
  
 ```
 CREATE TABLE user_info (
-    user_id INT PRIMARY KEY NOT NULL, 
+    user_id SERIAL PRIMARY KEY NOT NULL, 
     username TEXT NOT NULL, 
     password TEXT NOT NULL, 
     email TEXT NOT NULL, 
     create_date DATE NOT NULL,
     image_path TEXT, 
     links TEXT
-)
+);
 ```
 
 * install and run [redis](https://redis.io/)

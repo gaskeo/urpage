@@ -63,7 +63,7 @@ func CreateDoRegistration(conn *pgx.Conn, rdb *redis.Client) {
 		}
 
 		{ // add user in db
-			_, err = storage.AddUser(conn, username, passwordHashed, email, "", "")
+			_, err = storage.AddUser(conn, username, "", passwordHashed, email, "")
 
 			if err != nil {
 				http.Error(writer, "error adding user", http.StatusInternalServerError)

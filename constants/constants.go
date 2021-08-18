@@ -3,6 +3,7 @@ package constants
 import "time"
 
 const UserImages = "/static/images/user_images/"
+const DefaultUserImage = "default.jpeg"
 
 const LinkPath = "/static/images/site_images/social_icons/SVG/"
 

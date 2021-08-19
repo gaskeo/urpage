@@ -19,6 +19,7 @@ func CreateDoEditLinks(conn *pgx.Conn, rdb *redis.Client) {
 		var (
 			userId           int
 			links, CSRFToken string
+			linkPairs        [][]string
 			jsonAnswer       []byte
 			user             storage.User
 			err              error
@@ -73,14 +74,14 @@ func CreateDoEditLinks(conn *pgx.Conn, rdb *redis.Client) {
 
 			linksLst := strings.Split(links, " ")
 
-			user.Links, err = utils.CreateIconLinkPairs(linksLst)
+			linkPairs, err = utils.CreateIconLinkPairs(linksLst)
 
 			if err != nil {
 				http.Error(writer, "error generating links", http.StatusInternalServerError)
 				return
 			}
 
-			err = storage.UpdateUserMainInfo(conn, user)
+			err = storage.UpdateUsersLinks(conn, userId, linkPairs)
 
 			if err != nil {
 				http.Error(writer, "error updating user", http.StatusInternalServerError)

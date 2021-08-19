@@ -22,6 +22,8 @@ type User struct {
 	Links       [][]string
 	LikesCount  int
 	Verified    bool
+	Dev         bool
+	Status      int
 }
 
 type LinkWithPath struct {
@@ -58,6 +60,8 @@ func GetUserViaId(conn *pgx.Conn, userId int) (User, error) {
 			&user.CreateDate,
 			&user.ImagePath,
 			&user.Verified,
+			&user.Dev,
+			&user.Status,
 		)
 
 		if err != nil {
@@ -111,8 +115,8 @@ func AddUser(conn *pgx.Conn, username string, description string, password strin
 	var userId int
 
 	err := conn.QueryRow(context.Background(),
-		"INSERT INTO users (username, description, password, email, create_date, image_path, verified)"+
-			"VALUES ($1, $2, $3, $4, $5, $6, false) RETURNING user_id", username, description, password, email, time.Now(), imagePath).Scan(&userId)
+		"INSERT INTO users (username, description, password, email, create_date, image_path, verified, dev, status)"+
+			"VALUES ($1, $2, $3, $4, $5, $6, false, false, 1) RETURNING user_id", username, description, password, email, time.Now(), imagePath).Scan(&userId)
 
 	if err != nil {
 		return -1, err
@@ -169,12 +173,66 @@ func GetUserByEmailAndPassword(conn *pgx.Conn, email string, password string) (U
 	return user, nil
 }
 
-func UpdateUser(conn *pgx.Conn, user User) error {
+func UpdateUserMainInfo(conn *pgx.Conn, user User) error {
 	var userId int
 
 	err := conn.QueryRow(context.Background(), "UPDATE users SET "+
-		"username=$1, email=$2, password=$3, image_path=$4, verified=$5 WHERE user_id=$6 RETURNING user_id",
-		user.Username, user.Email, user.Password, user.ImagePath, user.Verified, user.UserId).Scan(&userId)
+		"username=$1, description=$2, email=$3, password=$4, image_path=$5 WHERE user_id=$6 RETURNING user_id",
+		user.Username, user.Description, user.Email, user.Password, user.ImagePath, user.UserId).Scan(&userId)
 
 	return err
+}
+
+func UpdateUserDevInfo(conn *pgx.Conn, user User) error {
+	var userId int
+
+	err := conn.QueryRow(context.Background(), "UPDATE users SET "+
+		"verified=$1, dev=$2, status=$3 WHERE user_id=$4 RETURNING user_id",
+		user.Verified, user.Dev, user.Status, user.UserId).Scan(&userId)
+
+	return err
+}
+
+func UpdateUsersLinks(conn *pgx.Conn, userId int, links [][]string) error {
+	var answer int
+	err := conn.QueryRow(context.Background(), "DELETE FROM links WHERE user_id=$1 RETURNING 1", userId).Scan(&answer)
+
+	if err != nil {
+		if err.Error() != "no rows in result set" {
+			return err
+		}
+	}
+
+	var rows [][]interface{}
+
+	for _, row := range links {
+		rows = append(rows, []interface{}{row[0], row[1], userId})
+	}
+
+	_, err = conn.CopyFrom(context.Background(), pgx.Identifier{"links"},
+		[]string{"link_url", "image_path", "user_id"}, pgx.CopyFromRows(rows))
+
+	return err
+}
+
+func SetLike(conn *pgx.Conn, userLikedId, userLikesId int) error {
+	err := conn.QueryRow(context.Background(),
+		"INSERT INTO likes (user_liked_id, user_likes_id) VALUES ($1, $2)", userLikedId, userLikesId).Scan()
+
+	if err.Error() != "no rows in result set" {
+		return err
+	}
+
+	return nil
+}
+
+func DeleteLike(conn *pgx.Conn, userLikedId, userLikesId int) error {
+	err := conn.QueryRow(context.Background(),
+		"DELETE FROM likes WHERE user_liked_id=$1 AND user_likes_id=$2", userLikedId, userLikesId).Scan()
+
+	if err.Error() != "no rows in result set" {
+		return err
+	}
+
+	return nil
 }

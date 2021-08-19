@@ -148,7 +148,7 @@ func CreateDoEditMain(conn *pgx.Conn, rdb *redis.Client) {
 				user.Username = username
 			}
 
-			err = storage.UpdateUser(conn, user)
+			err = storage.UpdateUserMainInfo(conn, user)
 
 			if err != nil {
 				http.Error(writer, "error updating user", http.StatusInternalServerError)

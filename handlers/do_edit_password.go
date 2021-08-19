@@ -84,7 +84,7 @@ func CreateDoEditPassword(conn *pgx.Conn, rdb *redis.Client) {
 				return
 			}
 
-			err = storage.UpdateUser(conn, user)
+			err = storage.UpdateUserMainInfo(conn, user)
 			if err != nil {
 				http.Error(writer, "error updating user", http.StatusInternalServerError)
 				return

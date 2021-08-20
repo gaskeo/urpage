@@ -40,7 +40,7 @@ func CreatePageHandler(conn *pgx.Conn, rdb *redis.Client) {
 			userId, err := strconv.Atoi(userIdStr)
 
 			if err != nil {
-				log.Println(err)
+				log.Println(err, 123)
 			}
 
 			user, err = storage.GetUserViaId(conn, userId)

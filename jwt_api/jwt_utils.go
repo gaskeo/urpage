@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"math/big"
+	"os"
 )
 
 func GenerateId() (int64, error) {
@@ -18,11 +19,16 @@ func GenerateId() (int64, error) {
 }
 
 func GenerateKey() string {
+	if os.Getenv("DEBUG") == "1" {
+		return "1"
+	}
+
 	key := make([]byte, 32)
 	_, err := rand.Read(key)
 
 	if err != nil {
 		log.Fatal(err)
+		return ""
 	}
 
 	return fmt.Sprintf("%x", key)

@@ -141,7 +141,7 @@ func CreateDoEditMain(conn *pgx.Conn, rdb *redis.Client) {
 
 		{ // set new data
 			if len(imageName) > 0 {
-				user.ImagePath = imageName + "." + imageType
+				user.ImagePath = constants.UserImages + imageName + "." + imageType
 			}
 
 			if len(username) > 0 {

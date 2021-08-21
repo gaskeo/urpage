@@ -17,7 +17,7 @@
         {{ end }}
 
     </div>
-    <h1 class="user-username">{{ .User.Username }}</h1>
+    <h1 class="user-username">{{ .User.Username }} {{if .User.Verified }} VER {{ end }}</h1>
     <ul class="user-links">
         {{ range .User.Links }}
             <li class="user-link"><a href="{{ index . 0 }}"><img class="user-linked-img" src="{{ index . 1 }}"></a></li>
